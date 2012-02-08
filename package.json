@@ -1,8 +1,8 @@
 { 
     "name": "es", 
+    "version": "0.0.1",
     "description": "EventSource client for Node.js", 
     "keywords": [ "eventsource", "http", "streamin", "sse" ], 
-    "version": "1.0.0", 
     "homepage": "http://github.com/aslakhellesoy/es", 
     "author": "Aslak Hellesøy <aslak.hellesoy@gmail.com>", 
     "contributors": [
