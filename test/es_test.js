@@ -60,5 +60,15 @@ exports['Messages'] = {
                 test.done();
             }
         });
+    },
+
+    'one two-line messages in one chunk': function(test) {
+        createServer(["data: Hello\ndata:World\n\n"], function(es, close) {
+            es.onmessage = function(m) {
+                test.equal("Hello\nWorld", m.data);
+                close();
+                test.done();
+            };
+        });
     }
 };
