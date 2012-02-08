@@ -4,12 +4,12 @@ This library implements [EventSource](http://dev.w3.org/html5/eventsource/) (Ser
 
 ## Install
 
-    npm install es
+    npm install eventsource
 
 ## Usage
 
 ```javascript
-var EventSource = require('es');
+var EventSource = require('eventsource');
 
 es = new EventSource('someurl');
 ```

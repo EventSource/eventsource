@@ -1,5 +1,5 @@
 var http = require('http');
-var EventSource = require('es');
+var EventSource = require('eventsource');
 
 var port = 20000;
 function createServer(chunks, callback) {
