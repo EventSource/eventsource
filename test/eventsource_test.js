@@ -88,5 +88,18 @@ exports['Messages'] = {
                 test.done();
             }
         });
+/*
+    },
+
+    'delivers message with explicit event': function(test) {
+        createServer(["event: greeting\ndata: Hello\n\n"], function(es, close) {
+            es.addEventListener('greeting', function(m) {
+                test.equal("Hello", m.data);
+                close();
+                test.done();
+            });
+        });
+*/
     }
 };
+
