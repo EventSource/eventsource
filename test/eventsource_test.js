@@ -89,6 +89,7 @@ exports['Messages'] = {
             }
         });
 /*
+    TODO: implement this using a simple parser based on jison
     },
 
     'delivers message with explicit event': function(test) {
