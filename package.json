@@ -1,0 +1,31 @@
+{ 
+    "name": "es", 
+    "description": "EventSource client for Node.js", 
+    "keywords": [ "eventsource", "http", "streamin", "sse" ], 
+    "version": "1.0.0", 
+    "homepage": "http://github.com/aslakhellesoy/es", 
+    "author": "Aslak Hellesøy <aslak.hellesoy@gmail.com>", 
+    "contributors": [
+        "Aslak Hellesøy <aslak.hellesoy@gmail.com>"
+    ], 
+    "repository": {
+        "type": "git", 
+        "url": "git://github.com/aslakhellesoy/es.git"
+    }, 
+    "bugs": {
+        "url": "http://github.com/aslakhellesoy/es/issues"
+    },
+    "directories": {
+        "lib" : "./lib"
+    },
+    "main": "./lib/es", 
+    "licenses": [
+        {
+            "type": "MIT", 
+            "url": "http://github.com/aslakhellesoy/es/raw/master/LICENSE"
+        }
+    ], 
+    "devDependencies": {
+        "nodeunit" : "0.6.4"
+    }
+}
