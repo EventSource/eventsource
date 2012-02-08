@@ -70,5 +70,23 @@ exports['Messages'] = {
                 test.done();
             };
         });
+    },
+
+    'really chopped up unicode data': function(test) {
+        var chopped = "data: Aslak\n\ndata: Hellesøy\n\n".split("");
+        createServer(chopped, function(es, close) {
+            es.onmessage = first;
+
+            function first(m) {
+                test.equal("Aslak", m.data);
+                es.onmessage = second;
+            }
+
+            function second(m) {
+                test.equal("Hellesøy", m.data);
+                close();
+                test.done();
+            }
+        });
     }
 };
