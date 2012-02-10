@@ -1,6 +1,6 @@
 {
     "name": "eventsource",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "EventSource client for Node.js",
     "keywords": [ "eventsource", "http", "streaming", "sse" ],
     "homepage": "http://github.com/aslakhellesoy/eventsource-node",

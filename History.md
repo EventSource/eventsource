@@ -1,4 +1,4 @@
-# In Git
+# [0.0.4](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.3...v0.0.4)
 
 * Automatic reconnect every second if the server is down. Reconnect interval can be set with `reconnectInterval` (not in W3C spec). (Aslak Hellesøy)
 
