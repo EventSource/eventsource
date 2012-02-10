@@ -6,7 +6,9 @@
     "homepage": "http://github.com/aslakhellesoy/eventsource-node",
     "author": "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
     "contributors": [
-        "Aslak Hellesøy <aslak.hellesoy@gmail.com>"
+        "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
+        "Einar Otto Stangvik <einaros+gh@gmail.com>",
+        "Dan North <tastapod@gmail.com>"
     ],
     "repository": {
         "type": "git",

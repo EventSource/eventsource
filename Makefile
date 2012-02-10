@@ -1,6 +1,6 @@
 VERSION := $(shell node -e "console.log(JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version)")
 
-run-tests: node_modules
+run-tests: node_modules lib/eventstream.js
 	@NODE_PATH=lib ./node_modules/.bin/nodeunit test
 .PHONY: run-tests
 
@@ -8,10 +8,10 @@ clobber:
 	git clean -dfx
 .PHONY: clobber
 
-parser:
-	./node_modules/.bin/jison -o lib/parser.js lib/grammar.jison
+lib/eventstream.js: lib/eventstream.jison node_modules
+	./node_modules/.bin/jison -o $@ lib/eventstream.jison
 
-publish:
+publish: lib/eventstream.js
 	npm publish && git tag v$(VERSION) -m "Release v$(VERSION)" && git push && git push --tags
 .PHONY: publish
 
