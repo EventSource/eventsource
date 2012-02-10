@@ -17,14 +17,18 @@ function createServer(chunks, callback) {
         });
         server.close();
     }
-    var p = port++;
-    server.listen(p, function() {
-        var es = new EventSource('http://localhost:' + p);
+    server.listen(port, function() {
+        var es = new EventSource('http://localhost:' + port);
         callback(es, close);
     });
 }
 
 exports['Messages'] = {
+    setUp: function(done) {
+        port++;
+        done();
+    },
+  
     'one one-line message in one chunk': function(test) {
         createServer(["data: Hello\n\n"], function(es, close) {
             es.onmessage = function(m) {
@@ -115,6 +119,25 @@ exports['Messages'] = {
                 test.done();
             }
         });
+    }
+};
+
+exports['Reconnect'] = {
+      'when server is down': function(test) {
+        var es = new EventSource('http://localhost:' + port);
+        es.reconnectInterval = 0;
+        var theClose = null;
+        es.onmessage = function(m) {
+            test.equal("Hello", m.data);
+            theClose();
+            test.done();
+        };
+
+        es.onerror = function() {
+            createServer(["data: Hello\n\n"], function(_, close) {
+                theClose = close;
+            });
+        };
     }
 };
 
