@@ -11,17 +11,17 @@ function createServer(chunks, callback) {
         });
         responses.push(res);
     });
-    function close() {
+    function close(closed) {
         responses.forEach(function(res) {
             res.end();
         });
+        server.on('close', closed);
         server.close();
     }
     server.listen(port, function() {
-        var es = new EventSource('http://localhost:' + port);
-        callback(es, close);
+        callback(close);
     });
-}
+};
 
 exports['Messages'] = {
     setUp: function(done) {
@@ -30,27 +30,30 @@ exports['Messages'] = {
     },
   
     'one one-line message in one chunk': function(test) {
-        createServer(["data: Hello\n\n"], function(es, close) {
+        createServer(["data: Hello\n\n"], function(close) {
+            var es = new EventSource('http://localhost:' + port);
             es.onmessage = function(m) {
                 test.equal("Hello", m.data);
-                close();
-                test.done();
+                es.close();
+                close(test.done);
             };
         });
     },
 
     'one one-line message in two chunks': function(test) {
-        createServer(["data: Hel", "lo\n\n"], function(es, close) {
+        createServer(["data: Hel", "lo\n\n"], function(close) {
+            var es = new EventSource('http://localhost:' + port);
             es.onmessage = function(m) {
                 test.equal("Hello", m.data);
-                close();
-                test.done();
+                es.close();
+                close(test.done);
             };
         });
     },
 
     'two one-line messages in one chunk': function(test) {
-        createServer(["data: Hello\n\n", "data: World\n\n"], function(es, close) {
+        createServer(["data: Hello\n\n", "data: World\n\n"], function(close) {
+            var es = new EventSource('http://localhost:' + port);
             es.onmessage = first;
 
             function first(m) {
@@ -60,25 +63,27 @@ exports['Messages'] = {
 
             function second(m) {
                 test.equal("World", m.data);
-                close();
-                test.done();
+                es.close();
+                close(test.done);
             }
         });
     },
 
     'one two-line message in one chunk': function(test) {
-        createServer(["data: Hello\ndata:World\n\n"], function(es, close) {
+        createServer(["data: Hello\ndata:World\n\n"], function(close) {
+            var es = new EventSource('http://localhost:' + port);
             es.onmessage = function(m) {
                 test.equal("Hello\nWorld", m.data);
-                close();
-                test.done();
+                es.close();
+                close(test.done);
             };
         });
     },
 
     'really chopped up unicode data': function(test) {
         var chopped = "data: Aslak\n\ndata: Hellesøy\n\n".split("");
-        createServer(chopped, function(es, close) {
+        createServer(chopped, function(close) {
+            var es = new EventSource('http://localhost:' + port);
             es.onmessage = first;
 
             function first(m) {
@@ -88,24 +93,26 @@ exports['Messages'] = {
 
             function second(m) {
                 test.equal("Hellesøy", m.data);
-                close();
-                test.done();
+                es.close();
+                close(test.done);
             }
         });
     },
 
     'delivers message with explicit event': function(test) {
-        createServer(["event: greeting\ndata: Hello\n\n"], function(es, close) {
+        createServer(["event: greeting\ndata: Hello\n\n"], function(close) {
+            var es = new EventSource('http://localhost:' + port);
             es.addEventListener('greeting', function(m) {
                 test.equal("Hello", m.data);
-                close();
-                test.done();
+                es.close();
+                close(test.done);
             });
         });
     },
 
     'comments are ignored': function(test) {
-        createServer(["data: Hello\n\n:nothing to see here\n\ndata: World\n\n"], function(es, close) {
+        createServer(["data: Hello\n\n:nothing to see here\n\ndata: World\n\n"], function(close) {
+            var es = new EventSource('http://localhost:' + port);
             es.onmessage = first;
 
             function first(m) {
@@ -115,29 +122,58 @@ exports['Messages'] = {
 
             function second(m) {
                 test.equal("World", m.data);
-                close();
-                test.done();
+                es.close();
+                close(test.done);
             }
         });
     }
 };
 
 exports['Reconnect'] = {
-      'when server is down': function(test) {
+    setUp: function(done) {
+        port++;
+        done();
+    },
+
+    'when server is down': function(test) {
         var es = new EventSource('http://localhost:' + port);
         es.reconnectInterval = 0;
         var theClose = null;
-        es.onmessage = function(m) {
-            test.equal("Hello", m.data);
-            theClose();
-            test.done();
-        };
 
-        es.onerror = function() {
-            createServer(["data: Hello\n\n"], function(_, close) {
+        es.onerror = function(source) {
+            es.onerror = null;
+            createServer(["data: Hello\n\n"], function(close) {
                 theClose = close;
             });
         };
+
+        es.onmessage = function(m) {
+            test.equal("Hello", m.data);
+            es.close();
+            theClose(test.done);
+        };
+    },
+
+    'when server goes down after connection': function(test) {
+        createServer(["data: Hello\n\n"], function(closeFirstServer) {
+            var es = new EventSource('http://localhost:' + port);
+            es.reconnectInterval = 0;
+
+            es.onmessage = function(m) {
+                test.equal("Hello", m.data);
+                closeFirstServer(function() {
+                    createServer(["data: World\n\n"], function(closeSecondServer) {
+                        es.onmessage = second;
+
+                        function second(m) {
+                            test.equal("World", m.data);
+                            es.close();
+                            closeSecondServer(test.done);
+                        }
+                    });
+                });
+            };
+        });
     }
 };
 
