@@ -62,7 +62,7 @@ exports['Messages'] = {
         });
     },
 
-    'one two-line messages in one chunk': function(test) {
+    'one two-line message in one chunk': function(test) {
         createServer(["data: Hello\ndata:World\n\n"], function(es, close) {
             es.onmessage = function(m) {
                 test.equal("Hello\nWorld", m.data);
@@ -88,8 +88,6 @@ exports['Messages'] = {
                 test.done();
             }
         });
-/*
-    TODO: implement this using a simple parser based on jison
     },
 
     'delivers message with explicit event': function(test) {
@@ -100,7 +98,23 @@ exports['Messages'] = {
                 test.done();
             });
         });
-*/
+    },
+
+    'comments are ignored': function(test) {
+        createServer(["data: Hello\n\n:nothing to see here\n\ndata: World\n\n"], function(es, close) {
+            es.onmessage = first;
+
+            function first(m) {
+                test.equal("Hello", m.data);
+                es.onmessage = second;
+            }
+
+            function second(m) {
+                test.equal("World", m.data);
+                close();
+                test.done();
+            }
+        });
     }
 };
 

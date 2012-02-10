@@ -8,6 +8,9 @@ clobber:
 	git clean -dfx
 .PHONY: clobber
 
+parser:
+	./node_modules/.bin/jison -o lib/parser.js lib/grammar.jison
+
 publish:
 	npm publish && git tag v$(VERSION) -m "Release v$(VERSION)" && git push && git push --tags
 .PHONY: publish

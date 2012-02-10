@@ -1,32 +1,33 @@
-{ 
-    "name": "eventsource", 
+{
+    "name": "eventsource",
     "version": "0.0.2",
-    "description": "EventSource client for Node.js", 
-    "keywords": [ "eventsource", "http", "streaming", "sse" ], 
-    "homepage": "http://github.com/aslakhellesoy/eventsource-node", 
-    "author": "Aslak Hellesøy <aslak.hellesoy@gmail.com>", 
+    "description": "EventSource client for Node.js",
+    "keywords": [ "eventsource", "http", "streaming", "sse" ],
+    "homepage": "http://github.com/aslakhellesoy/eventsource-node",
+    "author": "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
     "contributors": [
         "Aslak Hellesøy <aslak.hellesoy@gmail.com>"
-    ], 
+    ],
     "repository": {
-        "type": "git", 
+        "type": "git",
         "url": "git://github.com/aslakhellesoy/eventsource-node.git"
-    }, 
+    },
     "bugs": {
         "url": "http://github.com/aslakhellesoy/eventsource-node/issues"
     },
     "directories": {
         "lib" : "./lib"
     },
-    "main": "./lib/eventsource", 
+    "main": "./lib/eventsource",
     "licenses": [
         {
-            "type": "MIT", 
+            "type": "MIT",
             "url": "http://github.com/aslakhellesoy/eventsource-node/raw/master/LICENSE"
         }
-    ], 
+    ],
     "devDependencies": {
         "nodeunit" : "0.6.x",
-        "dox" : "0.1.x"
+        "dox" : "0.1.x",
+        "jison": "0.3.x"
     }
 }
