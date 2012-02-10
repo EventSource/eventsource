@@ -16,3 +16,6 @@ es = new EventSource('someurl');
 
 See the [spec](http://dev.w3.org/html5/eventsource/) for API docs.
 
+## Example
+
+See https://github.com/einaros/sse-example
