@@ -100,6 +100,44 @@ exports['Messages'] = {
         });
     },
 
+    'accepts CRLF as separator': function(test) {
+        var chopped = "data: Aslak\r\n\r\ndata: Hellesøy\r\n\r\n".split("");
+        createServer(chopped, function(close) {
+            var es = new EventSource('http://localhost:' + port);
+            es.onmessage = first;
+
+            function first(m) {
+                test.equal("Aslak", m.data);
+                es.onmessage = second;
+            }
+
+            function second(m) {
+                test.equal("Hellesøy", m.data);
+                es.close();
+                close(test.done);
+            }
+        });
+    },
+
+    'accepts CR as separator': function(test) {
+        var chopped = "data: Aslak\r\rdata: Hellesøy\r\r".split("");
+        createServer(chopped, function(close) {
+            var es = new EventSource('http://localhost:' + port);
+            es.onmessage = first;
+
+            function first(m) {
+                test.equal("Aslak", m.data);
+                es.onmessage = second;
+            }
+
+            function second(m) {
+                test.equal("Hellesøy", m.data);
+                es.close();
+                close(test.done);
+            }
+        });
+    },
+
     'delivers message with explicit event': function(test) {
         createServer(["event: greeting\ndata: Hello\n\n"], function(close) {
             var es = new EventSource('http://localhost:' + port);
