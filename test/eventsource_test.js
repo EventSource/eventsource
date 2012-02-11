@@ -267,6 +267,11 @@ exports['Reconnect'] = {
 };
 
 exports['readyState'] = {
+    setUp: function(done) {
+        port++;
+        done();
+    },
+
     'has CONNECTING constant': function(test) {
         test.equal(0, EventSource.CONNECTING);
         test.done();
