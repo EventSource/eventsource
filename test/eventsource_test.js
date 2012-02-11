@@ -9,6 +9,7 @@ function createServer(chunks, callback) {
         chunks.forEach(function(chunk) {
             res.write(chunk);
         });
+        res.end();
         responses.push(res);
     });
     function close(closed) {
@@ -28,7 +29,7 @@ exports['Messages'] = {
         port++;
         done();
     },
-  
+
     'one one-line message in one chunk': function(test) {
         createServer(["data: Hello\n\n"], function(close) {
             var es = new EventSource('http://localhost:' + port);
@@ -177,3 +178,120 @@ exports['Reconnect'] = {
     }
 };
 
+exports['readyState'] = {
+    'has CONNECTING constant': function(test) {
+        test.equal(0, EventSource.CONNECTING);
+        test.done();
+    },
+
+    'has OPEN constant': function(test) {
+        test.equal(1, EventSource.OPEN);
+        test.done();
+    },
+
+    'has CLOSED constant': function(test) {
+        test.equal(2, EventSource.CLOSED);
+        test.done();
+    },
+
+    'readyState is CONNECTING before connection has been established': function(test) {
+        createServer([], function(close) {
+            var es = new EventSource('http://localhost:' + port);
+            test.equal(EventSource.CONNECTING, es.readyState);
+            es.onopen = function() {
+                es.close();
+                close(test.done);
+            }
+        });
+    },
+
+    'readyState is OPEN when connection has been established': function(test) {
+        createServer([], function(close) {
+            var es = new EventSource('http://localhost:' + port);
+            es.onopen = function() {
+                test.equal(EventSource.OPEN, es.readyState);
+                es.close();
+                close(test.done);
+            }
+        });
+    },
+
+    'readyState is CLOSED after connection has been closed': function(test) {
+        createServer([], function(close) {
+            var es = new EventSource('http://localhost:' + port);
+            es.onopen = function() {
+                es.close();
+            }
+            es.onclose = function() {
+                test.equal(EventSource.CLOSED, es.readyState);
+                close(test.done);
+            }
+        });
+    },
+};
+
+exports['Events'] = {
+    setUp: function(done) {
+        port++;
+        done();
+    },
+
+    'calls onopen when connection is established': function(test) {
+        createServer([], function(close) {
+            var es = new EventSource('http://localhost:' + port);
+            es.onopen = function() {
+                es.close();
+                close(test.done);
+            }
+        });
+    },
+
+    'emits open event when connection is established': function(test) {
+        createServer([], function(close) {
+            var es = new EventSource('http://localhost:' + port);
+            es.addEventListener('open', function() {
+                es.close();
+                close(test.done);
+            });
+        });
+    },
+
+    'calls onclose when connection is closed': function(test) {
+        createServer([], function(close) {
+            var es = new EventSource('http://localhost:' + port);
+            es.onopen = function() {
+                es.close();
+            }
+            es.onclose = function() {
+                close(test.done);
+            }
+        });
+    },
+
+    'emits close event when connection is established': function(test) {
+        createServer([], function(close) {
+            var es = new EventSource('http://localhost:' + port);
+            es.addEventListener('open', function() {
+                es.close();
+            });
+            es.addEventListener('close', function() {
+                close(test.done);
+            });
+        });
+    },
+
+    'does not emit error when connection is closed by client': function(test) {
+        createServer([], function(close) {
+            var es = new EventSource('http://localhost:' + port);
+            es.addEventListener('open', function() {
+                es.close();
+            });
+            es.addEventListener('error', function() {
+                throw new Error('error should not be emitted');
+            });
+            es.addEventListener('close', function() {
+                close(test.done);
+            });
+        });
+    },
+};
