@@ -9,7 +9,7 @@ function createServer(chunks, callback) {
         chunks.forEach(function(chunk) {
             res.write(chunk);
         });
-        res.end();
+        res.write(':'); // send a dummy comment to ensure that the response is flushed
         responses.push(res);
     });
     function close(closed) {
