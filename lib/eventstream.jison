@@ -3,7 +3,8 @@
 
 ^\uFEFF					/* skip leading byte order mark */
 \u0020					return 'space';
-\u000D?\u000A		return 'eol';
+\u000D					return 'cr';
+\u000A					return 'lf';
 ":"							return 'colon';
 [\u0000-\u0009\u000B-\u000C\u000E-\u0019\u0021-\u0039\u003B-\u10FFFF]	return 'char';
 <<EOF>>					return 'EOF';
@@ -95,3 +96,8 @@ name-char
 	| space
 	;
 
+eol
+	: cr lf
+  | cr
+  | lf
+  ;
