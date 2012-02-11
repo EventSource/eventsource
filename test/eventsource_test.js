@@ -219,6 +219,26 @@ exports['Messages'] = {
     },
 };
 
+exports['HTTP'] = {
+    setUp: function(done) {
+        port++;
+        done();
+    },
+
+    'passes cache-control: no-cache to server': function(test) {
+        var headers;
+        createServer([], function(close) {
+            var url = 'http://localhost:' + port;
+            var es = new EventSource(url);
+            es.onopen = function() {
+                test.equal('no-cache', headers['cache-control']);
+                es.close();
+                close(test.done);
+            }
+        }, function(req) { headers = req.headers; });
+    },
+};
+
 exports['Reconnect'] = {
     setUp: function(done) {
         port++;
