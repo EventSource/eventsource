@@ -57,39 +57,41 @@ row
 	;
 
 comment
-	: colon nullablespace any-string eol
+	: colon any-string eol
 		{ $$ = { name: 'comment', value: $3 } }
+	| colon eol
+		{ $$ = { name: 'comment', value: '' } }
 	;
 
 field
-	: name-string colon nullablespace any-string eol
-		{ $$ = { name: $1, value: $4 } }
+	: name-string colon any-string eol
+		{ $$ = { name: $1, value: $3[0] === ' ' ? $3.slice(1) : $3 } }
+	| name-string colon eol
+		{ $$ = { name: $1, value: '' } }
 	| name-string eol
 		{ $$ = { name: $1, value: '' } }
 	;
 
 any-string
-	: colon
-	| char
-	| space
-	| any-string colon
-		{ $$ = $1 + $2; }
-	| any-string char
-		{ $$ = $1 + $2; }
-	| any-string space
+	: any-char
+	| any-string any-char
 		{ $$ = $1 + $2; }
 	;
 
 name-string
-	: char
-	| space
-	| name-string char
-		{ $$ = $1 + $2; }
-	| name-string space
+	: name-char
+	| name-string name-char
 		{ $$ = $1 + $2; }
 	;
 
-nullablespace
-	: space
-	|
+any-char
+	: colon
+	| char
+	| space
 	;
+
+name-char
+	: char
+	| space
+	;
+

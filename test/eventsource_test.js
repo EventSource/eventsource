@@ -127,7 +127,57 @@ exports['Messages'] = {
                 close(test.done);
             }
         });
-    }
+    },
+
+    'empty comments are ignored': function(test) {
+        createServer(["data: Hello\n\n:\n\ndata: World\n\n"], function(close) {
+            var es = new EventSource('http://localhost:' + port);
+            es.onmessage = first;
+
+            function first(m) {
+                test.equal("Hello", m.data);
+                es.onmessage = second;
+            }
+
+            function second(m) {
+                test.equal("World", m.data);
+                es.close();
+                close(test.done);
+            }
+        });
+    },
+
+    'empty data field causes entire event to be ignored': function(test) {
+        createServer(["data:\n\ndata: Hello\n\n"], function(close) {
+            var es = new EventSource('http://localhost:' + port);
+            var originalEmit = es.emit;
+            es.emit = function(event) {
+                test.ok(event === 'close' || event === 'message' || event === 'newListener');
+                return originalEmit.apply(this, arguments);
+            }
+            es.onmessage = function(m) {
+                test.equal('Hello', m.data);
+                es.close();
+                close(test.done);
+            };
+        });
+    },
+
+    'empty event field causes entire event to be ignored': function(test) {
+        createServer(["event:\n\ndata: Hello\n\n"], function(close) {
+            var es = new EventSource('http://localhost:' + port);
+            var originalEmit = es.emit;
+            es.emit = function(event) {
+                test.ok(event === 'close' || event === 'message' || event === 'newListener');
+                return originalEmit.apply(this, arguments);
+            }
+            es.onmessage = function(m) {
+                test.equal('Hello', m.data);
+                es.close();
+                close(test.done);
+            };
+        });
+    },
 };
 
 exports['Reconnect'] = {
