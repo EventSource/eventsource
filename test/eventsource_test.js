@@ -2,14 +2,15 @@ var http = require('http');
 var EventSource = require('eventsource');
 
 var port = 20000;
-function createServer(chunks, callback) {
+function createServer(chunks, callback, onreq) {
     var responses = [];
     var server = http.createServer(function (req, res) {
+        if (onreq) onreq(req);
         res.writeHead(200, {'Content-Type': 'text/event-stream'});
         chunks.forEach(function(chunk) {
             res.write(chunk);
         });
-        res.end();
+        res.write(':'); // send a dummy comment to ensure that the response is flushed
         responses.push(res);
     });
     function close(closed) {
@@ -263,7 +264,43 @@ exports['Reconnect'] = {
                 });
             };
         });
-    }
+    },
+
+    'send Last-Event-ID http header when id has previously been passed in an event from the server': function(test) {
+        createServer(['id: 10\ndata: Hello\n\n'], function(closeFirstServer) {
+            var headers = null;
+            var es = new EventSource('http://localhost:' + port);
+            es.onmessage = function(m) {
+                closeFirstServer(function() {
+                    createServer([], function(close) {
+                        es.onopen = function() {
+                            test.equal('10', headers['last-event-id']);
+                            es.close();
+                            close(test.done);
+                        };
+                    }, function(req) { headers = req.headers; });
+                });
+            };
+        });
+    },
+
+    'does not send Last-Event-ID http header when id has not been previously sent by the server': function(test) {
+        createServer(['data: Hello\n\n'], function(closeFirstServer) {
+            var headers = null;
+            var es = new EventSource('http://localhost:' + port);
+            es.onmessage = function(m) {
+                closeFirstServer(function() {
+                    createServer([], function(close) {
+                        es.onopen = function() {
+                            test.equal('undefined', typeof headers['last-event-id']);
+                            es.close();
+                            close(test.done);
+                        };
+                    }, function(req) { headers = req.headers; });
+                });
+            };
+        });
+    },
 };
 
 exports['readyState'] = {
@@ -317,6 +354,25 @@ exports['readyState'] = {
             }
             es.onclose = function() {
                 test.equal(EventSource.CLOSED, es.readyState);
+                close(test.done);
+            }
+        });
+    },
+};
+
+exports['Properties'] = {
+    setUp: function(done) {
+        port++;
+        done();
+    },
+
+    'url exposes original request url': function(test) {
+        createServer([], function(close) {
+            var url = 'http://localhost:' + port;
+            var es = new EventSource(url);
+            es.onopen = function() {
+                test.equal(url, es.url);
+                es.close();
                 close(test.done);
             }
         });
