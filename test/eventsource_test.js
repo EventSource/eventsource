@@ -1,18 +1,28 @@
-var http = require('http');
-var EventSource = require('eventsource');
+var EventSource = require('eventsource')
+  , http = require('http')
+  , https = require('https')
+  , fs = require('fs');
 
 var port = 20000;
-function createServer(chunks, callback, onreq) {
+function createServer(chunks, callback, onreq, secure) {
+    var options = {};
+    var isSecure = onreq === true || secure === true;
+    if (isSecure) {
+        options = {
+            key: fs.readFileSync(__dirname + '/key.pem'),
+            cert: fs.readFileSync(__dirname + '/certificate.pem')
+        };
+    }
     var responses = [];
-    var server = http.createServer(function (req, res) {
-        if (onreq) onreq(req);
+    function open(req, res) {
+        if (typeof onreq == 'function') onreq(req);
         res.writeHead(200, {'Content-Type': 'text/event-stream'});
         chunks.forEach(function(chunk) {
             res.write(chunk);
         });
         res.write(':'); // send a dummy comment to ensure that the response is flushed
         responses.push(res);
-    });
+    }
     function close(closed) {
         responses.forEach(function(res) {
             res.end();
@@ -20,6 +30,9 @@ function createServer(chunks, callback, onreq) {
         server.on('close', closed);
         server.close();
     }
+    var server;
+    if (isSecure) server = https.createServer(options, open);
+    else server = http.createServer(open);
     server.listen(port, function() {
         callback(close);
     });
@@ -219,7 +232,7 @@ exports['Messages'] = {
     },
 };
 
-exports['HTTP'] = {
+exports['HTTP Request'] = {
     setUp: function(done) {
         port++;
         done();
@@ -236,6 +249,32 @@ exports['HTTP'] = {
                 close(test.done);
             }
         }, function(req) { headers = req.headers; });
+    },
+};
+
+exports['HTTPS Support'] = {
+    setUp: function(done) {
+        port++;
+        done();
+    },
+
+    'uses https for https urls': function(test) {
+        var chopped = "data: Aslak\n\ndata: Hellesøy\n\n".split("");
+        createServer(chopped, function(close) {
+            var es = new EventSource('https://localhost:' + port);
+            es.onmessage = first;
+
+            function first(m) {
+                test.equal("Aslak", m.data);
+                es.onmessage = second;
+            }
+
+            function second(m) {
+                test.equal("Hellesøy", m.data);
+                es.close();
+                close(test.done);
+            }
+        }, true);
     },
 };
 
