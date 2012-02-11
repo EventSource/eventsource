@@ -323,6 +323,25 @@ exports['readyState'] = {
     },
 };
 
+exports['Properties'] = {
+    setUp: function(done) {
+        port++;
+        done();
+    },
+
+    'url exposes original request url': function(test) {
+        createServer([], function(close) {
+            var url = 'http://localhost:' + port;
+            var es = new EventSource(url);
+            es.onopen = function() {
+                test.equal(url, es.url);
+                es.close();
+                close(test.done);
+            }
+        });
+    },
+};
+
 exports['Events'] = {
     setUp: function(done) {
         port++;
