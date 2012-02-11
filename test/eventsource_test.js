@@ -9,6 +9,7 @@ function createServer(chunks, callback) {
         chunks.forEach(function(chunk) {
             res.write(chunk);
         });
+        res.end();
         responses.push(res);
     });
     function close(closed) {
@@ -194,7 +195,7 @@ exports['readyState'] = {
     },
 
     'readyState is CONNECTING before connection has been established': function(test) {
-        createServer(["data: Hello\n\n"], function(close) {
+        createServer([], function(close) {
             var es = new EventSource('http://localhost:' + port);
             test.equal(EventSource.CONNECTING, es.readyState);
             es.onopen = function() {
@@ -205,7 +206,7 @@ exports['readyState'] = {
     },
 
     'readyState is OPEN when connection has been established': function(test) {
-        createServer(["data: Hello\n\n"], function(close) {
+        createServer([], function(close) {
             var es = new EventSource('http://localhost:' + port);
             es.onopen = function() {
                 test.equal(EventSource.OPEN, es.readyState);
@@ -216,7 +217,7 @@ exports['readyState'] = {
     },
 
     'readyState is CLOSED after connection has been closed': function(test) {
-        createServer(["data: Hello\n\n"], function(close) {
+        createServer([], function(close) {
             var es = new EventSource('http://localhost:' + port);
             es.onopen = function() {
                 es.close();
@@ -236,7 +237,7 @@ exports['Events'] = {
     },
 
     'calls onopen when connection is established': function(test) {
-        createServer(["event: greeting\ndata: Hello\n\n"], function(close) {
+        createServer([], function(close) {
             var es = new EventSource('http://localhost:' + port);
             es.onopen = function() {
                 es.close();
@@ -246,7 +247,7 @@ exports['Events'] = {
     },
 
     'emits open event when connection is established': function(test) {
-        createServer(["event: greeting\ndata: Hello\n\n"], function(close) {
+        createServer([], function(close) {
             var es = new EventSource('http://localhost:' + port);
             es.addEventListener('open', function() {
                 es.close();
@@ -256,7 +257,7 @@ exports['Events'] = {
     },
 
     'calls onclose when connection is closed': function(test) {
-        createServer(["event: greeting\ndata: Hello\n\n"], function(close) {
+        createServer([], function(close) {
             var es = new EventSource('http://localhost:' + port);
             es.onopen = function() {
                 es.close();
@@ -268,7 +269,7 @@ exports['Events'] = {
     },
 
     'emits close event when connection is established': function(test) {
-        createServer(["event: greeting\ndata: Hello\n\n"], function(close) {
+        createServer([], function(close) {
             var es = new EventSource('http://localhost:' + port);
             es.addEventListener('open', function() {
                 es.close();
@@ -280,7 +281,7 @@ exports['Events'] = {
     },
 
     'does not emit error when connection is closed by client': function(test) {
-        createServer(["event: greeting\ndata: Hello\n\n"], function(close) {
+        createServer([], function(close) {
             var es = new EventSource('http://localhost:' + port);
             es.addEventListener('open', function() {
                 es.close();
