@@ -5,6 +5,7 @@ run-tests: node_modules lib/eventstream.js
 .PHONY: run-tests
 
 clobber:
+	rm lib/eventstream.js
 	git clean -dfx
 .PHONY: clobber
 
