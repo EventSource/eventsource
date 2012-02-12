@@ -1,4 +1,4 @@
-# In Git
+# [0.0.5](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.4...v0.0.5)
 
 * Add no-cache and https support ([#10](https://github.com/aslakhellesoy/eventsource-node/pull/10) Einar Otto Stangvik)
 * Ensure that Last-Event-ID is sent to the server for reconnects, as defined in the spec ([#8](https://github.com/aslakhellesoy/eventsource-node/pull/8) Einar Otto Stangvik)
