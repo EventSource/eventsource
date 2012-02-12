@@ -329,6 +329,8 @@ exports['Reconnect'] = {
         createServer(['id: 10\ndata: Hello\n\n'], function(closeFirstServer) {
             var headers = null;
             var es = new EventSource('http://localhost:' + port);
+            es.reconnectInterval = 0;
+
             es.onmessage = function(m) {
                 closeFirstServer(function() {
                     createServer([], function(close) {
@@ -347,6 +349,8 @@ exports['Reconnect'] = {
         createServer(['data: Hello\n\n'], function(closeFirstServer) {
             var headers = null;
             var es = new EventSource('http://localhost:' + port);
+            es.reconnectInterval = 0;
+
             es.onmessage = function(m) {
                 closeFirstServer(function() {
                     createServer([], function(close) {
