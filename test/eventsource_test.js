@@ -486,7 +486,6 @@ exports['Reconnect'] = {
         var headers;
         var url = 'http://localhost:' + port;
         var redirectSuffix = '/foobar';
-        var clientRequestedRedirectUrl = false;
         createServer(['data: Hello\n\n'],
             function(closeFirstServer) {
                 var es = new EventSource(url);
@@ -519,7 +518,6 @@ exports['Reconnect'] = {
         var headers;
         var url = 'http://localhost:' + port;
         var redirectSuffix = '/foobar';
-        var clientRequestedRedirectUrl = false;
         createServer(['data: Hello\n\n'],
             function(closeFirstServer) {
                 var es = new EventSource(url);
