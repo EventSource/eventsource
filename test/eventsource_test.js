@@ -15,12 +15,10 @@ function createServer(chunks, callback, onreq, secure) {
     }
     var responses = [];
     function open(req, res) {
-        if (typeof onreq == 'function') onreq(req);
+        if (typeof onreq == 'function' && onreq(req, res) === true) return;
         res.writeHead(200, {'Content-Type': 'text/event-stream'});
-        chunks.forEach(function(chunk) {
-            res.write(chunk);
-        });
-        res.write(':'); // send a dummy comment to ensure that the response is flushed
+        chunks.forEach(function(chunk) { res.write(chunk); });
+        res.write(':'); // send a dummy comment to ensure that the head is flushed
         responses.push(res);
     }
     function close(closed) {
@@ -320,6 +318,24 @@ exports['Reconnect'] = {
                             closeSecondServer(test.done);
                         }
                     });
+                });
+            };
+        });
+    },
+
+    'stop reconnecting when server responds with HTTP 204': function(test) {
+        createServer(["data: Hello\n\n"], function(closeFirstServer) {
+            var es = new EventSource('http://localhost:' + port);
+            es.reconnectInterval = 0;
+
+            es.onmessage = function(m) {
+                test.equal("Hello", m.data);
+                closeFirstServer(function() {
+                    createServer([], function(closeSecondServer) {
+                        es.onclose = function() {
+                            closeSecondServer(test.done);
+                        };
+                    }, function(req, res) { res.writeHead(204); res.end(); return true; });
                 });
             };
         });
