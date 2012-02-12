@@ -245,9 +245,110 @@ exports['HTTP Request'] = {
                 test.equal('no-cache', headers['cache-control']);
                 es.close();
                 close(test.done);
-            }
+            };
         }, function(req) { headers = req.headers; });
     },
+
+    'follows http 301 redirect': function(test) {
+        var headers;
+        var url = 'http://localhost:' + port;
+        var redirectSuffix = '/foobar';
+        var clientRequestedRedirectUrl = false;
+        createServer([],
+            function(close) {
+                var es = new EventSource(url);
+                es.onopen = function() {
+                    test.ok(clientRequestedRedirectUrl);
+                    test.equal(url + redirectSuffix, es.url);
+                    es.close();
+                    close(test.done);
+                };
+            },
+            function(req, res) {
+                if (req.url != '/') {
+                    clientRequestedRedirectUrl = req.url == redirectSuffix;
+                    return false;
+                }
+                res.writeHead(301, 'Moved Permanently', {
+                    'Connection': 'Close',
+                    'Location': url + redirectSuffix
+                });
+                res.end();
+                return true;
+            });
+    },
+
+    'http 301 with missing location causes error event': function(test) {
+        var headers;
+        var url = 'http://localhost:' + port;
+        createServer([],
+            function(close) {
+                var es = new EventSource(url);
+                es.onerror = function() {
+                    es.close();
+                    close(test.done);
+                };
+            },
+            function(req, res) {
+                if (req.url != '/') return false;
+                res.writeHead(301, 'Moved Permanently', {
+                    'Connection': 'Close'
+                });
+                res.end();
+                return true;
+            });
+    },
+
+    'follows http 307 redirect': function(test) {
+        var headers;
+        var url = 'http://localhost:' + port;
+        var redirectSuffix = '/foobar';
+        var clientRequestedRedirectUrl = false;
+        createServer([],
+            function(close) {
+                var es = new EventSource(url);
+                es.onopen = function() {
+                    test.ok(clientRequestedRedirectUrl);
+                    test.equal(url + redirectSuffix, es.url);
+                    es.close();
+                    close(test.done);
+                };
+            },
+            function(req, res) {
+                if (req.url != '/') {
+                    clientRequestedRedirectUrl = req.url == redirectSuffix;
+                    return false;
+                }
+                res.writeHead(307, 'Temporary Redirect', {
+                    'Connection': 'Close',
+                    'Location': url + redirectSuffix
+                });
+                res.end();
+                return true;
+            });
+    },
+
+    'http 307 with missing location causes error event': function(test) {
+        var headers;
+        var url = 'http://localhost:' + port;
+        createServer([],
+            function(close) {
+                var es = new EventSource(url);
+                es.onerror = function() {
+                    es.close();
+                    close(test.done);
+                };
+            },
+            function(req, res) {
+                if (req.url != '/') return false;
+                res.writeHead(307, 'Temporary Redirect', {
+                    'Connection': 'Close'
+                });
+                res.end();
+                return true;
+            }
+        );
+    }
 };
 
 exports['HTTPS Support'] = {
@@ -379,6 +480,72 @@ exports['Reconnect'] = {
                 });
             };
         });
+    },
+
+    'reconnect after http 301 redirect uses new url': function(test) {
+        var headers;
+        var url = 'http://localhost:' + port;
+        var redirectSuffix = '/foobar';
+        var clientRequestedRedirectUrl = false;
+        createServer(['data: Hello\n\n'],
+            function(closeFirstServer) {
+                var es = new EventSource(url);
+                es.reconnectInterval = 0;
+
+                es.onmessage = function(m) {
+                    closeFirstServer(function() {
+                        createServer([], function(closeSecondServer) {
+                            es.onopen = function() {
+                                test.equal(url + redirectSuffix, es.url);
+                                es.close();
+                                closeSecondServer(test.done);
+                            };
+                        }, function(req, res) { test.equal(redirectSuffix, req.url); });
+                    });
+                };
+            },
+            function(req, res) {
+                if (req.url != '/') return false;
+                res.writeHead(301, 'Moved Permanently', {
+                    'Connection': 'Close',
+                    'Location': url + redirectSuffix
+                });
+                res.end();
+                return true;
+            });
+    },
+
+    'reconnect after http 307 redirect uses original url': function(test) {
+        var headers;
+        var url = 'http://localhost:' + port;
+        var redirectSuffix = '/foobar';
+        var clientRequestedRedirectUrl = false;
+        createServer(['data: Hello\n\n'],
+            function(closeFirstServer) {
+                var es = new EventSource(url);
+                es.reconnectInterval = 0;
+
+                es.onmessage = function(m) {
+                    closeFirstServer(function() {
+                        createServer([], function(closeSecondServer) {
+                            es.onopen = function() {
+                                test.equal(url, es.url);
+                                es.close();
+                                closeSecondServer(test.done);
+                            };
+                        }, function(req, res) { test.equal('/', req.url); });
+                    });
+                };
+            },
+            function(req, res) {
+                if (req.url != '/') return false;
+                res.writeHead(307, 'Temporary Redirect', {
+                    'Connection': 'Close',
+                    'Location': url + redirectSuffix
+                });
+                res.end();
+                return true;
+            });
     },
 };
 
