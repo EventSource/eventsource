@@ -202,7 +202,7 @@ exports['Messages'] = {
             var es = new EventSource('http://localhost:' + port);
             var originalEmit = es.emit;
             es.emit = function(event) {
-                test.ok(event === 'close' || event === 'message' || event === 'newListener');
+                test.ok(event === 'message' || event === 'newListener');
                 return originalEmit.apply(this, arguments);
             }
             es.onmessage = function(m) {
@@ -218,7 +218,7 @@ exports['Messages'] = {
             var es = new EventSource('http://localhost:' + port);
             var originalEmit = es.emit;
             es.emit = function(event) {
-                test.ok(event === 'close' || event === 'message' || event === 'newListener');
+                test.ok(event === 'message' || event === 'newListener');
                 return originalEmit.apply(this, arguments);
             }
             es.onmessage = function(m) {
@@ -433,9 +433,18 @@ exports['Reconnect'] = {
                 test.equal("Hello", m.data);
                 closeFirstServer(function() {
                     createServer([], function(closeSecondServer) {
-                        es.onclose = function() {
-                            closeSecondServer(test.done);
-                        };
+                        // this will be verified by the readyState
+                        // going from CONNECTING to CLOSED,
+                        // along with the tests verifying that the
+                        // state is CONNECTING when a server closes.
+                        // it's next to impossible to write a fail-safe
+                        // test for this, though.
+                        var ival = setInterval(function() {
+                            if (es.readyState == EventSource.CLOSED) {
+                                clearInterval(ival);
+                                closeSecondServer(test.done);
+                            }
+                        }, 5);
                     }, function(req, res) { res.writeHead(204); res.end(); return true; });
                 });
             };
@@ -579,6 +588,24 @@ exports['readyState'] = {
         });
     },
 
+    'readyState is CONNECTING when server has closed the connection': function(test) {
+        createServer(["data: Hello\n\n"], function(closeFirstServer) {
+            var es = new EventSource('http://localhost:' + port);
+            es.reconnectInterval = 0;
+
+            es.onmessage = function(m) {
+                test.equal("Hello", m.data);
+                closeFirstServer(function() {
+                    createServer([], function(closeSecondServer) {
+                        test.equal(EventSource.CONNECTING, es.readyState);
+                        es.close();
+                        closeSecondServer(test.done);
+                    });
+                });
+            };
+        });
+    },
+
     'readyState is OPEN when connection has been established': function(test) {
         createServer([], function(close) {
             var es = new EventSource('http://localhost:' + port);
@@ -595,11 +622,9 @@ exports['readyState'] = {
             var es = new EventSource('http://localhost:' + port);
             es.onopen = function() {
                 es.close();
-            }
-            es.onclose = function() {
                 test.equal(EventSource.CLOSED, es.readyState);
                 close(test.done);
-            }
+            };
         });
     },
 };
@@ -649,41 +674,17 @@ exports['Events'] = {
         });
     },
 
-    'calls onclose when connection is closed': function(test) {
-        createServer([], function(close) {
-            var es = new EventSource('http://localhost:' + port);
-            es.onopen = function() {
-                es.close();
-            }
-            es.onclose = function() {
-                close(test.done);
-            }
-        });
-    },
-
-    'emits close event when connection is established': function(test) {
-        createServer([], function(close) {
-            var es = new EventSource('http://localhost:' + port);
-            es.addEventListener('open', function() {
-                es.close();
-            });
-            es.addEventListener('close', function() {
-                close(test.done);
-            });
-        });
-    },
-
     'does not emit error when connection is closed by client': function(test) {
         createServer([], function(close) {
             var es = new EventSource('http://localhost:' + port);
             es.addEventListener('open', function() {
                 es.close();
+                setTimeout(function() {
+                    close(test.done);
+                }, 50);
             });
             es.addEventListener('error', function() {
                 throw new Error('error should not be emitted');
-            });
-            es.addEventListener('close', function() {
-                close(test.done);
             });
         });
     },
