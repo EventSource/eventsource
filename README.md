@@ -13,7 +13,13 @@ This library implements the [EventSource](http://dev.w3.org/html5/eventsource/) 
 ```javascript
 var EventSource = require('eventsource');
 
-es = new EventSource('someurl');
+es = new EventSource('http://googlecodesamples.com/html5/sse/sse.php');
+es.onmessage = function(message) {
+    console.log(e.data);
+};
+es.onerror = function() {
+    console.log('ERROR!');
+};
 ```
 
 See the [spec](http://dev.w3.org/html5/eventsource/) for API docs.
