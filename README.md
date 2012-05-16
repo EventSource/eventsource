@@ -14,7 +14,7 @@ This library implements the [EventSource](http://dev.w3.org/html5/eventsource/) 
 var EventSource = require('eventsource');
 
 es = new EventSource('http://googlecodesamples.com/html5/sse/sse.php');
-es.onmessage = function(message) {
+es.onmessage = function(e) {
     console.log(e.data);
 };
 es.onerror = function() {
