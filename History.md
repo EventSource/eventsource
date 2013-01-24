@@ -1,3 +1,7 @@
+# [0.0.6](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.5...v0.0.6)
+
+* Add Accept: text/event-stream header ([#17](https://github.com/aslakhellesoy/eventsource-node/pull/17) William Wicks)
+
 # [0.0.5](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.4...v0.0.5)
 
 * Add no-cache and https support ([#10](https://github.com/aslakhellesoy/eventsource-node/pull/10) Einar Otto Stangvik)
