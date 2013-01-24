@@ -42,6 +42,17 @@ exports['Messages'] = {
         done();
     },
 
+    'issue-18': function(test) {
+        createServer(["id: 1\ndata: hello world\n\n"], function(close) {
+            var es = new EventSource('http://localhost:' + port);
+            es.onmessage = function(m) {
+                test.equal("hello world", m.data);
+                es.close();
+                close(test.done);
+            };
+        });
+    },
+
     'one one-line message in one chunk': function(test) {
         createServer(["data: Hello\n\n"], function(close) {
             var es = new EventSource('http://localhost:' + port);
