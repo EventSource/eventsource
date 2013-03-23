@@ -5,7 +5,12 @@
 \u0020					return 'space';
 ":"							return 'colon';
 (\u000D\u000A|\u000D|\u000A) return 'eol';
-[\u0000-\u0009\u000B-\u000C\u000E-\u0019\u0021-\u0039\u003B-\u10FFFF]	return 'char';
+
+/* Javascript can't support \u10FFFF , it's too large.
+\uFFFFF is only 1 less and works correctly, size limitations! */
+
+[\u0000-\u0009\u000B-\u000C\u000E-\u0019\u0021-\u0039\u003B-\uFFFFF]	return 'char';
+
 <<EOF>>					return 'EOF';
 .								return 'INVALID';
 
