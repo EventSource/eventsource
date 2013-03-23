@@ -42,6 +42,17 @@ exports['Messages'] = {
         done();
     },
 
+    'Multibyte Characters': function(test) {
+        createServer(["id: 1\ndata: €豆腐\n\n"], function(close) {
+            var es = new EventSource('http://localhost:' + port);
+            es.onmessage = function(m) {
+                test.equal("€豆腐", m.data);
+                es.close();
+                close(test.done);
+            };
+        });
+    },
+
     'issue-18': function(test) {
         createServer(["id: 1\ndata: hello world\n\n"], function(close) {
             var es = new EventSource('http://localhost:' + port);
