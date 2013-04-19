@@ -327,6 +327,24 @@ exports['HTTP Request'] = {
             });
     },
 
+    'http 403 causes error event': function(test) {
+        var headers;
+        var url = 'http://localhost:' + port;
+        createServer(["id: 1\ndata: hello world\n\n"],
+            function(close) {
+                var es = new EventSource(url);
+                es.onerror = function() {
+                    test.ok(true, 'got error');
+                    es.close();
+                    close(test.done);
+                };
+            },
+            function(req, res) {
+                res.writeHead(403, {'Content-Type': 'text/html'});
+                res.end();
+            });
+    },
+
     'http 301 with missing location causes error event': function(test) {
         var headers;
         var url = 'http://localhost:' + port;
