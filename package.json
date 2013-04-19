@@ -1,7 +1,7 @@
 {
   "name": "eventsource",
-  "version": "0.0.6",
-  "description": "EventSource client for Node.js",
+  "version": "0.0.7",
+  "description": "W3C compliant EventSource client for Node.js",
   "keywords": [
     "eventsource",
     "http",
@@ -13,7 +13,10 @@
   "contributors": [
     "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
     "Einar Otto Stangvik <einaros+gh@gmail.com>",
-    "Dan North <tastapod@gmail.com>"
+    "Dan North <tastapod@gmail.com>",
+    "Scott Moak <scott.moak@mybrainoncode.com>",
+    "William Wicks",
+    "Devon Adkisson"
   ],
   "repository": {
     "type": "git",

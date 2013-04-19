@@ -1,7 +1,10 @@
+# [0.0.7](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.6...v0.0.7)
+
 * Explicitly raise an error when server returns http 403 and dont continue ([#20](https://github.com/aslakhellesoy/eventsource-node/pull/20) Scott Moak)
 * Added ability to send custom http headers to server ([#21](https://github.com/aslakhellesoy/eventsource-node/pull/21), [#9](https://github.com/aslakhellesoy/eventsource-node/issues/9) Scott Moak)
 * Fix Unicode support to cope with Javascript Unicode size limitations ([#23](https://github.com/aslakhellesoy/eventsource-node/pull/23), [#22](https://github.com/aslakhellesoy/eventsource-node/issues/22) Devon Adkisson)
 * Graceful handling of parse errors ([#19](https://github.com/aslakhellesoy/eventsource-node/issues/19) Aslak Hellesøy)
+* Switched from testing with Nodeunit to Mocha (Aslak Hellesøy)
 
 # [0.0.6](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.5...v0.0.6)
 
