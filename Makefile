@@ -16,10 +16,6 @@ publish: lib/eventstream.js
 	npm publish && git tag v$(VERSION) -m "Release v$(VERSION)" && git push && git push --tags
 .PHONY: publish
 
-doc/eventsource.json:
-	@mkdir -p doc
-	NODE_PATH=lib ./node_modules/.bin/dox < lib/eventsource.js > doc/eventsource.json
-
 node_modules: package.json
 	npm install
 	touch $@
