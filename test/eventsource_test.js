@@ -275,6 +275,29 @@ exports['HTTP Request'] = {
         }, function(req) { headers = req.headers; });
     },
 
+    'sets headers by user': function(test) {
+        var url = 'http://localhost:' + port;
+        var headers = {
+          'User-Agent': 'test',
+          'Cookie': 'test=test'
+        };
+        createServer([],
+            function(close) {
+                var es = new EventSource(url, headers);
+                es.onopen = function() {
+                    es.close();
+                    close(test.done);
+                };
+            },
+            function(req, res) {
+                test.equal(req.headers['user-agent'], headers['User-Agent']);
+                test.equal(req.headers['cookie'], headers['Cookie']);
+                res.writeHead(200);
+                res.end();
+                return true;
+            });
+    },
+
     'follows http 301 redirect': function(test) {
         var headers;
         var url = 'http://localhost:' + port;
