@@ -644,7 +644,7 @@ describe('readyState', function() {
         done();
     });
 
-    it('readyState is CONNECTING before connection has been established', function(done) {
+    it('is CONNECTING before connection has been established', function(done) {
         createServer([], function(close) {
             var es = new EventSource('http://localhost:' + port);
             assert.equal(EventSource.CONNECTING, es.readyState);
@@ -655,7 +655,7 @@ describe('readyState', function() {
         });
     });
 
-    it('readyState is CONNECTING when server has closed the connection', function(done) {
+    it('is CONNECTING when server has closed the connection', function(done) {
         createServer(["data: Hello\n\n"], function(closeFirstServer) {
             var es = new EventSource('http://localhost:' + port);
             es.reconnectInterval = 0;
@@ -673,7 +673,7 @@ describe('readyState', function() {
         });
     });
 
-    it('readyState is OPEN when connection has been established', function(done) {
+    it('is OPEN when connection has been established', function(done) {
         createServer([], function(close) {
             var es = new EventSource('http://localhost:' + port);
             es.onopen = function() {
@@ -684,7 +684,7 @@ describe('readyState', function() {
         });
     });
 
-    it('readyState is CLOSED after connection has been closed', function(done) {
+    it('is CLOSED after connection has been closed', function(done) {
         createServer([], function(close) {
             var es = new EventSource('http://localhost:' + port);
             es.onopen = function() {
