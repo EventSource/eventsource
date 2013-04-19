@@ -1,7 +1,7 @@
 VERSION := $(shell node -e "console.log(JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version)")
 
 run-tests: node_modules lib/eventstream.js
-	@NODE_PATH=lib ./node_modules/.bin/nodeunit test
+	@NODE_PATH=lib ./node_modules/.bin/mocha --reporter spec
 .PHONY: run-tests
 
 clobber:

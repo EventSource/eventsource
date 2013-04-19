@@ -1,40 +1,45 @@
 {
-    "name": "eventsource",
-    "version": "0.0.6",
-    "description": "EventSource client for Node.js",
-    "keywords": [ "eventsource", "http", "streaming", "sse" ],
-    "homepage": "http://github.com/aslakhellesoy/eventsource-node",
-    "author": "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
-    "contributors": [
-        "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
-        "Einar Otto Stangvik <einaros+gh@gmail.com>",
-        "Dan North <tastapod@gmail.com>"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/aslakhellesoy/eventsource-node.git"
-    },
-    "bugs": {
-        "url": "http://github.com/aslakhellesoy/eventsource-node/issues"
-    },
-    "directories": {
-        "lib" : "./lib"
-    },
-    "main": "./lib/eventsource",
-    "licenses": [
-        {
-            "type": "MIT",
-            "url": "http://github.com/aslakhellesoy/eventsource-node/raw/master/LICENSE"
-        }
-    ],
-    "devDependencies": {
-        "nodeunit" : "0.6.x",
-        "jison": "0.4.x"
-    },
-    "scripts": {
-        "test": "make run-tests"
-    },
-    "engines": {
-        "node" : ">=0.6.0"
+  "name": "eventsource",
+  "version": "0.0.6",
+  "description": "EventSource client for Node.js",
+  "keywords": [
+    "eventsource",
+    "http",
+    "streaming",
+    "sse"
+  ],
+  "homepage": "http://github.com/aslakhellesoy/eventsource-node",
+  "author": "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
+  "contributors": [
+    "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
+    "Einar Otto Stangvik <einaros+gh@gmail.com>",
+    "Dan North <tastapod@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/aslakhellesoy/eventsource-node.git"
+  },
+  "bugs": {
+    "url": "http://github.com/aslakhellesoy/eventsource-node/issues"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "main": "./lib/eventsource",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/aslakhellesoy/eventsource-node/raw/master/LICENSE"
     }
+  ],
+  "devDependencies": {
+    "mocha": "~1.9.0",
+    "jison": "~0.4.4"
+  },
+  "scripts": {
+    "test": "make run-tests"
+  },
+  "engines": {
+    "node": ">=0.6.0"
+  }
 }
