@@ -283,7 +283,7 @@ exports['HTTP Request'] = {
         };
         createServer([],
             function(close) {
-                var es = new EventSource(url, headers);
+                var es = new EventSource(url, {headers: headers});
                 es.onopen = function() {
                     es.close();
                     close(test.done);
