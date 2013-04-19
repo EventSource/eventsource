@@ -30,7 +30,7 @@
     "devDependencies": {
         "nodeunit" : "0.6.x",
         "dox" : "0.1.x",
-        "jison": "0.3.x"
+        "jison": "0.4.x"
     },
     "scripts": {
         "test": "make run-tests"
