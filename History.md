@@ -1,3 +1,4 @@
+* Fix Unicode support to cope with Javascript Unicode size limitations ([#23](https://github.com/aslakhellesoy/eventsource-node/pull/23), [#22](https://github.com/aslakhellesoy/eventsource-node/issues/22) Devon Adkisson)
 * Graceful handling of parse errors ([#19](https://github.com/aslakhellesoy/eventsource-node/issues/19) Aslak Hellesøy)
 
 # [0.0.6](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.5...v0.0.6)
