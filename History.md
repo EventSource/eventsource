@@ -1,3 +1,5 @@
+* Graceful handling of parse errors ([#19](https://github.com/aslakhellesoy/eventsource-node/issues/19) Aslak Hellesøy)
+
 # [0.0.6](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.5...v0.0.6)
 
 * Add Accept: text/event-stream header ([#17](https://github.com/aslakhellesoy/eventsource-node/pull/17) William Wicks)
