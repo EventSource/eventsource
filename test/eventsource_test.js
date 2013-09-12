@@ -4,7 +4,7 @@ var EventSource = require('../lib/eventsource')
   , fs = require('fs')
   , assert = require('assert');
 
-var port = 20000;
+var _port = 20000;
 var servers = 0;
 process.on('exit', function() {
     if(servers != 0) {
@@ -12,8 +12,6 @@ process.on('exit', function() {
     }
 });
 function createServer(chunks, callback, onreq, secure) {
-    servers++;
-    console.log();
     var options = {};
     var isSecure = onreq === true || secure === true;
     if (isSecure) {
@@ -40,8 +38,9 @@ function createServer(chunks, callback, onreq, secure) {
     var server;
     if (isSecure) server = https.createServer(options, open);
     else server = http.createServer(open);
-    server.listen(port, function() {
-        callback(function(err) {
+    server.listen(_port, function onOpen() {
+        servers++;
+        callback(_port++, function(err) {
             servers--;
             close(err);
         });
@@ -49,13 +48,8 @@ function createServer(chunks, callback, onreq, secure) {
 };
 
 describe('Parser', function() {
-    beforeEach(function(done) {
-        port++;
-        done();
-    });
-
     it('parses multibyte characters', function(done) {
-        createServer(["id: 1\ndata: €豆腐\n\n"], function(close) {
+        createServer(["id: 1\ndata: €豆腐\n\n"], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onmessage = function(m) {
                 assert.equal("€豆腐", m.data);
@@ -66,7 +60,7 @@ describe('Parser', function() {
     });
 
     it('raises error when it fails to parse', function(done) {
-        createServer(["\n\n\n\nid: 1\ndata: hello world\n\n"], function(close) {
+        createServer(["\n\n\n\nid: 1\ndata: hello world\n\n"], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onmessage = function(m) {
                 assert.equal("hello world", m.data);
@@ -81,7 +75,7 @@ describe('Parser', function() {
     });
 
     it('parses one one-line message in one chunk', function(done) {
-        createServer(["data: Hello\n\n"], function(close) {
+        createServer(["data: Hello\n\n"], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onmessage = function(m) {
                 assert.equal("Hello", m.data);
@@ -92,7 +86,7 @@ describe('Parser', function() {
     });
 
     it('parses one one-line message in two chunks', function(done) {
-        createServer(["data: Hel", "lo\n\n"], function(close) {
+        createServer(["data: Hel", "lo\n\n"], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onmessage = function(m) {
                 assert.equal("Hello", m.data);
@@ -103,7 +97,7 @@ describe('Parser', function() {
     });
 
     it('parses two one-line messages in one chunk', function(done) {
-        createServer(["data: Hello\n\n", "data: World\n\n"], function(close) {
+        createServer(["data: Hello\n\n", "data: World\n\n"], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onmessage = first;
 
@@ -121,7 +115,7 @@ describe('Parser', function() {
     });
 
     it('parses one two-line message in one chunk', function(done) {
-        createServer(["data: Hello\ndata:World\n\n"], function(close) {
+        createServer(["data: Hello\ndata:World\n\n"], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onmessage = function(m) {
                 assert.equal("Hello\nWorld", m.data);
@@ -133,7 +127,7 @@ describe('Parser', function() {
 
     it('parses really chopped up unicode data', function(done) {
         var chopped = "data: Aslak\n\ndata: Hellesøy\n\n".split("");
-        createServer(chopped, function(close) {
+        createServer(chopped, function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onmessage = first;
 
@@ -152,7 +146,7 @@ describe('Parser', function() {
 
     it('accepts CRLF as separator', function(done) {
         var chopped = "data: Aslak\r\n\r\ndata: Hellesøy\r\n\r\n".split("");
-        createServer(chopped, function(close) {
+        createServer(chopped, function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onmessage = first;
 
@@ -171,7 +165,7 @@ describe('Parser', function() {
 
     it('accepts CR as separator', function(done) {
         var chopped = "data: Aslak\r\rdata: Hellesøy\r\r".split("");
-        createServer(chopped, function(close) {
+        createServer(chopped, function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onmessage = first;
 
@@ -189,7 +183,7 @@ describe('Parser', function() {
     });
 
     it('delivers message with explicit event', function(done) {
-        createServer(["event: greeting\ndata: Hello\n\n"], function(close) {
+        createServer(["event: greeting\ndata: Hello\n\n"], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.addEventListener('greeting', function(m) {
                 assert.equal("Hello", m.data);
@@ -200,7 +194,7 @@ describe('Parser', function() {
     });
 
     it('ignores comments', function(done) {
-        createServer(["data: Hello\n\n:nothing to see here\n\ndata: World\n\n"], function(close) {
+        createServer(["data: Hello\n\n:nothing to see here\n\ndata: World\n\n"], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onmessage = first;
 
@@ -218,7 +212,7 @@ describe('Parser', function() {
     });
 
     it('ignores empty comments', function(done) {
-        createServer(["data: Hello\n\n:\n\ndata: World\n\n"], function(close) {
+        createServer(["data: Hello\n\n:\n\ndata: World\n\n"], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onmessage = first;
 
@@ -236,7 +230,7 @@ describe('Parser', function() {
     });
 
     it('causes entire event to be ignored for empty data fields', function(done) {
-        createServer(["data:\n\ndata: Hello\n\n"], function(close) {
+        createServer(["data:\n\ndata: Hello\n\n"], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             var originalEmit = es.emit;
             es.emit = function(event) {
@@ -252,7 +246,7 @@ describe('Parser', function() {
     });
 
     it('causes entire event to be ignored for empty event field', function(done) {
-        createServer(["event:\n\ndata: Hello\n\n"], function(close) {
+        createServer(["event:\n\ndata: Hello\n\n"], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             var originalEmit = es.emit;
             es.emit = function(event) {
@@ -269,14 +263,9 @@ describe('Parser', function() {
 });
 
 describe('HTTP Request', function() {
-    beforeEach(function(done) {
-        port++;
-        done();
-    });
-
     it('passes cache-control: no-cache to server', function(done) {
         var headers;
-        createServer([], function(close) {
+        createServer([], function(port, close) {
             var url = 'http://localhost:' + port;
             var es = new EventSource(url);
             es.onopen = function() {
@@ -288,13 +277,13 @@ describe('HTTP Request', function() {
     });
 
     it('sets headers by user', function(done) {
-        var url = 'http://localhost:' + port;
         var headers = {
           'User-Agent': 'test',
           'Cookie': 'test=test'
         };
         createServer([],
-            function(close) {
+            function(port, close) {
+                var url = 'http://localhost:' + port;
                 var es = new EventSource(url, {headers: headers});
                 es.onopen = function() {
                     es.close();
@@ -311,12 +300,11 @@ describe('HTTP Request', function() {
     });
 
     it('follows http 301 redirect', function(done) {
-        var headers;
-        var url = 'http://localhost:' + port;
+        var url = 'http://localhost:' + _port;
         var redirectSuffix = '/foobar';
         var clientRequestedRedirectUrl = false;
         createServer([],
-            function(close) {
+            function(port, close) {
                 var es = new EventSource(url);
                 es.onopen = function() {
                     assert.ok(clientRequestedRedirectUrl);
@@ -340,10 +328,9 @@ describe('HTTP Request', function() {
     });
 
     it('causes error event when response is 403', function(done) {
-        var headers;
-        var url = 'http://localhost:' + port;
         createServer(["id: 1\ndata: hello world\n\n"],
-            function(close) {
+            function(port, close) {
+                var url = 'http://localhost:' + port;
                 var es = new EventSource(url);
                 es.onerror = function() {
                     assert.ok(true, 'got error');
@@ -358,10 +345,9 @@ describe('HTTP Request', function() {
     });
 
     it('causes error event when response is 301 with missing location', function(done) {
-        var headers;
-        var url = 'http://localhost:' + port;
         createServer([],
-            function(close) {
+            function(port, close) {
+                var url = 'http://localhost:' + port;
                 var es = new EventSource(url);
                 es.onerror = function() {
                     es.close();
@@ -379,12 +365,11 @@ describe('HTTP Request', function() {
     });
 
     it('follows http 307 redirect', function(done) {
-        var headers;
-        var url = 'http://localhost:' + port;
+        var url = 'http://localhost:' + _port;
         var redirectSuffix = '/foobar';
         var clientRequestedRedirectUrl = false;
         createServer([],
-            function(close) {
+            function(port, close) {
                 var es = new EventSource(url);
                 es.onopen = function() {
                     assert.ok(clientRequestedRedirectUrl);
@@ -408,10 +393,9 @@ describe('HTTP Request', function() {
     });
 
     it('causes error event for 307 response with with missing location', function(done) {
-        var headers;
-        var url = 'http://localhost:' + port;
         createServer([],
-            function(close) {
+            function(port, close) {
+                var url = 'http://localhost:' + port;
                 var es = new EventSource(url);
                 es.onerror = function() {
                     es.close();
@@ -430,14 +414,9 @@ describe('HTTP Request', function() {
 });
 
 describe('HTTPS Support', function() {
-    beforeEach(function(done) {
-        port++;
-        done();
-    });
-
     it('uses https for https urls', function(done) {
         var chopped = "data: Aslak\n\ndata: Hellesøy\n\n".split("");
-        createServer(chopped, function(close) {
+        createServer(chopped, function(port, close) {
             var es = new EventSource('https://localhost:' + port, {rejectUnauthorized: false});
  
             es.onerror = function(err) {
@@ -461,7 +440,7 @@ describe('HTTPS Support', function() {
 
     it('rejects unauthorized https by default', function(done) {
         var chopped = "data: Aslak\n\ndata: Hellesøy\n\n".split("");
-        createServer(chopped, function(close) {
+        createServer(chopped, function(port, close) {
             var es = new EventSource('https://localhost:' + port);
  
             es.onerror = function(err) {
@@ -478,19 +457,14 @@ describe('HTTPS Support', function() {
 });
 
 describe('Reconnection', function() {
-    beforeEach(function(done) {
-        port++;
-        done();
-    });
-
     it('is attempted when server is down', function(done) {
-        var es = new EventSource('http://localhost:' + port);
+        var es = new EventSource('http://localhost:' + _port);
         es.reconnectInterval = 0;
         var theClose = null;
 
         es.onerror = function(source) {
             es.onerror = null;
-            createServer(["data: Hello\n\n"], function(close) {
+            createServer(["data: Hello\n\n"], function(port, close) {
                 theClose = close;
             });
         };
@@ -503,14 +477,15 @@ describe('Reconnection', function() {
     });
 
     it('is attempted when server goes down after connection', function(done) {
-        createServer(["data: Hello\n\n"], function(closeFirstServer) {
+        createServer(["data: Hello\n\n"], function(port, closeFirstServer) {
             var es = new EventSource('http://localhost:' + port);
             es.reconnectInterval = 0;
 
             es.onmessage = function(m) {
                 assert.equal("Hello", m.data);
                 closeFirstServer(function() {
-                    createServer(["data: World\n\n"], function(closeSecondServer) {
+                    _port = port;
+                    createServer(["data: World\n\n"], function(port, closeSecondServer) {
                         es.onmessage = second;
 
                         function second(m) {
@@ -525,7 +500,7 @@ describe('Reconnection', function() {
     });
 
     it('is stopped when server goes down and eventsource is being closed', function(done) {
-        createServer(["data: Hello\n\n"], function(closeFirstServer) {
+        createServer(["data: Hello\n\n"], function(port, closeFirstServer) {
             var es = new EventSource('http://localhost:' + port);
             es.reconnectInterval = 0;
 
@@ -543,7 +518,8 @@ describe('Reconnection', function() {
                 // We close es, so we do not want es to reconnect.
                 es.close();
 
-                createServer(["data: World\n\n"], function(closeSecondServer) {
+                _port = port;
+                createServer(["data: World\n\n"], function(port, closeSecondServer) {
                     es.onmessage = second;
 
                     function second(m) {
@@ -562,14 +538,15 @@ describe('Reconnection', function() {
     });
 
     it('is not attempted when server responds with HTTP 204', function(done) {
-        createServer(["data: Hello\n\n"], function(closeFirstServer) {
+        createServer(["data: Hello\n\n"], function(port, closeFirstServer) {
             var es = new EventSource('http://localhost:' + port);
             es.reconnectInterval = 0;
 
             es.onmessage = function(m) {
                 assert.equal("Hello", m.data);
                 closeFirstServer(function() {
-                    createServer([], function(closeSecondServer) {
+                    _port = port;
+                    createServer([], function(port, closeSecondServer) {
                         // this will be verified by the readyState
                         // going from CONNECTING to CLOSED,
                         // along with the tests verifying that the
@@ -589,14 +566,15 @@ describe('Reconnection', function() {
     });
 
     it('sends Last-Event-ID http header when it has previously been passed in an event from the server', function(done) {
-        createServer(['id: 10\ndata: Hello\n\n'], function(closeFirstServer) {
+        createServer(['id: 10\ndata: Hello\n\n'], function(port, closeFirstServer) {
             var headers = null;
             var es = new EventSource('http://localhost:' + port);
             es.reconnectInterval = 0;
 
             es.onmessage = function(m) {
                 closeFirstServer(function() {
-                    createServer([], function(close) {
+                    _port = port;
+                    createServer([], function(port, close) {
                         es.onopen = function() {
                             assert.equal('10', headers['last-event-id']);
                             es.close();
@@ -609,14 +587,15 @@ describe('Reconnection', function() {
     });
 
     it('does not send Last-Event-ID http header when it has not been previously sent by the server', function(done) {
-        createServer(['data: Hello\n\n'], function(closeFirstServer) {
+        createServer(['data: Hello\n\n'], function(port, closeFirstServer) {
             var headers = null;
             var es = new EventSource('http://localhost:' + port);
             es.reconnectInterval = 0;
 
             es.onmessage = function(m) {
                 closeFirstServer(function() {
-                    createServer([], function(close) {
+                    _port = port;
+                    createServer([], function(port, close) {
                         es.onopen = function() {
                             assert.equal('undefined', typeof headers['last-event-id']);
                             es.close();
@@ -630,16 +609,17 @@ describe('Reconnection', function() {
 
     it('is attempted after http 301 redirect uses new url', function(done) {
         var headers;
-        var url = 'http://localhost:' + port;
+        var url = 'http://localhost:' + _port;
         var redirectSuffix = '/foobar';
         createServer(['data: Hello\n\n'],
-            function(closeFirstServer) {
+            function(port, closeFirstServer) {
                 var es = new EventSource(url);
                 es.reconnectInterval = 0;
 
                 es.onmessage = function(m) {
                     closeFirstServer(function() {
-                        createServer([], function(closeSecondServer) {
+                        _port = port;
+                        createServer([], function(port, closeSecondServer) {
                             es.onopen = function() {
                                 assert.equal(url + redirectSuffix, es.url);
                                 es.close();
@@ -662,16 +642,17 @@ describe('Reconnection', function() {
 
     it('is attempted after http 307 redirect uses original url', function(done) {
         var headers;
-        var url = 'http://localhost:' + port;
+        var url = 'http://localhost:' + _port;
         var redirectSuffix = '/foobar';
         createServer(['data: Hello\n\n'],
-            function(closeFirstServer) {
+            function(port, closeFirstServer) {
                 var es = new EventSource(url);
                 es.reconnectInterval = 0;
 
                 es.onmessage = function(m) {
                     closeFirstServer(function() {
-                        createServer([], function(closeSecondServer) {
+                        --_port;
+                        createServer([], function(port, closeSecondServer) {
                             es.onopen = function() {
                                 assert.equal(url, es.url);
                                 es.close();
@@ -694,11 +675,6 @@ describe('Reconnection', function() {
 });
 
 describe('readyState', function() {
-    beforeEach(function(done) {
-        port++;
-        done();
-    });
-
     it('has CONNECTING constant', function(done) {
         assert.equal(0, EventSource.CONNECTING);
         done();
@@ -715,7 +691,7 @@ describe('readyState', function() {
     });
 
     it('is CONNECTING before connection has been established', function(done) {
-        createServer([], function(close) {
+        createServer([], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             assert.equal(EventSource.CONNECTING, es.readyState);
             es.onopen = function() {
@@ -726,25 +702,24 @@ describe('readyState', function() {
     });
 
     it('is CONNECTING when server has closed the connection', function(done) {
-        createServer(["data: Hello\n\n"], function(closeFirstServer) {
+        createServer(["data: Hello\n\n"], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.reconnectInterval = 0;
 
             es.onmessage = function(m) {
                 assert.equal("Hello", m.data);
-                closeFirstServer(function() {
-                    createServer([], function(closeSecondServer) {
+                close(function() {
+                    setTimeout(function(){
                         assert.equal(EventSource.CONNECTING, es.readyState);
-                        es.close();
-                        closeSecondServer(done);
-                    });
+                        done();
+                    }, 0);
                 });
             };
         });
     });
 
     it('is OPEN when connection has been established', function(done) {
-        createServer([], function(close) {
+        createServer([], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onopen = function() {
                 assert.equal(EventSource.OPEN, es.readyState);
@@ -755,7 +730,7 @@ describe('readyState', function() {
     });
 
     it('is CLOSED after connection has been closed', function(done) {
-        createServer([], function(close) {
+        createServer([], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onopen = function() {
                 es.close();
@@ -767,13 +742,8 @@ describe('readyState', function() {
 });
 
 describe('Properties', function() {
-    beforeEach(function(done) {
-        port++;
-        done();
-    });
-
     it('url exposes original request url', function(done) {
-        createServer([], function(close) {
+        createServer([], function(port, close) {
             var url = 'http://localhost:' + port;
             var es = new EventSource(url);
             es.onopen = function() {
@@ -786,13 +756,8 @@ describe('Properties', function() {
 });
 
 describe('Events', function() {
-    beforeEach(function(done) {
-        port++;
-        done();
-    });
-
     it('calls onopen when connection is established', function(done) {
-        createServer([], function(close) {
+        createServer([], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onopen = function() {
                 es.close();
@@ -802,7 +767,7 @@ describe('Events', function() {
     });
 
     it('emits open event when connection is established', function(done) {
-        createServer([], function(close) {
+        createServer([], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.addEventListener('open', function() {
                 es.close();
@@ -812,7 +777,7 @@ describe('Events', function() {
     });
 
     it('does not emit error when connection is closed by client', function(done) {
-        createServer([], function(close) {
+        createServer([], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.addEventListener('open', function() {
                 es.close();
