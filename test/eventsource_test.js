@@ -491,6 +491,43 @@ describe('Reconnection', function() {
         });
     });
 
+    it('is stopped when server goes down and eventsource is being closed', function(done) {
+        createServer(["data: Hello\n\n"], function(closeFirstServer) {
+            var es = new EventSource('http://localhost:' + port);
+            es.reconnectInterval = 0;
+
+            es.onmessage = function(m) {
+                assert.equal("Hello", m.data);
+                closeFirstServer(function() {
+                    // The server has closed down. es.onerror should now get called,
+                    // because es's remote connection was dropped.
+                });
+            };
+
+            es.onerror = function(source) {
+                
+                // We received an error because the remote connection was closed.
+                // We close es, so we do not want es to reconnect.
+                es.close();
+
+                createServer(["data: World\n\n"], function(closeSecondServer) {
+                    es.onmessage = second;
+
+                    function second(m) {
+                        // We received a message even though we closed es.
+                        assert.ok(false);
+                    }
+
+                    setTimeout(function() {
+                        // We have not received any message within 100ms, we can
+                        // presume this works correctly.
+                        closeSecondServer(done);
+                    },100);
+                });
+            };
+        });
+    });
+
     it('is not attempted when server responds with HTTP 204', function(done) {
         createServer(["data: Hello\n\n"], function(closeFirstServer) {
             var es = new EventSource('http://localhost:' + port);
