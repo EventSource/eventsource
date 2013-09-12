@@ -438,22 +438,25 @@ describe('HTTPS Support', function() {
         }, true);
     });
 
-    it('rejects unauthorized https by default', function(done) {
-        var chopped = "data: Aslak\n\ndata: Hellesøy\n\n".split("");
-        createServer(chopped, function(port, close) {
-            var es = new EventSource('https://localhost:' + port);
- 
-            es.onerror = function(err) {
-                // Expected
-                close(done);
-            };
-            es.onmessage = function(err) {
-                close(function() {
-                    done(new Error("Didn't expect any messages"));
-                });
-            };
-        }, true);
-    });
+    if(!process.version.match(/^v0\.[12345678]\./)) {
+        // This functionality relies on Node 0.10.x
+        it('rejects unauthorized https by default', function(done) {
+            var chopped = "data: Aslak\n\ndata: Hellesøy\n\n".split("");
+            createServer(chopped, function(port, close) {
+                var es = new EventSource('https://localhost:' + port);
+     
+                es.onerror = function(err) {
+                    // Expected
+                    close(done);
+                };
+                es.onmessage = function(err) {
+                    close(function() {
+                        done(new Error("Didn't expect any messages"));
+                    });
+                };
+            }, true);
+        });
+    }
 });
 
 describe('Reconnection', function() {

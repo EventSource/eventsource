@@ -51,3 +51,4 @@ var eventSourceInitDict = {rejectUnauthorized: false};
 var es = new EventSource(url, eventSourceInitDict);
 ```
 
+Note that for Node.js < v0.10.x this option has no effect - unauthorized HTTPS requests are *always* allowed.

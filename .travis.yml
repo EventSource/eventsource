@@ -1,5 +1,8 @@
 language: node_js
+# We'll test on newer versions of node when this is fixed:
+# https://github.com/joyent/node/issues/5439
+# https://travis-ci.org/aslakhellesoy/eventsource-node/jobs/11281097
 node_js:
-  - 0.10.4
-  - 0.10.18
+  - 0.6.21
+  - 0.8.25
 
