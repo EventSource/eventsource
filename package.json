@@ -1,6 +1,6 @@
 {
   "name": "eventsource",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "W3C compliant EventSource client for Node.js",
   "keywords": [
     "eventsource",
@@ -16,7 +16,8 @@
     "Dan North <tastapod@gmail.com>",
     "Scott Moak <scott.moak@mybrainoncode.com>",
     "William Wicks",
-    "Devon Adkisson"
+    "Devon Adkisson",
+    "FrozenCow <frozencow@gmail.com>"
   ],
   "repository": {
     "type": "git",
