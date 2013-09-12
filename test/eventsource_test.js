@@ -5,7 +5,15 @@ var EventSource = require('../lib/eventsource')
   , assert = require('assert');
 
 var port = 20000;
+var servers = 0;
+process.on('exit', function() {
+    if(servers != 0) {
+        console.error("************ Didn't kill all servers - there is still %d running.", servers);
+    }
+});
 function createServer(chunks, callback, onreq, secure) {
+    servers++;
+    console.log();
     var options = {};
     var isSecure = onreq === true || secure === true;
     if (isSecure) {
@@ -33,7 +41,10 @@ function createServer(chunks, callback, onreq, secure) {
     if (isSecure) server = https.createServer(options, open);
     else server = http.createServer(open);
     server.listen(port, function() {
-        callback(close);
+        callback(function(err) {
+            servers--;
+            close(err);
+        });
     });
 };
 
@@ -454,10 +465,13 @@ describe('HTTPS Support', function() {
             var es = new EventSource('https://localhost:' + port);
  
             es.onerror = function(err) {
-                done();
+                // Expected
+                close(done);
             };
             es.onmessage = function(err) {
-                done(new Error("Didn't expect any messages"));
+                close(function() {
+                    done(new Error("Didn't expect any messages"));
+                });
             };
         }, true);
     });
