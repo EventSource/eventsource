@@ -1,3 +1,6 @@
+* Bugfix: EventSource still reconnected when closed ([#24](https://github.com/aslakhellesoy/eventsource-node/pull/24) FrozenCow) 
+* Allow unauthorized HTTPS connections by setting `rejectUnauthorized` to false. 
+
 # [0.0.7](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.6...v0.0.7)
 
 * Explicitly raise an error when server returns http 403 and dont continue ([#20](https://github.com/aslakhellesoy/eventsource-node/pull/20) Scott Moak)

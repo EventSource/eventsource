@@ -40,3 +40,14 @@ This is done by assigning a `header` attribute to the optional `eventSourceInitD
 var eventSourceInitDict = {headers: {'Cookie': 'test=test'}};
 var es = new EventSource(url, eventSourceInitDict);
 ```
+
+### Allow unauthorized HTTPS requests
+
+By default, https requests that cannot be authorized will cause connection to fail and an exception
+to be emitted. You can override this behaviour:
+
+```
+var eventSourceInitDict = {rejectUnauthorized: false};
+var es = new EventSource(url, eventSourceInitDict);
+```
+

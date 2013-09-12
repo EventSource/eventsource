@@ -427,7 +427,12 @@ describe('HTTPS Support', function() {
     it('uses https for https urls', function(done) {
         var chopped = "data: Aslak\n\ndata: Hellesøy\n\n".split("");
         createServer(chopped, function(close) {
-            var es = new EventSource('https://localhost:' + port);
+            var es = new EventSource('https://localhost:' + port, {rejectUnauthorized: false});
+ 
+            es.onerror = function(err) {
+                if(!err) err = new Error("Didn't expect error here");
+                done(err);
+            };
             es.onmessage = first;
 
             function first(m) {
@@ -440,6 +445,20 @@ describe('HTTPS Support', function() {
                 es.close();
                 close(done);
             }
+        }, true);
+    });
+
+    it('rejects unauthorized https by default', function(done) {
+        var chopped = "data: Aslak\n\ndata: Hellesøy\n\n".split("");
+        createServer(chopped, function(close) {
+            var es = new EventSource('https://localhost:' + port);
+ 
+            es.onerror = function(err) {
+                done();
+            };
+            es.onmessage = function(err) {
+                done(new Error("Didn't expect any messages"));
+            };
         }, true);
     });
 });
