@@ -279,7 +279,8 @@ describe('HTTP Request', function() {
     it('sets headers by user', function(done) {
         var headers = {
           'User-Agent': 'test',
-          'Cookie': 'test=test'
+          'Cookie': 'test=test',
+          'Last-Event-ID': '99'
         };
         createServer([],
             function(port, close) {
@@ -293,6 +294,7 @@ describe('HTTP Request', function() {
             function(req, res) {
                 assert.equal(req.headers['user-agent'], headers['User-Agent']);
                 assert.equal(req.headers['cookie'], headers['Cookie']);
+                assert.equal(req.headers['last-event-id'], '99'); // Shouldn't be sent
                 res.writeHead(200);
                 res.end();
                 return true;
@@ -572,6 +574,27 @@ describe('Reconnection', function() {
         createServer(['id: 10\ndata: Hello\n\n'], function(port, closeFirstServer) {
             var headers = null;
             var es = new EventSource('http://localhost:' + port);
+            es.reconnectInterval = 0;
+
+            es.onmessage = function(m) {
+                closeFirstServer(function() {
+                    _port = port;
+                    createServer([], function(port, close) {
+                        es.onopen = function() {
+                            assert.equal('10', headers['last-event-id']);
+                            es.close();
+                            close(done);
+                        };
+                    }, function(req) { headers = req.headers; });
+                });
+            };
+        });
+    });
+
+    it('sends correct Last-Event-ID http header when an initial Last-Event-ID header was specified in the constructor', function(done) {
+        createServer(['id: 10\ndata: Hello\n\n'], function(port, closeFirstServer) {
+            var headers = null;
+            var es = new EventSource('http://localhost:' + port, {headers: {'Last-Event-ID': '9'}});
             es.reconnectInterval = 0;
 
             es.onmessage = function(m) {

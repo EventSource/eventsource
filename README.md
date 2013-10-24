@@ -33,8 +33,10 @@ See https://github.com/einaros/sse-example
 
 ### Setting HTTP request headers
 
-You can define custom HTTP headers for the initial HTTP request. This can be useful for e.g. sending cookies.
-This is done by assigning a `headers` attribute to the optional `eventSourceInitDict` argument:
+You can define custom HTTP headers for the initial HTTP request. This can be useful for e.g. sending cookies
+or to specify an initial `Last-Event-ID` value.
+
+HTTP headers are defined by assigning a `headers` attribute to the optional `eventSourceInitDict` argument:
 
 ```javascript
 var eventSourceInitDict = {headers: {'Cookie': 'test=test'}};
