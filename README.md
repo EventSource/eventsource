@@ -2,6 +2,7 @@
 
 [![NPM](https://nodei.co/npm/eventsource.png?stars&downloads)](https://nodei.co/npm/eventsource/) 
 [![NPM](https://nodei.co/npm-dl/eventsource.png)](https://nodei.co/npm/eventsource/)
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/aslakhellesoy/eventsource-node/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 This library implements the [EventSource](http://dev.w3.org/html5/eventsource/) client for Node.js. The API aims to be W3C compatible.
 
@@ -54,7 +55,4 @@ var es = new EventSource(url, eventSourceInitDict);
 ```
 
 Note that for Node.js < v0.10.x this option has no effect - unauthorized HTTPS requests are *always* allowed.
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/aslakhellesoy/eventsource-node/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
