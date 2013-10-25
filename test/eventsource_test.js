@@ -816,4 +816,15 @@ describe('Events', function() {
             });
         });
     });
+
+    it('populates id field when event contains an id', function(done) {
+        createServer(["id: 123\ndata: sample_data\n\n"], function(port, close) {
+            var es = new EventSource('http://localhost:' + port);
+            es.onmessage = function(m) {
+                assert("123" == m.id);
+                es.close();
+                close(done);
+            };
+        });
+    });
 });
