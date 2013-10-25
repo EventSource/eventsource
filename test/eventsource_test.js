@@ -817,14 +817,32 @@ describe('Events', function() {
         });
     });
 
-    it('populates id field when event contains an id', function(done) {
+    it('populates message\'s lastEventId correctly when the last event has an associated id', function(done) {
         createServer(["id: 123\ndata: sample_data\n\n"], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onmessage = function(m) {
-                assert("123" == m.id);
+                assert("123" == m.lastEventId);
                 es.close();
                 close(done);
             };
         });
     });
+    
+    it('populates message\'s lastEventId correctly when the last event doesn\'t have an associated id', function(done) {
+        createServer(["id: 123\ndata: Hello\n\n", "data: World\n\n"], function(port, close) {
+            var es = new EventSource('http://localhost:' + port);
+            es.onmessage = first;
+
+            function first(m) {
+                es.onmessage = second;
+            }
+
+            function second(m) {
+                assert.equal("World", m.data);
+                assert.equal("123", m.lastEventId);  //expect to get back the previous event id 
+                es.close();
+                close(done);
+            }
+        });
+    });    
 });
