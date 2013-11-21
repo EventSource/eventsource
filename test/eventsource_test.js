@@ -821,7 +821,7 @@ describe('Events', function() {
         createServer(["id: 123\ndata: sample_data\n\n"], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onmessage = function(m) {
-                assert("123" == m.lastEventId);
+                assert.equal(m.lastEventId, "123");
                 es.close();
                 close(done);
             };
@@ -838,8 +838,8 @@ describe('Events', function() {
             }
 
             function second(m) {
-                assert.equal("World", m.data);
-                assert.equal("123", m.lastEventId);  //expect to get back the previous event id 
+                assert.equal(m.data, "World");
+                assert.equal(m.lastEventId, "123");  //expect to get back the previous event id 
                 es.close();
                 close(done);
             }

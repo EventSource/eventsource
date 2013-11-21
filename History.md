@@ -1,3 +1,7 @@
+# [Git master](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.9...master)
+
+* Expose `lastEventId` on messages. ([#28](https://github.com/aslakhellesoy/eventsource-node/pull/28) mbieser)
+
 # [0.0.9](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.8...v0.0.9)
 
 * Bugfix: old "last-event-id" used on reconnect ([#27](https://github.com/aslakhellesoy/eventsource-node/pull/27) Aslak Hellesøy) 
