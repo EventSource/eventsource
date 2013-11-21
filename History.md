@@ -1,5 +1,6 @@
 # [Git master](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.9...master)
 
+* Provide `Event` argument on `open` and `error` event ([#30](https://github.com/aslakhellesoy/eventsource-node/issues/30), [#31](https://github.com/aslakhellesoy/eventsource-node/pull/31) Donghwan Kim)
 * Expose `lastEventId` on messages. ([#28](https://github.com/aslakhellesoy/eventsource-node/pull/28) mbieser)
 
 # [0.0.9](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.8...v0.0.9)
