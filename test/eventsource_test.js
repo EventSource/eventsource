@@ -785,7 +785,8 @@ describe('Events', function() {
     it('calls onopen when connection is established', function(done) {
         createServer([], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
-            es.onopen = function() {
+            es.onopen = function(event) {
+                assert.equal(event.type, 'open');
                 es.close();
                 close(done);
             }
@@ -795,7 +796,8 @@ describe('Events', function() {
     it('emits open event when connection is established', function(done) {
         createServer([], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
-            es.addEventListener('open', function() {
+            es.addEventListener('open', function(event) {
+                assert.equal(event.type, 'open');
                 es.close();
                 close(done);
             });
