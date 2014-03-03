@@ -260,6 +260,20 @@ describe('Parser', function() {
             };
         });
     });
+
+    var longMessage = "data: " + new Array(100000).join('a') + "\n\n";
+
+    it('parses relatively huge messages efficiently', function(done) {
+        this.timeout(1000);
+
+        createServer([longMessage], function(port, close) {
+            var es = new EventSource('http://localhost:' + port);
+            es.onmessage = function(m) {
+                es.close();
+                close(done);
+            };
+        });
+    });
 });
 
 describe('HTTP Request', function() {
