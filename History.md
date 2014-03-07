@@ -1,3 +1,7 @@
+# [Git master](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.10...master)
+
+* Bugfix: High CPU usage by replacing Jison with port of WebKit's parser. ([#25](https://github.com/aslakhellesoy/eventsource-node/issues/25), [#32](https://github.com/aslakhellesoy/eventsource-node/pull/32))
+
 # [0.0.10](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.9...v0.0.10)
 
 * Provide `Event` argument on `open` and `error` event ([#30](https://github.com/aslakhellesoy/eventsource-node/issues/30), [#31](https://github.com/aslakhellesoy/eventsource-node/pull/31) Donghwan Kim)
@@ -5,11 +9,11 @@
 
 # [0.0.9](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.8...v0.0.9)
 
-* Bugfix: old "last-event-id" used on reconnect ([#27](https://github.com/aslakhellesoy/eventsource-node/pull/27) Aslak Hellesøy) 
+* Bugfix: old "last-event-id" used on reconnect ([#27](https://github.com/aslakhellesoy/eventsource-node/pull/27) Aslak Hellesøy)
 
 # [0.0.8](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.7...v0.0.8)
 
-* Bugfix: EventSource still reconnected when closed ([#24](https://github.com/aslakhellesoy/eventsource-node/pull/24) FrozenCow) 
+* Bugfix: EventSource still reconnected when closed ([#24](https://github.com/aslakhellesoy/eventsource-node/pull/24) FrozenCow)
 * Allow unauthorized HTTPS connections by setting `rejectUnauthorized` to false. (Aslak Hellesøy)
 
 # [0.0.7](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.6...v0.0.7)
