@@ -1,7 +1,7 @@
 # EventSource [![Build Status](https://secure.travis-ci.org/aslakhellesoy/eventsource-node.png)](http://travis-ci.org/aslakhellesoy/eventsource-node) [![Dependencies](https://david-dm.org/aslakhellesoy/eventsource-node.png)](https://david-dm.org/aslakhellesoy/eventsource-node) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/aslakhellesoy/eventsource-node/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 
-[![NPM](https://nodei.co/npm/eventsource.png?stars&downloads)](https://nodei.co/npm/eventsource/) 
+[![NPM](https://nodei.co/npm/eventsource.png?stars&downloads)](https://nodei.co/npm/eventsource/)
 [![NPM](https://nodei.co/npm-dl/eventsource.png)](https://nodei.co/npm/eventsource/)
 
 This library implements the [EventSource](http://dev.w3.org/html5/eventsource/) client for Node.js. The API aims to be W3C compatible.
@@ -15,12 +15,12 @@ This library implements the [EventSource](http://dev.w3.org/html5/eventsource/) 
 ```javascript
 var EventSource = require('eventsource');
 
-var es = new EventSource('http://googlecodesamples.com/html5/sse/sse.php');
+var es = new EventSource('http://demo-eventsource.rhcloud.com/');
 es.onmessage = function(e) {
-    console.log(e.data);
+  console.log(e.data);
 };
 es.onerror = function() {
-    console.log('ERROR!');
+  console.log('ERROR!');
 };
 ```
 
@@ -55,4 +55,3 @@ var es = new EventSource(url, eventSourceInitDict);
 ```
 
 Note that for Node.js < v0.10.x this option has no effect - unauthorized HTTPS requests are *always* allowed.
-
