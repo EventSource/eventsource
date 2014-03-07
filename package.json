@@ -18,7 +18,8 @@
     "William Wicks",
     "Devon Adkisson",
     "FrozenCow <frozencow@gmail.com>",
-    "mbieser <29erpilot@gmail.com>"
+    "mbieser <29erpilot@gmail.com>",
+    "qqueue <queue@hakase.org>"
   ],
   "repository": {
     "type": "git",
@@ -38,10 +39,10 @@
     }
   ],
   "devDependencies": {
-    "mocha": "~1.9.0"
+    "mocha": "^1.17.1"
   },
   "scripts": {
-    "test": "make run-tests"
+    "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "engines": {
     "node": ">=0.6.0"
