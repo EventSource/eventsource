@@ -1,6 +1,7 @@
-# [Git master](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.10...master)
+# [0.1.0](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.10...0.1.0)
 
 * Bugfix: High CPU usage by replacing Jison with port of WebKit's parser. ([#25](https://github.com/aslakhellesoy/eventsource-node/issues/25), [#32](https://github.com/aslakhellesoy/eventsource-node/pull/32), [#18](https://github.com/aslakhellesoy/eventsource-node/issues/18) qqueue)
+* Reformatted all code to 2 spaces.
 
 # [0.0.10](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.9...v0.0.10)
 
@@ -18,7 +19,7 @@
 
 # [0.0.7](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.6...v0.0.7)
 
-* Explicitly raise an error when server returns http 403 and dont continue ([#20](https://github.com/aslakhellesoy/eventsource-node/pull/20) Scott Moak)
+* Explicitly raise an error when server returns http 403 and don't continue ([#20](https://github.com/aslakhellesoy/eventsource-node/pull/20) Scott Moak)
 * Added ability to send custom http headers to server ([#21](https://github.com/aslakhellesoy/eventsource-node/pull/21), [#9](https://github.com/aslakhellesoy/eventsource-node/issues/9) Scott Moak)
 * Fix Unicode support to cope with Javascript Unicode size limitations ([#23](https://github.com/aslakhellesoy/eventsource-node/pull/23), [#22](https://github.com/aslakhellesoy/eventsource-node/issues/22) Devon Adkisson)
 * Graceful handling of parse errors ([#19](https://github.com/aslakhellesoy/eventsource-node/issues/19) Aslak Hellesøy)
