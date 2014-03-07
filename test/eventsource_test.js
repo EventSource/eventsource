@@ -59,15 +59,11 @@ describe('Parser', function() {
         });
     });
 
-    it('raises error when it fails to parse', function(done) {
-        createServer(["\n\n\n\nid: 1\ndata: hello world\n\n"], function(port, close) {
+    it('parses empty lines with Chinese characters', function(done) {
+        createServer(["\n\n\n\nid: 1\ndata: 我現在都看實況不玩遊戲\n\n"], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
             es.onmessage = function(m) {
-                assert.equal("hello world", m.data);
-                es.close();
-                close(done);
-            };
-            es.onerror = function(e) {
+                assert.equal("我現在都看實況不玩遊戲", m.data);
                 es.close();
                 close(done);
             };
@@ -434,7 +430,7 @@ describe('HTTPS Support', function() {
         var chopped = "data: Aslak\n\ndata: Hellesøy\n\n".split("");
         createServer(chopped, function(port, close) {
             var es = new EventSource('https://localhost:' + port, {rejectUnauthorized: false});
- 
+
             es.onerror = function(err) {
                 if(!err) err = new Error("Didn't expect error here");
                 done(err);
@@ -460,7 +456,7 @@ describe('HTTPS Support', function() {
             var chopped = "data: Aslak\n\ndata: Hellesøy\n\n".split("");
             createServer(chopped, function(port, close) {
                 var es = new EventSource('https://localhost:' + port);
-     
+
                 es.onerror = function(err) {
                     // Expected
                     close(done);
@@ -532,7 +528,7 @@ describe('Reconnection', function() {
             };
 
             es.onerror = function(source) {
-                
+
                 // We received an error because the remote connection was closed.
                 // We close es, so we do not want es to reconnect.
                 es.close();
@@ -843,7 +839,7 @@ describe('Events', function() {
             };
         });
     });
-    
+
     it('populates message\'s lastEventId correctly when the last event doesn\'t have an associated id', function(done) {
         createServer(["id: 123\ndata: Hello\n\n", "data: World\n\n"], function(port, close) {
             var es = new EventSource('http://localhost:' + port);
@@ -855,10 +851,10 @@ describe('Events', function() {
 
             function second(m) {
                 assert.equal(m.data, "World");
-                assert.equal(m.lastEventId, "123");  //expect to get back the previous event id 
+                assert.equal(m.lastEventId, "123");  //expect to get back the previous event id
                 es.close();
                 close(done);
             }
         });
-    });    
+    });
 });

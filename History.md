@@ -1,6 +1,6 @@
 # [Git master](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.10...master)
 
-* Bugfix: High CPU usage by replacing Jison with port of WebKit's parser. ([#25](https://github.com/aslakhellesoy/eventsource-node/issues/25), [#32](https://github.com/aslakhellesoy/eventsource-node/pull/32))
+* Bugfix: High CPU usage by replacing Jison with port of WebKit's parser. ([#25](https://github.com/aslakhellesoy/eventsource-node/issues/25), [#32](https://github.com/aslakhellesoy/eventsource-node/pull/32), [#18](https://github.com/aslakhellesoy/eventsource-node/issues/18) qqueue)
 
 # [0.0.10](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.9...v0.0.10)
 
