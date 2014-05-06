@@ -1,4 +1,4 @@
-# [0.1.0](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.10...0.1.0)
+# [0.1.0](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.10...v0.1.0)
 
 * Bugfix: High CPU usage by replacing Jison with port of WebKit's parser. ([#25](https://github.com/aslakhellesoy/eventsource-node/issues/25), [#32](https://github.com/aslakhellesoy/eventsource-node/pull/32), [#18](https://github.com/aslakhellesoy/eventsource-node/issues/18) qqueue)
 * Reformatted all code to 2 spaces.
