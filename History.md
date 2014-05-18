@@ -1,3 +1,7 @@
+# [0.1.1](https://github.com/aslakhellesoy/eventsource-node/compare/v0.1.0...v0.1.1)
+
+* Bugfix: Fix message type. ([#33](https://github.com/aslakhellesoy/eventsource-node/pull/33) Romain Gauthier)
+
 # [0.1.0](https://github.com/aslakhellesoy/eventsource-node/compare/v0.0.10...v0.1.0)
 
 * Bugfix: High CPU usage by replacing Jison with port of WebKit's parser. ([#25](https://github.com/aslakhellesoy/eventsource-node/issues/25), [#32](https://github.com/aslakhellesoy/eventsource-node/pull/32), [#18](https://github.com/aslakhellesoy/eventsource-node/issues/18) qqueue)
