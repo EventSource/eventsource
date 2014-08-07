@@ -230,16 +230,24 @@ describe('Parser', function () {
     });
   });
 
-  it('causes entire event to be ignored for empty data fields', function (done) {
-    createServer(["data:\n\ndata: Hello\n\n"], function (port, close) {
+  it('does not ignore multilines strings', function (done) {
+    createServer(["data: line one\ndata:\ndata: line two\n\n"], function (port, close) {
       var es = new EventSource('http://localhost:' + port);
       var originalEmit = es.emit;
-      es.emit = function (event) {
-        assert.ok(event === 'message' || event === 'newListener');
-        return originalEmit.apply(this, arguments);
-      };
       es.onmessage = function (m) {
-        assert.equal('Hello', m.data);
+        assert.equal('line one\n\nline two', m.data);
+        es.close();
+        close(done);
+      };
+    });
+  });
+
+  it('does not ignore multilines strings even in data beginning', function (done) {
+    createServer(["data:\ndata:line one\ndata: line two\n\n"], function (port, close) {
+      var es = new EventSource('http://localhost:' + port);
+      var originalEmit = es.emit;
+      es.onmessage = function (m) {
+        assert.equal('\nline one\nline two', m.data);
         es.close();
         close(done);
       };
