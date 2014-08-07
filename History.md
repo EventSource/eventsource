@@ -1,3 +1,7 @@
+# [0.1.2](https://github.com/aslakhellesoy/eventsource-node/compare/v0.1.1...v0.1.2)
+
+* Bugfix: Blank lines not read. ([#35](https://github.com/aslakhellesoy/eventsource-node/issues/35), [#36](https://github.com/aslakhellesoy/eventsource-node/pull/36) Lesterpig)
+
 # [0.1.1](https://github.com/aslakhellesoy/eventsource-node/compare/v0.1.0...v0.1.1)
 
 * Bugfix: Fix message type. ([#33](https://github.com/aslakhellesoy/eventsource-node/pull/33) Romain Gauthier)
