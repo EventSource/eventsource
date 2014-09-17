@@ -1,3 +1,7 @@
+# [0.1.3](https://github.com/aslakhellesoy/eventsource-node/compare/v0.1.2...v0.1.3)
+
+* Bugfix: Made message properties enumerable. ([#37](https://github.com/aslakhellesoy/eventsource-node/pull/37) Golo Roden)
+
 # [0.1.2](https://github.com/aslakhellesoy/eventsource-node/compare/v0.1.1...v0.1.2)
 
 * Bugfix: Blank lines not read. ([#35](https://github.com/aslakhellesoy/eventsource-node/issues/35), [#36](https://github.com/aslakhellesoy/eventsource-node/pull/36) Lesterpig)
