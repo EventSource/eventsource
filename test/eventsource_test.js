@@ -884,4 +884,17 @@ describe('Events', function () {
       }
     });
   });
+
+  it('populates messages with enumerable properties so they can be inspected via console.log().', function (done) {
+    createServer(["data: sample_data\n\n"], function (port, close) {
+      var es = new EventSource('http://localhost:' + port);
+      es.onmessage = function (m) {
+        var enumerableAttributes = Object.keys(m);
+        assert.notEqual(enumerableAttributes.indexOf("data"), -1);
+        assert.notEqual(enumerableAttributes.indexOf("type"), -1);
+        es.close();
+        close(done);
+      };
+    });
+  });
 });
