@@ -830,6 +830,17 @@ describe('Events', function () {
     });
   });
 
+  it('supplies the correct origin', function (done) {
+    createServer(["id: 123\ndata: sample_data\n\n"], function (port, close) {
+      var es = new EventSource('http://localhost:' + port);
+      es.onmessage = function (event) {
+        assert.equal(event.origin, 'http://localhost:'+ port);
+        es.close();
+        close(done);
+      }
+    });
+  });
+
   it('emits open event when connection is established', function (done) {
     createServer([], function (port, close) {
       var es = new EventSource('http://localhost:' + port);
