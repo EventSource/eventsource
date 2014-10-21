@@ -359,8 +359,9 @@ describe('HTTP Request', function () {
       function (port, close) {
         var url = 'http://localhost:' + port;
         var es = new EventSource(url);
-        es.onerror = function () {
+        es.onerror = function (err) {
           assert.ok(true, 'got error');
+          assert.equal(err.statusCode, 403);
           es.close();
           close(done);
         };
@@ -371,12 +372,31 @@ describe('HTTP Request', function () {
       });
   });
 
+  it('causes error event when response is 401', function (done) {
+    createServer(["id: 1\ndata: hello world\n\n"],
+      function (port, close) {
+        var url = 'http://localhost:' + port;
+        var es = new EventSource(url);
+        es.onerror = function (err) {
+          assert.ok(true, 'got error');
+          assert.equal(err.statusCode, 401);
+          es.close();
+          close(done);
+        };
+      },
+      function (req, res) {
+        res.writeHead(401, {'Content-Type': 'text/html'});
+        res.end();
+      });
+  });
+
   it('causes error event when response is 301 with missing location', function (done) {
     createServer([],
       function (port, close) {
         var url = 'http://localhost:' + port;
         var es = new EventSource(url);
-        es.onerror = function () {
+        es.onerror = function (err) {
+          assert.equal(err.statusCode, 301);
           es.close();
           close(done);
         };
@@ -424,7 +444,8 @@ describe('HTTP Request', function () {
       function (port, close) {
         var url = 'http://localhost:' + port;
         var es = new EventSource(url);
-        es.onerror = function () {
+        es.onerror = function (err) {
+          assert.equal(err.statusCode, 307);
           es.close();
           close(done);
         };
