@@ -56,18 +56,16 @@ var es = new EventSource(url, eventSourceInitDict);
 
 Note that for Node.js < v0.10.x this option has no effect - unauthorized HTTPS requests are *always* allowed.
 
-### Status code on error events
+### HTTP status code on error events
 
-Unauthorized and redirect errors status codes (for example 401, 403, 301, 307) are returned as statusCode property in the error event.
+Unauthorized and redirect error status codes (for example 401, 403, 301, 307) are available in the `status` property in the error event.
 
 ```
 es.onerror = function (err) {
   if (err) {
-    if (err.statusCode === 401 || err.statusCode === 403) {
+    if (err.status === 401 || err.status === 403) {
       console.log('not authorized');
     }
   }
 };
 ```
-
-

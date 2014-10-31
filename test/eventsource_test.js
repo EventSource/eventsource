@@ -361,7 +361,7 @@ describe('HTTP Request', function () {
         var es = new EventSource(url);
         es.onerror = function (err) {
           assert.ok(true, 'got error');
-          assert.equal(err.statusCode, 403);
+          assert.equal(err.status, 403);
           es.close();
           close(done);
         };
@@ -379,7 +379,7 @@ describe('HTTP Request', function () {
         var es = new EventSource(url);
         es.onerror = function (err) {
           assert.ok(true, 'got error');
-          assert.equal(err.statusCode, 401);
+          assert.equal(err.status, 401);
           es.close();
           close(done);
         };
@@ -396,7 +396,7 @@ describe('HTTP Request', function () {
         var url = 'http://localhost:' + port;
         var es = new EventSource(url);
         es.onerror = function (err) {
-          assert.equal(err.statusCode, 301);
+          assert.equal(err.status, 301);
           es.close();
           close(done);
         };
@@ -445,7 +445,7 @@ describe('HTTP Request', function () {
         var url = 'http://localhost:' + port;
         var es = new EventSource(url);
         es.onerror = function (err) {
-          assert.equal(err.statusCode, 307);
+          assert.equal(err.status, 307);
           es.close();
           close(done);
         };
