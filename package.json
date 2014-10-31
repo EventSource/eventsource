@@ -38,6 +38,6 @@
     "node": ">=0.6.0"
   },
   "dependencies": {
-    "original": "^0.0.5"
+    "original": ">=0.0.5"
   }
 }
