@@ -1,5 +1,6 @@
 # [Git master HEAD](https://github.com/aslakhellesoy/eventsource-node/compare/v0.1.3...master)
 
+* Bugfix: Added missing origin property. ([#39](https://github.com/aslakhellesoy/eventsource-node/pull/39), [#38](https://github.com/aslakhellesoy/eventsource-node/issues/38) Arnout Kazemier)
 * Expose `status` property on `error` events. ([#40](https://github.com/aslakhellesoy/eventsource-node/pull/40) Adriano Raiano)
 
 # [0.1.3](https://github.com/aslakhellesoy/eventsource-node/compare/v0.1.2...v0.1.3)
