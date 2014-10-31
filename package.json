@@ -10,19 +10,6 @@
   ],
   "homepage": "http://github.com/aslakhellesoy/eventsource-node",
   "author": "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
-  "contributors": [
-    "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
-    "Einar Otto Stangvik <einaros+gh@gmail.com>",
-    "Dan North <tastapod@gmail.com>",
-    "Scott Moak <scott.moak@mybrainoncode.com>",
-    "William Wicks",
-    "Devon Adkisson",
-    "FrozenCow <frozencow@gmail.com>",
-    "mbieser <29erpilot@gmail.com>",
-    "qqueue <queue@hakase.org>",
-    "Romain Gauthier",
-    "Lesterpig <loick.bt@gmail.com>"
-  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/aslakhellesoy/eventsource-node.git"
@@ -44,12 +31,13 @@
     "mocha": ">=1.21.4"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec"
+    "test": "mocha --reporter spec",
+    "postpublish": "git push && git push --tags"
   },
   "engines": {
     "node": ">=0.6.0"
   },
   "dependencies": {
-    "original": "0.0.x"
+    "original": "^0.0.5"
   }
 }
