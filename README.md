@@ -49,7 +49,7 @@ var es = new EventSource(url, eventSourceInitDict);
 By default, https requests that cannot be authorized will cause connection to fail and an exception
 to be emitted. You can override this behaviour:
 
-```
+```javascript
 var eventSourceInitDict = {rejectUnauthorized: false};
 var es = new EventSource(url, eventSourceInitDict);
 ```
@@ -60,7 +60,7 @@ Note that for Node.js < v0.10.x this option has no effect - unauthorized HTTPS r
 
 Unauthorized and redirect error status codes (for example 401, 403, 301, 307) are available in the `status` property in the error event.
 
-```
+```javascript
 es.onerror = function (err) {
   if (err) {
     if (err.status === 401 || err.status === 403) {
