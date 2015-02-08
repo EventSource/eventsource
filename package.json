@@ -1,6 +1,6 @@
 {
   "name": "eventsource",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "W3C compliant EventSource client for Node.js",
   "keywords": [
     "eventsource",
