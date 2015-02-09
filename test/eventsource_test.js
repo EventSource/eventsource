@@ -350,7 +350,7 @@ describe('HTTP Request', function () {
     });
   });
 
-  it('sets headers by user', function (done) {
+  it('sets request headers', function (done) {
     var server = createServer(function (err, server) {
       if (err) return done(err);
 
@@ -370,7 +370,7 @@ describe('HTTP Request', function () {
     });
   });
 
-  it('sets undefined headers by user', function (done) {
+  it("does not set request headers that don't have a value", function (done) {
     var server = createServer(function (err, server) {
       if (err) return done(err);
 
@@ -386,7 +386,7 @@ describe('HTTP Request', function () {
         'User-Agent': 'test',
         'Cookie': 'test=test',
         'Last-Event-ID': '99',
-        'X-Something': undefined
+        'X-Something': null
       };
 
       assert.doesNotThrow(

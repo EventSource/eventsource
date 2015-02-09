@@ -1,3 +1,7 @@
+# [0.1.6](https://github.com/aslakhellesoy/eventsource-node/compare/v0.1.5...v0.1.6)
+
+* Refactor tests to support Node.js 0.12.0 and Io.js 1.1.0. ([#41](https://github.com/aslakhellesoy/eventsource-node/issues/41), [#43](https://github.com/aslakhellesoy/eventsource-node/pull/43) Adriano Raiano)
+
 # [0.1.5](https://github.com/aslakhellesoy/eventsource-node/compare/v0.1.4...v0.1.5)
 
 * Refactor tests to support Node.js 0.12.0 and Io.js 1.1.0. (Aslak Hellesøy)
