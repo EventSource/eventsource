@@ -364,7 +364,8 @@ describe('HTTP Request', function () {
       var headers = {
         'User-Agent': 'test',
         'Cookie': 'test=test',
-        'Last-Event-ID': '99'
+        'Last-Event-ID': '99',
+        'X-something': undefined
       };
       new EventSource(server.url, {headers: headers});
     });
