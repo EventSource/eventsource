@@ -370,6 +370,33 @@ describe('HTTP Request', function () {
     });
   });
 
+  it('sets undefined headers by user', function (done) {
+    var server = createServer(function (err, server) {
+      if (err) return done(err);
+
+      server.on('request', function (req) {
+        assert.equal(req.headers['user-agent'], 'test');
+        assert.equal(req.headers['cookie'], 'test=test');
+        assert.equal(req.headers['last-event-id'], '99');
+        assert.equal(req.headers['X-Something'], undefined);
+        server.close(done);
+      });
+
+      var headers = {
+        'User-Agent': 'test',
+        'Cookie': 'test=test',
+        'Last-Event-ID': '99',
+        'X-Something': undefined
+      };
+
+      assert.doesNotThrow(
+        function() {
+          new EventSource(server.url, {headers: headers});
+        }
+      );
+    });
+  });
+
   [301, 307].forEach(function (status) {
     it('follows http ' + status + ' redirect', function (done) {
       var redirectSuffix = '/foobar';
