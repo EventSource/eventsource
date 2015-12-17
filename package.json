@@ -21,6 +21,7 @@
     "lib": "./lib"
   },
   "main": "./lib/eventsource",
+  "license": "MIT",
   "licenses": [
     {
       "type": "MIT",
@@ -28,7 +29,7 @@
     }
   ],
   "devDependencies": {
-    "mocha": ">=1.21.4"
+    "mocha": ">=2.3.2"
   },
   "scripts": {
     "test": "mocha --reporter spec",
@@ -38,6 +39,6 @@
     "node": ">=0.8.0"
   },
   "dependencies": {
-    "original": ">=0.0.5"
+    "original": ">=1.0.0"
   }
 }
