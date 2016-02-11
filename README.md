@@ -21,6 +21,24 @@ You can use it with Node.js or as a browser polyfill for
     open http://localhost:8080     (Browser client - both native and polyfill)
     curl http://localhost:8080/sse (Enjoy the simplicity of SSE)
 
+## Browser Polyfill
+
+Just add `example/eventsource-polyfill.js` file to your web page:
+
+```html
+<script src=/eventsource-polyfill.js></script>
+```
+
+Now you will have two global constructors:
+
+```javascript
+window.EventSourcePolyfill
+window.EventSource // Unchanged if browser has defined it. Otherwise, same as window.EventSourcePolyfill
+```
+
+If you're using [webpack](https://webpack.github.io/) or [browserify](http://browserify.org/)
+you can of course build your own. (The `example/eventsource-polyfill.js` is built with webpack).
+
 ## Extensions to the W3C API
 
 ### Setting HTTP request headers
