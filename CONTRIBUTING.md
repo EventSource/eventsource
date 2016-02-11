@@ -7,5 +7,7 @@ If you add or fix something, add tests.
 Update `History.md`, Then:
 
     npm outdated --depth 0 # See if you can upgrade something
+    npm run polyfill
+    git commit ...
     npm version [major|minor|patch]
     npm publish

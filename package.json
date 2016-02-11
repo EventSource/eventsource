@@ -30,9 +30,9 @@
   ],
   "devDependencies": {
     "express": "^4.13.4",
-    "mocha": ">=2.3.2",
+    "mocha": "^2.4.5",
     "serve-static": "^1.10.2",
-    "sse": "0.0.6",
+    "sse": "^0.0.6",
     "webpack": "^1.12.13"
   },
   "scripts": {
@@ -44,6 +44,6 @@
     "node": ">=0.8.0"
   },
   "dependencies": {
-    "original": ">=1.0.0"
+    "original": "^1.0.0"
   }
 }
