@@ -4,7 +4,7 @@
 [![NPM](https://nodei.co/npm/eventsource.png?stars&downloads)](https://nodei.co/npm/eventsource/)
 [![NPM](https://nodei.co/npm-dl/eventsource.png)](https://nodei.co/npm/eventsource/)
 
-This library implements the [EventSource](http://dev.w3.org/html5/eventsource/) client for Node.js. The API aims to be W3C compatible.
+This library implements the [EventSource](http://www.w3.org/TR/eventsource/) client for Node.js. The API aims to be W3C compatible.
 
 ## Install
 
@@ -16,10 +16,10 @@ This library implements the [EventSource](http://dev.w3.org/html5/eventsource/) 
 var EventSource = require('eventsource');
 
 var es = new EventSource('http://demo-eventsource.rhcloud.com/');
-es.onmessage = function(e) {
-  console.log(e.data);
+es.onmessage = function(evt) {
+  console.log(evt.data);
 };
-es.onerror = function() {
+es.onerror = function(evt) {
   console.log('ERROR!');
 };
 ```
