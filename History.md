@@ -1,3 +1,7 @@
+# [Unreleased](https://github.com/aslakhellesoy/eventsource-node/compare/v0.1.6...master)
+
+* Compatibility with webpack/browserify. ([#44](https://github.com/aslakhellesoy/eventsource-node/pull/44) Adriano Raiano).
+
 # [0.1.6](https://github.com/aslakhellesoy/eventsource-node/compare/v0.1.5...v0.1.6)
 
 * Ignore headers without a value. ([#41](https://github.com/aslakhellesoy/eventsource-node/issues/41), [#43](https://github.com/aslakhellesoy/eventsource-node/pull/43) Adriano Raiano)
