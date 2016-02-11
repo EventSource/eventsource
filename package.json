@@ -29,10 +29,15 @@
     }
   ],
   "devDependencies": {
-    "mocha": ">=2.3.2"
+    "express": "^4.13.4",
+    "mocha": ">=2.3.2",
+    "serve-static": "^1.10.2",
+    "sse": "0.0.6",
+    "webpack": "^1.12.13"
   },
   "scripts": {
     "test": "mocha --reporter spec",
+    "polyfill": "webpack lib/eventsource-polyfill.js example/eventsource-polyfill.js",
     "postpublish": "git push && git push --tags"
   },
   "engines": {

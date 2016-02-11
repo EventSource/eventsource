@@ -1,0 +1,20 @@
+<ul id=es-messages>
+</ul>
+
+<ul id=es-polyfill-messages>
+</ul>
+
+<script src=/eventsource-polyfill.js></script>
+
+<script>
+function subscribe(es, ul) {
+  es.addEventListener('server-time', function (e) {
+    var li = document.createElement("LI");
+    li.appendChild(document.createTextNode(e.data));
+    ul.appendChild(li);
+  });
+}
+
+subscribe(new EventSource('/sse'),         document.getElementById('es-messages'));
+subscribe(new EventSourcePolyfill('/sse'), document.getElementById('es-polyfill-messages'));
+</script>

@@ -10,25 +10,13 @@ This library implements the [EventSource](http://www.w3.org/TR/eventsource/) cli
 
     npm install eventsource
 
-## Usage
-
-```javascript
-var EventSource = require('eventsource');
-
-var es = new EventSource('http://demo-eventsource.rhcloud.com/');
-es.onmessage = function(evt) {
-  console.log(evt.data);
-};
-es.onerror = function(evt) {
-  console.log('ERROR!');
-};
-```
-
-See the [spec](http://dev.w3.org/html5/eventsource/) for API docs.
-
 ## Example
 
-See https://github.com/einaros/sse-example
+    npm install
+    node ./examples/sse-server.js
+    node ./examples/sse-client.js  (Node.js client)
+    open http://localhost:8080     (Browser client - both native and polyfill)
+    curl http://localhost:8080/sse (Enjoy the simplicity of SSE)
 
 ## Extensions to the W3C API
 
