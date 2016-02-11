@@ -1,21 +1,22 @@
 {
   "name": "eventsource",
   "version": "0.2.0",
-  "description": "W3C compliant EventSource client for Node.js",
+  "description": "W3C compliant EventSource client for Node.js and browser (polyfill)",
   "keywords": [
     "eventsource",
     "http",
     "streaming",
-    "sse"
+    "sse",
+    "polyfill"
   ],
-  "homepage": "http://github.com/aslakhellesoy/eventsource-node",
+  "homepage": "http://github.com/aslakhellesoy/eventsource",
   "author": "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git://github.com/aslakhellesoy/eventsource-node.git"
+    "url": "git://github.com/aslakhellesoy/eventsource.git"
   },
   "bugs": {
-    "url": "http://github.com/aslakhellesoy/eventsource-node/issues"
+    "url": "http://github.com/aslakhellesoy/eventsource/issues"
   },
   "directories": {
     "lib": "./lib"
@@ -25,7 +26,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/aslakhellesoy/eventsource-node/raw/master/LICENSE"
+      "url": "http://github.com/aslakhellesoy/eventsource/raw/master/LICENSE"
     }
   ],
   "devDependencies": {
