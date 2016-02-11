@@ -16,9 +16,9 @@ You can use it with Node.js or as a browser polyfill for
 
     npm install
     node ./example/sse-server.js
-    node ./example/sse-client.js  (Node.js client)
-    open http://localhost:8080     (Browser client - both native and polyfill)
-    curl http://localhost:8080/sse (Enjoy the simplicity of SSE)
+    node ./example/sse-client.js    # Node.js client
+    open http://localhost:8080      # Browser client - both native and polyfill)
+    curl http://localhost:8080/sse  # Enjoy the simplicity of SSE)
 
 ## Browser Polyfill
 
