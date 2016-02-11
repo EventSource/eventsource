@@ -4,7 +4,10 @@
 [![NPM](https://nodei.co/npm/eventsource.png?stars&downloads)](https://nodei.co/npm/eventsource/)
 [![NPM](https://nodei.co/npm-dl/eventsource.png)](https://nodei.co/npm/eventsource/)
 
-This library implements the [EventSource](http://www.w3.org/TR/eventsource/) client for Node.js. The API aims to be W3C compatible.
+This library is a pure JavaScript implementation of the [EventSource](http://www.w3.org/TR/eventsource/) client. The API aims to be W3C compatible.
+
+You can use it with Node.js or as a browser polyfill for
+[browsers that don't have native `EventSource` support](http://caniuse.com/#search=eventsource).
 
 ## Install
 
@@ -13,8 +16,8 @@ This library implements the [EventSource](http://www.w3.org/TR/eventsource/) cli
 ## Example
 
     npm install
-    node ./examples/sse-server.js
-    node ./examples/sse-client.js  (Node.js client)
+    node ./example/sse-server.js
+    node ./example/sse-client.js  (Node.js client)
     open http://localhost:8080     (Browser client - both native and polyfill)
     curl http://localhost:8080/sse (Enjoy the simplicity of SSE)
 
