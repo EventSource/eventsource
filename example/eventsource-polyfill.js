@@ -67,7 +67,7 @@
 	 * Creates a new EventSource object
 	 *
 	 * @param {String} url the URL to which to connect
-	 * @param {Object} eventSourceInitDict extra init params. See README for details.
+	 * @param {Object} [eventSourceInitDict] extra init params. See README for details.
 	 * @api public
 	 **/
 	function EventSource(url, eventSourceInitDict) {
@@ -86,11 +86,9 @@
 
 	  var self = this;
 	  self.reconnectInterval = 1000;
-	  var connectPending = false;
 
 	  function onConnectionClosed() {
-	    if (connectPending || readyState === EventSource.CLOSED) return;
-	    connectPending = true;
+	    if (readyState === EventSource.CLOSED) return;
 	    readyState = EventSource.CONNECTING;
 	    _emit('error', new Event('error'));
 
@@ -122,7 +120,6 @@
 	  var reconnectUrl = null;
 
 	  function connect() {
-	    connectPending = false;
 
 	    var options = parse(url);
 	    var isSecure = options.protocol == 'https:';
@@ -155,7 +152,8 @@
 
 	      if (res.statusCode !== 200) {
 	        _emit('error', new Event('error', {status: res.statusCode}));
-	        return self.close();
+	        if (res.statusCode == 204) return self.close();
+	        return
 	      }
 
 	      readyState = EventSource.OPEN;

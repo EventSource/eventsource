@@ -1,3 +1,7 @@
+# [Unreleased](https://github.com/aslakhellesoy/eventsource/compare/v0.2.0...master)
+
+* Fix reconnect for polyfill. Only disable reconnect when server status is 204. (Aslak Hellesøy).
+
 # [0.2.0](https://github.com/aslakhellesoy/eventsource/compare/v0.1.6...v0.2.0)
 
 * Renamed repository to `eventsource` (since it's not just Node, but also browser polyfill). (Aslak Hellesøy).
