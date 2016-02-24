@@ -1,6 +1,7 @@
 # [Unreleased](https://github.com/aslakhellesoy/eventsource/compare/v0.2.0...master)
 
 * Fix reconnect for polyfill. Only disable reconnect when server status is 204. (Aslak Hellesøy).
+* Drop support for Node 0.10.x and older
 
 # [0.2.0](https://github.com/aslakhellesoy/eventsource/compare/v0.1.6...v0.2.0)
 
