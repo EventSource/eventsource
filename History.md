@@ -1,4 +1,4 @@
-# [Unreleased](https://github.com/aslakhellesoy/eventsource-node/compare/v0.1.6...v0.2.0)
+# [0.2.0](https://github.com/aslakhellesoy/eventsource-node/compare/v0.1.6...v0.2.0)
 
 * Renamed repository to `eventsource` (since it's not just Node, but also browser polyfill). (Aslak Hellesøy).
 * Compatibility with webpack/browserify. ([#44](https://github.com/aslakhellesoy/eventsource-node/pull/44) Adriano Raiano).
