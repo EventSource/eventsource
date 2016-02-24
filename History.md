@@ -1,7 +1,8 @@
 # [Unreleased](https://github.com/aslakhellesoy/eventsource/compare/v0.2.0...master)
 
+* Add http/https proxy function. ([#46](https://github.com/aslakhellesoy/eventsource/pull/46) Eric Lu)
 * Fix reconnect for polyfill. Only disable reconnect when server status is 204. (Aslak Hellesøy).
-* Drop support for Node 0.10.x and older
+* Drop support for Node 0.10.x and older (Aslak Hellesøy).
 
 # [0.2.0](https://github.com/aslakhellesoy/eventsource/compare/v0.1.6...v0.2.0)
 
