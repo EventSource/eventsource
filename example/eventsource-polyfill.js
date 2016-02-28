@@ -240,6 +240,7 @@
 	    if (readyState == EventSource.CLOSED) return;
 	    readyState = EventSource.CLOSED;
 	    if (req.abort) req.abort();
+	    if (req.xhr && req.xhr.abort) req.xhr.abort();
 	  };
 
 	  function parseEventStreamLine(buf, pos, fieldLength, lineLength) {

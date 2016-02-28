@@ -1,4 +1,4 @@
-# [Unreleased](https://github.com/aslakhellesoy/eventsource/compare/v0.2.0...master)
+# [0.2.1](https://github.com/aslakhellesoy/eventsource/compare/v0.2.0...v0.2.1)
 
 * Fix `close()` for polyfill. ([#52](https://github.com/aslakhellesoy/eventsource/pull/52) brian-medendorp)
 * Add http/https proxy function. ([#46](https://github.com/aslakhellesoy/eventsource/pull/46) Eric Lu)
