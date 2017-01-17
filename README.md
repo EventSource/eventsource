@@ -1,4 +1,4 @@
-# EventSource [![Build Status](https://secure.travis-ci.org/aslakhellesoy/eventsource.svg)](http://travis-ci.org/aslakhellesoy/eventsource) [![Dependencies](https://david-dm.org/aslakhellesoy/eventsource.svg)](https://david-dm.org/aslakhellesoy/eventsource)
+# EventSource [![Build Status](https://secure.travis-ci.org/EventSource/eventsource.svg)](http://travis-ci.org/EventSource/eventsource) [![Dependencies](https://david-dm.org/EventSource/eventsource.svg)](https://david-dm.org/EventSource/eventsource)
 
 [![NPM](https://nodei.co/npm/eventsource.png?stars&downloads)](https://nodei.co/npm/eventsource/)
 [![NPM](https://nodei.co/npm-dl/eventsource.png)](https://nodei.co/npm/eventsource/)
