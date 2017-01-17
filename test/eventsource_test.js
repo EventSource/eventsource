@@ -683,12 +683,16 @@ describe('readyState', function () {
     assert.equal(0, EventSource.CONNECTING);
   });
 
+  it('has CONNECT_ERROR constant', function () {
+    assert.equal(1, EventSource.CONNECT_ERROR);
+  });
+
   it('has OPEN constant', function () {
-    assert.equal(1, EventSource.OPEN);
+    assert.equal(2, EventSource.OPEN);
   });
 
   it('has CLOSED constant', function () {
-    assert.equal(2, EventSource.CLOSED);
+    assert.equal(3, EventSource.CLOSED);
   });
 
   it('is CONNECTING before connection has been established', function (done) {
