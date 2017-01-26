@@ -1,7 +1,4 @@
-# EventSource [![Build Status](https://secure.travis-ci.org/EventSource/eventsource.svg)](http://travis-ci.org/EventSource/eventsource) [![Dependencies](https://david-dm.org/EventSource/eventsource.svg)](https://david-dm.org/EventSource/eventsource)
-
-[![NPM](https://nodei.co/npm/eventsource.png?stars&downloads)](https://nodei.co/npm/eventsource/)
-[![NPM](https://nodei.co/npm-dl/eventsource.png)](https://nodei.co/npm/eventsource/)
+# EventSource [![Build Status](https://secure.travis-ci.org/EventSource/eventsource.svg)](http://travis-ci.org/EventSource/eventsource) [![NPM Downloads](https://img.shields.io/npm/dm/eventsource.svg?style=flat-square)](http://npm-stat.com/charts.html?package=eventsource&from=2015-09-01) [![Dependencies](https://david-dm.org/EventSource/eventsource.svg)](https://david-dm.org/EventSource/eventsource)
 
 This library is a pure JavaScript implementation of the [EventSource](http://www.w3.org/TR/eventsource/) client. The API aims to be W3C compatible.
 
