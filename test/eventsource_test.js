@@ -872,4 +872,23 @@ describe('Events', function () {
       };
     });
   });
+
+  it('will timeout after 3s.', function (done) {
+    this.timeout(5000)
+    createServer(function (err, server) {
+      if(err) return done(err);
+
+      server.on('request', writeEvents(["data: World\n\n"]));
+      var es = new EventSource(server.url, {timeout: 3000});
+
+      es.onmessage = function (m) {
+        assert.equal("World", m.data);        
+        // server.close(done);
+      };
+      es.addEventListener('timeout', function() {
+        console.log('in timeout')
+        server.close(done)
+      })
+    });
+  });
 });

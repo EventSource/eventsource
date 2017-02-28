@@ -61,6 +61,14 @@ var es = new EventSource(url, eventSourceInitDict);
 
 Note that for Node.js < v0.10.x this option has no effect - unauthorized HTTPS requests are *always* allowed.
 
+### message timeout
+
+set timeout of this eventsource, if set, it will emit `timeout` when there's no message in xxx ms
+
+```javascript
+var es = new EventSource(url, {timeout: 2000}) //if there's no message in 2000ms ,this will emit timeout event
+```
+
 ### HTTP status code on error events
 
 Unauthorized and redirect error status codes (for example 401, 403, 301, 307) are available in the `status` property in the error event.
