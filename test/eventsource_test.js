@@ -21,8 +21,8 @@ function createServer(callback) {
 
 function createHttpsServer(callback) {
   var options = {
-    key: fs.readFileSync(path.join(__dirname, 'fixtures', 'key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, 'fixtures', 'certificate.pem'))
+    key: fs.readFileSync(path.join(__dirname, 'server_certs', 'key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, 'server_certs', 'certificate.pem'))
   };
   var server = https.createServer(options);
   configureServer(server, 'https', _port++, callback);
