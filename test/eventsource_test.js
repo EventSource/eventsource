@@ -463,6 +463,8 @@ describe('HTTP Request', function () {
 
         var es = new EventSource(server.url);
         es.onerror = function (err) {
+          if(this.readyState === EventSource.CLOSED) return
+
           assert.equal(err.status, status);
           server.close(done);
         };
@@ -589,6 +591,8 @@ describe('Reconnection', function () {
       es.reconnectInterval = 0;
 
       es.onerror = function (e) {
+        if(this.readyState === EventSource.CLOSED) return
+
         assert.equal(e.status, 204);
         server.close(function (err) {
           if(err) return done(err);
@@ -696,6 +700,8 @@ describe('readyState', function () {
     var es = new EventSource('http://localhost:' + _port);
     assert.equal(EventSource.CONNECTING, es.readyState);
     es.onerror = function () {
+      if(this.readyState === EventSource.CLOSED) return
+
       es.close();
       done();
     }
@@ -836,10 +842,12 @@ describe('Events', function () {
       es.addEventListener('open', function () {
         es.close();
         process.nextTick(function () {
-          server.close(done);
+          server.close();
         });
       });
       es.addEventListener('error', function () {
+        if(this.readyState === EventSource.CLOSED) return done()
+
         done(new Error('error should not be emitted'));
       });
     });
