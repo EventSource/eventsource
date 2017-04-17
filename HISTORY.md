@@ -1,3 +1,10 @@
+# [1.0.0](https://github.com/EventSource/eventsource/compare/v0.2.3...v1.0.0)
+
+* Add missing `removeEventListener`-method. ([#51](https://github.com/EventSource/eventsource/pull/51) Yucheng Tu / Espen Hovlandsdal)
+* Fix EventSource reconnecting on non-200 responses. ([af84476](https://github.com/EventSource/eventsource/commit/af84476b519a01e61b8c80727261df52ae40022c) Espen Hovlandsdal)
+* Add ability to customize https options. ([#53](https://github.com/EventSource/eventsource/pull/53) Rafael Alfaro)
+* Add readyState constants to EventSource instances. ([#66](https://github.com/EventSource/eventsource/pull/66) Espen Hovlandsdal)
+
 # [0.2.3](https://github.com/EventSource/eventsource/compare/v0.2.2...v0.2.3)
 
 * Fix `onConnectionClosed` firing multiple times resulting in multiple connections. ([#61](https://github.com/EventSource/eventsource/pull/61) Phil Strong / Duncan Wong)
