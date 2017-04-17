@@ -9,14 +9,14 @@
     "sse",
     "polyfill"
   ],
-  "homepage": "http://github.com/aslakhellesoy/eventsource",
+  "homepage": "http://github.com/EventSource/eventsource",
   "author": "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git://github.com/aslakhellesoy/eventsource.git"
+    "url": "git://github.com/EventSource/eventsource.git"
   },
   "bugs": {
-    "url": "http://github.com/aslakhellesoy/eventsource/issues"
+    "url": "http://github.com/EventSource/eventsource/issues"
   },
   "directories": {
     "lib": "./lib"
@@ -26,7 +26,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/aslakhellesoy/eventsource/raw/master/LICENSE"
+      "url": "http://github.com/EventSource/eventsource/raw/master/LICENSE"
     }
   ],
   "devDependencies": {
