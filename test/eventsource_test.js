@@ -28,6 +28,19 @@ function createHttpsServer(callback) {
   configureServer(server, 'https', _port++, callback);
 }
 
+function createHttpsServerWithClientAuth(callback) {
+  var options = {
+    key: fs.readFileSync(__dirname + '/client_certs/server_key.pem'),
+    cert: fs.readFileSync(__dirname + '/client_certs/server_cert.crt'),
+    ca: fs.readFileSync(__dirname + '/client_certs/cacert.crt'),
+    passphrase:'test1234$',
+    requestCert: true,
+    rejectAuthorized:true
+  };
+  var server = https.createServer(options);
+  configureServer(server, 'https', _port++, callback);
+}
+
 function configureServer(server, protocol, port, callback) {
   var responses = [];
 
@@ -503,6 +516,32 @@ describe('HTTPS Support', function () {
       server.on('request', writeEvents(["data: hello\n\n"]));
       var es = new EventSource(server.url, {rejectUnauthorized: false});
 
+      es.onmessage = function (m) {
+        assert.equal("hello", m.data);
+        server.close(done);
+      }
+    });
+  });
+});
+
+describe('HTTPS Client Certificate Support', function () {
+  it('uses client certificate for https urls', function (done) {
+    this.timeout(1500000);
+    createHttpsServerWithClientAuth(function (err, server) {
+      if(err) return done(err);
+
+      server.on('request', writeEvents(["data: hello\n\n"]));
+      var es = new EventSource(server.url,
+          {
+            options:{
+              key: fs.readFileSync(__dirname + '/client_certs/client_key.pem'),
+              cert: fs.readFileSync(__dirname + '/client_certs/client_cert.crt'),
+              ca: fs.readFileSync(__dirname + '/client_certs/cacert.crt'),
+              passphrase:'test1234$',
+              rejectUnauthorized: true
+            }
+          }
+      );
       es.onmessage = function (m) {
         assert.equal("hello", m.data);
         server.close(done);
