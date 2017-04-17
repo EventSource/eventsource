@@ -31,10 +31,10 @@
   ],
   "devDependencies": {
     "express": "^4.13.4",
-    "mocha": "^2.4.5",
+    "mocha": "^3.2.0",
     "serve-static": "^1.10.2",
     "sse": "^0.0.6",
-    "webpack": "^1.12.14"
+    "webpack": "^2.4.1"
   },
   "scripts": {
     "test": "mocha --reporter spec",
