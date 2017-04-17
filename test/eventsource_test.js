@@ -500,6 +500,7 @@ describe('HTTP Request', function () {
 
         var es = new EventSource(server.url);
         es.onerror = function (err) {
+          assert.equal(server.readyState, EventSource.CLOSED);
           assert.equal(err.status, status);
           server.close(done);
         };
