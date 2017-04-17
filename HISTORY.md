@@ -1,3 +1,8 @@
+# [0.2.3](https://github.com/EventSource/eventsource/compare/v0.2.2...v0.2.3)
+
+* Fix `onConnectionClosed` firing multiple times resulting in multiple connections. ([#61](https://github.com/EventSource/eventsource/pull/61) Phil Strong / Duncan Wong)
+* Remove unneeded isPlainObject check for headers. ([#64](https://github.com/EventSource/eventsource/pull/64) David Mark)
+
 # [0.2.2](https://github.com/EventSource/eventsource/compare/v0.2.1...v0.2.2)
 
 * Don't include test files in npm package. ([#56](https://github.com/EventSource/eventsource/pull/56) eanplatter)
