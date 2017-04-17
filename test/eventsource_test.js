@@ -762,6 +762,18 @@ describe('readyState', function () {
     assert.equal(2, EventSource.CLOSED)
   })
 
+  it('has readystate constants on instances', function (done) {
+    var es = new EventSource('http://localhost:' + _port)
+    assert.equal(EventSource.CONNECTING, es.CONNECTING, 'constant CONNECTING missing/invalid')
+    assert.equal(EventSource.OPEN, es.OPEN, 'constant OPEN missing/invalid')
+    assert.equal(EventSource.CLOSED, es.CLOSED, 'constant CLOSED missing/invalid')
+
+    es.onerror = function () {
+      es.close()
+      done()
+    }
+  })
+
   it('is CONNECTING before connection has been established', function (done) {
     var es = new EventSource('http://localhost:' + _port)
     assert.equal(EventSource.CONNECTING, es.readyState)
