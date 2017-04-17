@@ -34,10 +34,11 @@
     "mocha": "^3.2.0",
     "serve-static": "^1.10.2",
     "sse": "^0.0.6",
+    "standard": "^10.0.2",
     "webpack": "^2.4.1"
   },
   "scripts": {
-    "test": "mocha --reporter spec",
+    "test": "mocha --reporter spec && standard",
     "polyfill": "webpack lib/eventsource-polyfill.js example/eventsource-polyfill.js",
     "postpublish": "git push && git push --tags"
   },
@@ -46,5 +47,10 @@
   },
   "dependencies": {
     "original": "^1.0.0"
+  },
+  "standard": {
+    "ignore": [
+      "example/eventsource-polyfill.js"
+    ]
   }
 }
