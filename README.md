@@ -15,7 +15,7 @@ You can use it with Node.js or as a browser polyfill for
     node ./example/sse-server.js
     node ./example/sse-client.js    # Node.js client
     open http://localhost:8080      # Browser client - both native and polyfill
-    curl http://localhost:8080/sse  # Enjoy the simplicity of SSE)
+    curl http://localhost:8080/sse  # Enjoy the simplicity of SSE
 
 ## Browser Polyfill
 
@@ -82,3 +82,8 @@ You can define a `proxy` option for the HTTP request to be used. This is typical
 ```javascript
 var es = new EventSource(url, {proxy: 'http://your.proxy.com'});
 ```
+
+
+## License
+
+MIT-licensed. See LICENSE
