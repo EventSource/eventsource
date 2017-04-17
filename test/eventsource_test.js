@@ -231,19 +231,32 @@ describe('Parser', function () {
     });
   });
 
-  it('delivers message with explicit event', function (done) {
+  it('raises an event with a specific key when a message has the event set', function (done) {
+    raiseEventAndCheck('greeting','greeting', done);
+  });
+
+  it('raises an event with a generic \'message\' key when a message has the event set', function (done) {
+    raiseEventAndCheck('greeting','message', done);
+  });
+
+  it('raises an event with a generic \'message\' key when the event is not set', function (done) {
+    raiseEventAndCheck('','message', done);
+  });
+
+  function raiseEventAndCheck(sseEventKey, eventListenerKey, done) {
     createServer(function (err, server) {
       if (err) return done(err);
 
-      server.on('request', writeEvents(["event: greeting\ndata: Hello\n\n"]));
+      var event = (sseEventKey ? "event: " + sseEventKey + "\n" : "") + "data: Hello\n\n";
+      server.on('request', writeEvents([event]));
       var es = new EventSource(server.url);
 
-      es.addEventListener('greeting', function (m) {
+      es.addEventListener(eventListenerKey, function (m) {
         assert.equal("Hello", m.data);
         server.close(done);
       });
     });
-  });
+  }
 
   it('allows removal of event listeners', function (done) {
     createServer(function (err, server) {
