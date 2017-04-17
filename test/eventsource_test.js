@@ -1,4 +1,5 @@
 var EventSource = require('../lib/eventsource')
+  , path = require('path')
   , http = require('http')
   , https = require('https')
   , fs = require('fs')
@@ -20,8 +21,8 @@ function createServer(callback) {
 
 function createHttpsServer(callback) {
   var options = {
-    key: fs.readFileSync(__dirname + '/key.pem'),
-    cert: fs.readFileSync(__dirname + '/certificate.pem')
+    key: fs.readFileSync(path.join(__dirname, 'fixtures', 'key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, 'fixtures', 'certificate.pem'))
   };
   var server = https.createServer(options);
   configureServer(server, 'https', _port++, callback);
