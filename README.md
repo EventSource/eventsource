@@ -52,10 +52,10 @@ var es = new EventSource(url, eventSourceInitDict);
 ### Allow unauthorized HTTPS requests
 
 By default, https requests that cannot be authorized will cause connection to fail and an exception
-to be emitted. You can override this behaviour:
+to be emitted. You can override this behaviour, along with other https options:
 
 ```javascript
-var eventSourceInitDict = {rejectUnauthorized: false};
+var eventSourceInitDict = {https: {rejectUnauthorized: false}};
 var es = new EventSource(url, eventSourceInitDict);
 ```
 
@@ -80,5 +80,5 @@ es.onerror = function (err) {
 You can define a `proxy` option for the HTTP request to be used. This is typically useful if you are behind a corporate firewall.
 
 ```javascript
-var es = new EventSource(url, { proxy: 'http://your.proxy.com' });
+var es = new EventSource(url, {proxy: 'http://your.proxy.com'});
 ```
