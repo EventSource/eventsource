@@ -1,3 +1,7 @@
+# [0.2.2](https://github.com/EventSource/eventsource/compare/v0.2.1...v0.2.2)
+
+* Don't include test files in npm package. ([#56](https://github.com/EventSource/eventsource/pull/56) eanplatter)
+
 # [0.2.1](https://github.com/EventSource/eventsource/compare/v0.2.0...v0.2.1)
 
 * Fix `close()` for polyfill. ([#52](https://github.com/EventSource/eventsource/pull/52) brian-medendorp)
