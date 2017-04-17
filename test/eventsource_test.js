@@ -232,6 +232,30 @@ describe('Parser', function () {
     });
   });
 
+  it('allows removal of event listeners', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err);
+
+      server.on('request', writeEvents(["event: greeting\ndata: Hello\n\n", "event: greeting\ndata: World\n\n"]));
+      var es = new EventSource(server.url);
+      var numCalled = 0;
+
+      function onGreeting(m) {
+        numCalled++;
+        assert.equal("Hello", m.data);
+        es.removeEventListener('greeting', onGreeting, false);
+        process.nextTick(scheduleDisconnect);
+      }
+
+      function scheduleDisconnect() {
+        assert.equal(1, numCalled);
+        server.close(done);
+      }
+
+      es.addEventListener('greeting', onGreeting, false);
+    });
+  });
+
   it('ignores comments', function (done) {
     createServer(function (err, server) {
       if (err) return done(err);
