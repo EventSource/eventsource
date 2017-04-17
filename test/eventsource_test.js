@@ -600,7 +600,7 @@ describe('Reconnection', function () {
     });
   });
 
-  it('is not attempted when server responds with HTTP 204', function (done) {
+  it('is not attempted when server responds with non-200', function (done) {
     createServer(function (err, server) {
       if(err) return done(err);
 
