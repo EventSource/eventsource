@@ -803,6 +803,28 @@ describe('Events', function () {
     });
   });
 
+  it('does not double reconnect when connection is closed by server', function (done) {
+    createServer(function (err, server) {
+      if(err) return done(err);
+
+      var numConnections = 0;
+      server.on('request', function (req, res) {
+        numConnections++;
+        writeEvents([])(req, res)
+
+        if (numConnections > 2) done(new Error('reopening too many connections'))
+        // destroy only the first connection - expected only 1 other reconnect
+        if (numConnections == 1){
+          process.nextTick(function (){
+            req.destroy()
+          })
+        }
+      });
+      var es = new EventSource(server.url);
+    });
+    setTimeout(done, 1500);
+  })
+
   it('does not emit error when connection is closed by client', function (done) {
     createServer(function (err, server) {
       if(err) return done(err);
