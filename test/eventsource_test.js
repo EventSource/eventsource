@@ -607,13 +607,17 @@ describe('Reconnection', function () {
 
       server.on('request', function (req, res) {
         res.writeHead(500)
-        res.end();
+        res.end()
       })
 
-      var es = new EventSource(server.url);
-      es.reconnectInterval = 0;
+      var es = new EventSource(server.url)
+      es.reconnectInterval = 0
+
+      var errored = false
 
       es.onerror = function () {
+        if (errored) return
+        errored = true
         server.close(function (err) {
           if (err) return done(err)
 
