@@ -601,6 +601,37 @@ describe('Reconnection', function () {
     })
   })
 
+  it('is attempted when the server responds with a 500', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err)
+
+      server.on('request', function (req, res) {
+        res.writeHead(500)
+        res.end();
+      })
+
+      var es = new EventSource(server.url);
+      es.reconnectInterval = 0;
+
+      es.onerror = function () {
+        server.close(function (err) {
+          if (err) return done(err)
+
+          var port = u.parse(es.url).port
+          configureServer(http.createServer(), 'http', port, function (err, server2) {
+            if (err) return done(err)
+
+            server2.on('request', writeEvents(['data: hello\n\n']))
+            es.onmessage = function (m) {
+              assert.equal('hello', m.data)
+              server2.close(done)
+            }
+          })
+        })
+      }
+    })
+  })
+
   it('is stopped when server goes down and eventsource is being closed', function (done) {
     createServer(function (err, server) {
       if (err) return done(err)
@@ -642,7 +673,7 @@ describe('Reconnection', function () {
     })
   })
 
-  it('is not attempted when server responds with non-200', function (done) {
+  it('is not attempted when server responds with non-200 and non-500', function (done) {
     createServer(function (err, server) {
       if (err) return done(err)
 
