@@ -12,10 +12,10 @@ var it = mocha.it
 var describe = mocha.describe
 
 var _port = 20000
-var servers = 0
+var servers = []
 process.on('exit', function () {
-  if (servers > 0) {
-    console.error("************ Didn't kill all servers - there is still %d running.", servers)
+  if (servers.length > 0) {
+    console.error("************ Didn't kill all servers - there is still %d running.", servers.length)
   }
 })
 
@@ -50,12 +50,14 @@ function configureServer (server, protocol, port, callback) {
   var responses = []
 
   var oldClose = server.close
-  server.close = function () {
+  server.close = function (closeCb) {
     responses.forEach(function (res) {
       res.end()
     })
-    servers--
-    oldClose.apply(this, arguments)
+    oldClose.call(this, function () {
+      servers.splice(servers.indexOf(server), 1)
+      closeCb()
+    })
   }
 
   server.on('request', function (req, res) {
@@ -65,7 +67,7 @@ function configureServer (server, protocol, port, callback) {
   server.url = protocol + '://localhost:' + port
 
   server.listen(port, function onOpen (err) {
-    servers++
+    servers.push(server)
     callback(err, server)
   })
 }
@@ -940,8 +942,11 @@ describe('Events', function () {
       })
       const es = new EventSource(server.url)
       es.reconnectInterval = 50
+
+      setTimeout(function () {
+        server.close(done)
+      }, 350)
     })
-    setTimeout(done, 350)
   })
 
   it('does not emit error when connection is closed by client', function (done) {
