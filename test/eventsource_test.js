@@ -938,9 +938,10 @@ describe('Events', function () {
           })
         }
       })
-      new EventSource(server.url)
+      const es = new EventSource(server.url)
+      es.reconnectInterval = 50
     })
-    setTimeout(done, 1500)
+    setTimeout(done, 350)
   })
 
   it('does not emit error when connection is closed by client', function (done) {
