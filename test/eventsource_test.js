@@ -872,6 +872,24 @@ describe('readyState', function () {
   })
 })
 
+describe('Methods', function () {
+  it('close method exists and can be called to close an eventsource', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err)
+      var es = new EventSource(server.url)
+      server.on('request', writeEvents([]))
+      es.onopen = function () {
+        assert.equal(es.close(), undefined)
+        server.close(done)
+      }
+    })
+  })
+
+  it('close method is a prototype method', function () {
+    assert.equal(typeof EventSource.prototype.close, 'function')
+  })
+})
+
 describe('Properties', function () {
   it('url exposes original request url', function () {
     var url = 'http://localhost:' + _port
