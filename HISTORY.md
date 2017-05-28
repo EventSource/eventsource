@@ -1,3 +1,12 @@
+# [1.0.2](https://github.com/EventSource/eventsource/compare/v1.0.1...v1.0.2)
+
+* Fix proxy not working when proxy and target URL uses different protocols. ([#76](https://github.com/EventSource/eventsource/pull/76) Espen Hovlandsdal)
+* Make `close()` a prototype method instead of an instance method. ([#77](https://github.com/EventSource/eventsource/pull/77) Espen Hovlandsdal)
+
+# [1.0.1](https://github.com/EventSource/eventsource/compare/v1.0.0...v1.0.1)
+
+* Reconnect if server responds with HTTP 500, 502, 503 or 504. ([#74](https://github.com/EventSource/eventsource/pull/74) Vykintas Narmontas)
+
 # [1.0.0](https://github.com/EventSource/eventsource/compare/v0.2.3...v1.0.0)
 
 * Add missing `removeEventListener`-method. ([#51](https://github.com/EventSource/eventsource/pull/51) Yucheng Tu / Espen Hovlandsdal)
