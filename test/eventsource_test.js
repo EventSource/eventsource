@@ -11,6 +11,11 @@ var u = require('url')
 var it = mocha.it
 var describe = mocha.describe
 
+var httpsServerOptions = {
+  key: fs.readFileSync(path.join(__dirname, 'server_certs', 'key.pem')),
+  cert: fs.readFileSync(path.join(__dirname, 'server_certs', 'certificate.pem'))
+}
+
 var _port = 20000
 var servers = []
 process.on('exit', function () {
@@ -25,11 +30,7 @@ function createServer (callback) {
 }
 
 function createHttpsServer (callback) {
-  var options = {
-    key: fs.readFileSync(path.join(__dirname, 'server_certs', 'key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, 'server_certs', 'certificate.pem'))
-  }
-  var server = https.createServer(options)
+  var server = https.createServer(httpsServerOptions)
   configureServer(server, 'https', _port++, callback)
 }
 
@@ -68,6 +69,48 @@ function configureServer (server, protocol, port, callback) {
 
   server.listen(port, function onOpen (err) {
     servers.push(server)
+    callback(err, server)
+  })
+}
+
+function createProxy (target, protocol, callback) {
+  var proxyPort = _port++
+  var targetProtocol = target.indexOf('https') === 0 ? 'https' : 'http'
+  var requester = targetProtocol === 'https' ? https : http
+  var serve = protocol === 'https' ? https : http
+
+  var proxied = []
+  var server = serve.createServer(serve === https ? httpsServerOptions : undefined)
+
+  server.on('request', function (req, res) {
+    var options = u.parse(target)
+    options.headers = req.headers
+    options.rejectUnauthorized = false
+
+    var upstreamReq = requester.request(options, function (upstreamRes) {
+      upstreamRes.pipe(res)
+    })
+
+    proxied.push(upstreamReq)
+    upstreamReq.end()
+  })
+
+  servers.push(server)
+
+  var oldClose = server.close
+  server.close = function (closeCb) {
+    proxied.forEach(function (res) {
+      res.abort()
+    })
+
+    oldClose.call(server, function () {
+      servers.splice(servers.indexOf(server), 1)
+      closeCb()
+    })
+  }
+
+  server.listen(proxyPort, function onOpen (err) {
+    server.url = protocol + '://localhost:' + proxyPort
     callback(err, server)
   })
 }
@@ -1034,6 +1077,68 @@ describe('Events', function () {
         assert.notEqual(enumerableAttributes.indexOf('type'), -1)
         server.close(done)
       }
+    })
+  })
+})
+
+describe('Proxying', function () {
+  it('proxies http->http requests', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err)
+
+      server.on('request', writeEvents(['data: World\n\n']))
+
+      createProxy(server.url, 'http', function (err, proxy) {
+        if (err) return done(err)
+
+        var es = new EventSource(server.url, {proxy: proxy.url})
+        es.onmessage = function (m) {
+          assert.equal(m.data, 'World')
+          proxy.close(function () {
+            server.close(done)
+          })
+        }
+      })
+    })
+  })
+
+  it('proxies http->https requests', function (done) {
+    createHttpsServer(function (err, server) {
+      if (err) return done(err)
+
+      server.on('request', writeEvents(['data: World\n\n']))
+
+      createProxy(server.url, 'http', function (err, proxy) {
+        if (err) return done(err)
+
+        var es = new EventSource(server.url, {proxy: proxy.url})
+        es.onmessage = function (m) {
+          assert.equal(m.data, 'World')
+          proxy.close(function () {
+            server.close(done)
+          })
+        }
+      })
+    })
+  })
+
+  it('proxies https->http requests', function (done) {
+    createHttpsServer(function (err, server) {
+      if (err) return done(err)
+
+      server.on('request', writeEvents(['data: World\n\n']))
+
+      createProxy(server.url, 'https', function (err, proxy) {
+        if (err) return done(err)
+
+        var es = new EventSource(server.url, {proxy: proxy.url, rejectUnauthorized: false})
+        es.onmessage = function (m) {
+          assert.equal(m.data, 'World')
+          proxy.close(function () {
+            server.close(done)
+          })
+        }
+      })
     })
   })
 })
