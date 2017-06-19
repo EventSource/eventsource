@@ -1,3 +1,7 @@
+# [1.0.4](https://github.com/EventSource/eventsource/compare/v1.0.2...v1.0.4)
+
+* Pass withCredentials on to the XHR. ([#79](https://github.com/EventSource/eventsource/pull/79) Ken Mayer)
+
 # [1.0.2](https://github.com/EventSource/eventsource/compare/v1.0.1...v1.0.2)
 
 * Fix proxy not working when proxy and target URL uses different protocols. ([#76](https://github.com/EventSource/eventsource/pull/76) Espen Hovlandsdal)
