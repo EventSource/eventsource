@@ -32,11 +32,11 @@
   "devDependencies": {
     "express": "^4.15.3",
     "mocha": "^3.4.2",
-    "nyc": "^10.3.2",
+    "nyc": "^11.0.2",
     "serve-static": "^1.12.3",
     "sse": "^0.0.6",
     "standard": "^10.0.2",
-    "webpack": "^2.6.1"
+    "webpack": "^3.0.0"
   },
   "scripts": {
     "test": "mocha --reporter spec && standard",
