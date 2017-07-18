@@ -1,3 +1,7 @@
+# [1.0.5](https://github.com/EventSource/eventsource/compare/v1.0.4...v1.0.5)
+
+* Check for `window` existing before polyfilling. ([#80](https://github.com/EventSource/eventsource/pull/80) Neftaly Hernandez)
+
 # [1.0.4](https://github.com/EventSource/eventsource/compare/v1.0.2...v1.0.4)
 
 * Pass withCredentials on to the XHR. ([#79](https://github.com/EventSource/eventsource/pull/79) Ken Mayer)
