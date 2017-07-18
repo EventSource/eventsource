@@ -5850,8 +5850,15 @@ function done(stream, er, data) {
 /* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
-window.EventSourcePolyfill = __webpack_require__(21)
-window.EventSource = window.EventSource || window.EventSourcePolyfill
+var EventSource = __webpack_require__(21)
+
+if (typeof window === 'object') {
+  window.EventSourcePolyfill = EventSource
+  if (!window.EventSource) window.EventSource = EventSource
+  module.exports = window.EventSource
+} else {
+  module.exports = EventSource
+}
 
 
 /***/ }),
