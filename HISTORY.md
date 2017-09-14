@@ -1,3 +1,7 @@
+# Unreleased
+
+* Change example to use `eventsource/ssestream`
+
 # [1.0.5](https://github.com/EventSource/eventsource/compare/v1.0.4...v1.0.5)
 
 * Check for `window` existing before polyfilling. ([#80](https://github.com/EventSource/eventsource/pull/80) Neftaly Hernandez)
