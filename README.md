@@ -3,7 +3,7 @@
 This library is a pure JavaScript implementation of the [EventSource](http://www.w3.org/TR/eventsource/) client. The API aims to be W3C compatible.
 
 You can use it with Node.js or as a browser polyfill for
-[browsers that don't have native `EventSource` support](http://caniuse.com/#search=eventsource).
+[browsers that don't have native `EventSource` support](http://caniuse.com/#feat=eventsource).
 
 ## Install
 
