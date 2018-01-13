@@ -1,4 +1,3 @@
-
 # Unreleased
 
 * Change example to use `eventsource/ssestream`
