@@ -1,3 +1,7 @@
+# [1.0.6]()
+
+* Added the ability to set the mode in the eventStreamInitDict to pass onto the HTTP Options of the request. This allows disable-fetch where you need to be able to abort the event stream.
+
 # Unreleased
 
 * Change example to use `eventsource/ssestream`
