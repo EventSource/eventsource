@@ -51,7 +51,7 @@ var es = new EventSource(url, eventSourceInitDict);
 
 ### Allow unauthorized HTTPS requests
 
-By default, https requests that cannot be authorized will cause connection to fail and an exception
+By default, https requests that cannot be authorized will cause the connection to fail and an exception
 to be emitted. You can override this behaviour, along with other https options:
 
 ```javascript
