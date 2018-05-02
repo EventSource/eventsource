@@ -1,4 +1,4 @@
-# Unreleased
+# [1.0.6](https://github.com/EventSource/eventsource/compare/v1.0.6...v1.0.6)
 
 * Change example to use `eventsource/ssestream`
 
