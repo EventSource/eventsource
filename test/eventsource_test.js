@@ -1058,7 +1058,7 @@ describe('Events', function () {
 
       function second (m) {
         assert.equal(m.data, 'World')
-        assert.equal(m.lastEventId, '123')  // expect to get back the previous event id
+        assert.equal(m.lastEventId, '123') // expect to get back the previous event id
         server.close(done)
       }
     })
