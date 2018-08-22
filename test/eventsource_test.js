@@ -1,5 +1,6 @@
 /* eslint-disable no-new */
 var EventSource = require('../lib/eventsource')
+var bufferFrom = require('buffer-from')
 var path = require('path')
 var http = require('http')
 var https = require('https')
@@ -167,6 +168,24 @@ describe('Parser', function () {
     })
   })
 
+  it('ignores byte-order mark', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err)
+
+      server.on('request', function (req, res) {
+        res.writeHead(200, {'Content-Type': 'text/event-stream'})
+        res.write('\uFEFF')
+        res.write('data: foo\n\n')
+        res.end()
+      })
+      var es = new EventSource(server.url)
+      es.onmessage = function (m) {
+        assert.equal('foo', m.data)
+        server.close(done)
+      }
+    })
+  })
+
   it('parses one one-line message in two chunks', function (done) {
     createServer(function (err, server) {
       if (err) return done(err)
@@ -215,7 +234,7 @@ describe('Parser', function () {
     })
   })
 
-  it('parses really chopped up unicode data', function (done) {
+  it('parses chopped up unicode data', function (done) {
     createServer(function (err, server) {
       if (err) return done(err)
 
@@ -232,6 +251,30 @@ describe('Parser', function () {
 
       function second (m) {
         assert.equal('Hellesøy', m.data)
+        server.close(done)
+      }
+    })
+  })
+
+  it('parses really chopped up unicode data', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err)
+
+      server.on('request', function (req, res) {
+        const msg = bufferFrom('data: Aslak Hellesøy is the original author\n\n')
+        res.writeHead(200, {'Content-Type': 'text/event-stream'})
+
+        // Slice in the middle of a unicode sequence (ø), making sure that one data
+        // chunk will contain the first byte and the second chunk will get the other
+        res.write(msg.slice(0, 19), 'binary', function () {
+          res.write(msg.slice(19))
+        })
+      })
+
+      var es = new EventSource(server.url)
+
+      es.onmessage = function (m) {
+        assert.equal('Aslak Hellesøy is the original author', m.data)
         server.close(done)
       }
     })
