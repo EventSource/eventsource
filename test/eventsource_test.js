@@ -530,7 +530,7 @@ describe('HTTP Request', function () {
         var es = new EventSource(server.url)
         es.onerror = function (err) {
           assert.equal(err.status, status)
-          assert.equal(err.message, 'status messgae')
+          assert.equal(err.message, 'status message')
           server.close(done)
         }
       })
@@ -738,7 +738,7 @@ describe('Reconnection', function () {
 
       es.onerror = function (e) {
         assert.equal(e.status, 204)
-        assert.equal(e.message, 'status messsage')
+        assert.equal(e.message, 'status message')
         server.close(function (err) {
           if (err) return done(err)
 
