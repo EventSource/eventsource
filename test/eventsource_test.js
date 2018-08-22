@@ -521,7 +521,7 @@ describe('HTTP Request', function () {
         if (err) return done(err)
 
         server.on('request', function (req, res) {
-          res.writeHead(status, {
+          res.writeHead(status, 'status message', {
             'Connection': 'Close'
           })
           res.end()
@@ -530,6 +530,7 @@ describe('HTTP Request', function () {
         var es = new EventSource(server.url)
         es.onerror = function (err) {
           assert.equal(err.status, status)
+          assert.equal(err.message, 'status messgae')
           server.close(done)
         }
       })
@@ -542,13 +543,14 @@ describe('HTTP Request', function () {
         if (err) return done(err)
 
         server.on('request', function (req, res) {
-          res.writeHead(status, {'Content-Type': 'text/html'})
+          res.writeHead(status, 'status message', {'Content-Type': 'text/html'})
           res.end()
         })
 
         var es = new EventSource(server.url)
         es.onerror = function (err) {
           assert.equal(err.status, status)
+          assert.equal(err.message, 'status message')
           server.close(done)
         }
       })
@@ -727,7 +729,7 @@ describe('Reconnection', function () {
       if (err) return done(err)
 
       server.on('request', function (req, res) {
-        res.writeHead(204)
+        res.writeHead(204, 'status message')
         res.end()
       })
 
@@ -736,6 +738,7 @@ describe('Reconnection', function () {
 
       es.onerror = function (e) {
         assert.equal(e.status, 204)
+        assert.equal(e.message, 'status messsage')
         server.close(function (err) {
           if (err) return done(err)
 
