@@ -30,6 +30,7 @@
     }
   ],
   "devDependencies": {
+    "buffer-from": "^1.1.1",
     "express": "^4.15.3",
     "mocha": "^3.5.3",
     "nyc": "^11.2.1",
