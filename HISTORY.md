@@ -1,6 +1,7 @@
-# Unreleased
+# [1.0.6](https://github.com/EventSource/eventsource/compare/v1.0.5...v1.0.6)
 
-* Change example to use `eventsource/ssestream`
+* Fix issue where a unicode sequence split in two chunks would lead to invalid messages ([#108](https://github.com/EventSource/eventsource/pull/108) Espen Hovlandsdal)
+* Change example to use `eventsource/ssestream` (Aslak Hellesøy)
 
 # [1.0.5](https://github.com/EventSource/eventsource/compare/v1.0.4...v1.0.5)
 
