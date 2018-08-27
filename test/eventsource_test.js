@@ -1125,6 +1125,50 @@ describe('Events', function () {
       }
     })
   })
+
+  it('throws error if the message type is unspecified, \'\' or null', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err)
+
+      var es = new EventSource(server.url)
+
+      assert.throws(function () { es.dispatchEvent({}) })
+      assert.throws(function () { es.dispatchEvent({type: undefined}) })
+      assert.throws(function () { es.dispatchEvent({type: ''}) })
+      assert.throws(function () { es.dispatchEvent({type: null}) })
+
+      server.close(done)
+    })
+  })
+
+  it('delivers the dispatched event without payload', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err)
+
+      var es = new EventSource(server.url)
+
+      es.addEventListener('greeting', function (m) {
+        server.close(done)
+      })
+
+      es.dispatchEvent({type: 'greeting'})
+    })
+  })
+
+  it('delivers the dispatched event with payload', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err)
+
+      var es = new EventSource(server.url)
+
+      es.addEventListener('greeting', function (m) {
+        assert.equal('Hello', m.data)
+        server.close(done)
+      })
+
+      es.dispatchEvent({type: 'greeting', detail: {data: 'Hello'}})
+    })
+  })
 })
 
 describe('Proxying', function () {
