@@ -1,3 +1,9 @@
+# [1.0.7](https://github.com/EventSource/eventsource/compare/v1.0.6...v1.0.7)
+
+* Add dispatchEvent to EventSource ([#101](https://github.com/EventSource/eventsource/pull/101) Ali Afroozeh)
+* Added `checkServerIdentity` option ([#104](https://github.com/EventSource/eventsource/pull/104) cintolas)
+* Surface request error message ([#107](https://github.com/EventSource/eventsource/pull/107) RasPhilCo)
+
 # [1.0.6](https://github.com/EventSource/eventsource/compare/v1.0.5...v1.0.6)
 
 * Fix issue where a unicode sequence split in two chunks would lead to invalid messages ([#108](https://github.com/EventSource/eventsource/pull/108) Espen Hovlandsdal)
