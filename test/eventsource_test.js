@@ -478,7 +478,7 @@ describe('HTTP Request', function () {
         server.close(done)
       })
 
-      EventSource(server.url)
+      new EventSource(server.url)
     })
   })
 
