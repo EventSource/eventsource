@@ -1,13 +1,15 @@
-# EventSource [![npm version](http://img.shields.io/npm/v/eventsource.svg?style=flat-square)](http://browsenpm.org/package/eventsource)[![Build Status](http://img.shields.io/travis/EventSource/eventsource/master.svg?style=flat-square)](https://travis-ci.org/EventSource/eventsource)[![NPM Downloads](https://img.shields.io/npm/dm/eventsource.svg?style=flat-square)](http://npm-stat.com/charts.html?package=eventsource&from=2015-09-01)[![Dependencies](https://img.shields.io/david/EventSource/eventsource.svg?style=flat-square)](https://david-dm.org/EventSource/eventsource)
+# EventSource [![npm version](http://img.shields.io/npm/v/launchdarkly-eventsource.svg?style=flat-square)](http://browsenpm.org/package/launchdarkly-eventsource)[![Build Status](http://img.shields.io/travis/launchdarkly/js-eventsource/master.svg?style=flat-square)](https://travis-ci.org/launchdarkly/js-eventsource)[![NPM Downloads](https://img.shields.io/npm/dm/laumchdarkly-eventsource.svg?style=flat-square)](http://npm-stat.com/charts.html?package=launchdarkly-eventsource&from=2015-09-01)[![Dependencies](https://img.shields.io/david/launchdarkly/js-eventsource.svg?style=flat-square)](https://david-dm.org/launchdarkly/js-eventsource)
 
 This library is a pure JavaScript implementation of the [EventSource](https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events) client. The API aims to be W3C compatible.
 
 You can use it with Node.js or as a browser polyfill for
 [browsers that don't have native `EventSource` support](http://caniuse.com/#feat=eventsource).
 
+This is a fork of the original [EventSource](https://github.com/EventSource/eventsource) project by Aslak Hellesøy, with minimal additions to support the requirements of the LaunchDarkly Node and Electron SDKs.
+
 ## Install
 
-    npm install eventsource
+    npm install launchdarkly-eventsource
 
 ## Example
 

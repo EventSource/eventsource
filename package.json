@@ -1,5 +1,5 @@
 {
-  "name": "eventsource",
+  "name": "launchdarkly-eventsource",
   "version": "1.0.7",
   "description": "W3C compliant EventSource client for Node.js and browser (polyfill)",
   "keywords": [
@@ -9,14 +9,14 @@
     "sse",
     "polyfill"
   ],
-  "homepage": "http://github.com/EventSource/eventsource",
+  "homepage": "http://github.com/launchdarkly/js-eventsource",
   "author": "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git://github.com/EventSource/eventsource.git"
+    "url": "git://github.com/launchdarkly/js-eventsource.git"
   },
   "bugs": {
-    "url": "http://github.com/EventSource/eventsource/issues"
+    "url": "http://github.com/launchdarkly/js-eventsource/issues"
   },
   "directories": {
     "lib": "./lib"
@@ -26,7 +26,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/EventSource/eventsource/raw/master/LICENSE"
+      "url": "http://github.com/launchdarkly/js-eventsource/raw/master/LICENSE"
     }
   ],
   "devDependencies": {
