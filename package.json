@@ -1,6 +1,6 @@
 {
   "name": "launchdarkly-eventsource",
-  "version": "1.0.7",
+  "version": "1.0.7-rc.1",
   "description": "Fork of eventsource package - W3C compliant EventSource client for Node.js and browser (polyfill)",
   "keywords": [
     "eventsource",
