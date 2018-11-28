@@ -527,6 +527,42 @@ describe('HTTP Request', function () {
         }
       )
     })
+  })
+
+  it('uses GET method by default', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err)
+
+      server.on('request', function (req) {
+        assert.equal(req.method, 'GET')
+        server.close(done)
+      })
+
+      new EventSource(server.url)
+    })
+  })
+
+  it('can specify HTTP method and body', function (done) {
+    var content = '{ "test": true }'
+
+    createServer(function (err, server) {
+      if (err) return done(err)
+
+      server.on('request', function (req) {
+        assert.equal(req.method, 'POST')
+
+        var receivedContent = ''
+        req.on('data', function (chunk) {
+          receivedContent += chunk
+        })
+        req.on('end', function () {
+          assert.equal(content, receivedContent)
+          server.close(done)
+        })
+      })
+
+      new EventSource(server.url, { method: 'POST', body: content })
+    })
   });
 
   [301, 307].forEach(function (status) {
