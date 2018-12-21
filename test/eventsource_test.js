@@ -529,7 +529,7 @@ describe('HTTP Request', function () {
     })
   });
 
-  [301, 307].forEach(function (status) {
+  [301, 302, 307].forEach(function (status) {
     it('follows http ' + status + ' redirect', function (done) {
       var redirectSuffix = '/foobar'
       var clientRequestedRedirectUrl = false
