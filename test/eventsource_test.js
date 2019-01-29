@@ -1,5 +1,5 @@
 /* eslint-disable no-new */
-var EventSource = require('../lib/eventsource').EventSource
+var EventSource = require('../lib/eventsource')
 var bufferFrom = require('buffer-from')
 var path = require('path')
 var http = require('http')
