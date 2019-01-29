@@ -1,11 +1,11 @@
-# EventSource [![npm version](http://img.shields.io/npm/v/launchdarkly-eventsource.svg?style=flat-square)](http://browsenpm.org/package/launchdarkly-eventsource)[![Build Status](http://img.shields.io/travis/launchdarkly/js-eventsource/master.svg?style=flat-square)](https://travis-ci.org/launchdarkly/js-eventsource)[![NPM Downloads](https://img.shields.io/npm/dm/laumchdarkly-eventsource.svg?style=flat-square)](http://npm-stat.com/charts.html?package=launchdarkly-eventsource&from=2015-09-01)[![Dependencies](https://img.shields.io/david/launchdarkly/js-eventsource.svg?style=flat-square)](https://david-dm.org/launchdarkly/js-eventsource)
+# EventSource [![npm version](http://img.shields.io/npm/v/launchdarkly-eventsource.svg?style=flat-square)](http://browsenpm.org/package/launchdarkly-eventsource)[![Circle CI](https://circleci.com/gh/launchdarkly/js-eventsource/tree/master.svg?style=svg)](https://circleci.com/gh/launchdarkly/js-eventsource/tree/master)[![NPM Downloads](https://img.shields.io/npm/dm/laumchdarkly-eventsource.svg?style=flat-square)](http://npm-stat.com/charts.html?package=launchdarkly-eventsource&from=2015-09-01)[![Dependencies](https://img.shields.io/david/launchdarkly/js-eventsource.svg?style=flat-square)](https://david-dm.org/launchdarkly/js-eventsource)
 
 This library is a pure JavaScript implementation of the [EventSource](https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events) client. The API aims to be W3C compatible.
 
 You can use it with Node.js or as a browser polyfill for
 [browsers that don't have native `EventSource` support](http://caniuse.com/#feat=eventsource).
 
-This is a fork of the original [EventSource](https://github.com/EventSource/eventsource) project by Aslak Hellesøy, with minimal additions to support the requirements of the LaunchDarkly Node and Electron SDKs.
+This is a fork of the original [EventSource](https://github.com/EventSource/eventsource) project by Aslak Hellesøy, with additions to support the requirements of the LaunchDarkly Node and Electron SDKs. Note that as described in the [changelog](CHANGELOG.md), the API is _not_ backward-compatible with the original package, although it can be used with minimal changes.
 
 ## Install
 
@@ -48,6 +48,15 @@ HTTP headers are defined by assigning a `headers` attribute to the optional `eve
 
 ```javascript
 var eventSourceInitDict = {headers: {'Cookie': 'test=test'}};
+var es = new EventSource(url, eventSourceInitDict);
+```
+
+### Setting HTTP request method/body
+
+By default, EventSource makes a `GET` request. You can specify a different HTTP verb and/or a request body:
+
+```javascript
+var eventSourceInitDict = {method: 'POST', body: 'n=100'};
 var es = new EventSource(url, eventSourceInitDict);
 ```
 
