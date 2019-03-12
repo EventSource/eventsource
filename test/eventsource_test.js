@@ -8,6 +8,7 @@ var fs = require('fs')
 var mocha = require('mocha')
 var assert = require('assert')
 var u = require('url')
+var net = require('net')
 
 var it = mocha.it
 var describe = mocha.describe
@@ -595,6 +596,31 @@ describe('HTTP Request', function () {
           assert.equal(err.status, status)
           assert.equal(err.message, 'status message')
           server.close(done)
+        }
+      })
+    })
+  })
+
+  it('checks createConnection option', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err)
+
+      var testResult = false
+
+      server.on('request', function () {
+        assert.ok(testResult)
+        server.close(done)
+      })
+
+      var urlObj = u.parse(server.url)
+
+      new EventSource(server.url, {
+        createConnection: function () {
+          var connection = net.createConnection({ port: urlObj.port, host: urlObj.hostname })
+          connection.on('connect', function () {
+            testResult = true
+          })
+          return connection
         }
       })
     })
