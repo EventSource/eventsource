@@ -873,6 +873,37 @@ describe('Reconnection', function () {
       }
     })
   })
+
+  it('attempts to reconnect are deduplicated on sequential erorrs', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err)
+      var events = ['data: Hello']
+      var eventsSent = 0
+      var errorOccurred = false
+      server.on('request', function (req, res) {
+        if (eventsSent === 0) {
+          var fn = writeEvents(events)
+          fn(req, res)
+          eventsSent++
+          // now cause a parse error!
+          fn(req, res)
+          eventsSent++
+        } else {
+          assert.equal(EventSource.CONNECTING, es.readyState)
+          assert.ok(errorOccurred)
+          server.close(done)
+        }
+      })
+
+      var es = new EventSource(server.url)
+      assert.equal(EventSource.CONNECTING, es.readyState)
+      es.reconnectInterval = 0
+      es.onerror = function (err) {
+        console.log(err);
+        errorOccurred = !!(errorOccurred || err)
+      }
+    })
+  })
 })
 
 describe('readyState', function () {
