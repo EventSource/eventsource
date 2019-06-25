@@ -885,7 +885,7 @@ describe('Reconnection', function () {
           var fn = writeEvents(events)
           fn(req, res)
           eventsSent++
-          // now cause a parse error!
+          // now cause a few errors
           fn(req, res)
           eventsSent++
         } else {
@@ -899,7 +899,6 @@ describe('Reconnection', function () {
       assert.equal(EventSource.CONNECTING, es.readyState)
       es.reconnectInterval = 0
       es.onerror = function (err) {
-        console.log(err);
         errorOccurred = !!(errorOccurred || err)
       }
     })
