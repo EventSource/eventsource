@@ -646,7 +646,7 @@ describe('HTTPS Client Certificate Support', function () {
 describe('Reconnection', function () {
   it('is attempted when server is down', function (done) {
     var es = new EventSource('http://localhost:' + _port)
-    es.reconnectInterval = 0
+    es.setupReconnectInterval(0)
 
     es.onerror = function () {
       es.onerror = null
@@ -669,7 +669,7 @@ describe('Reconnection', function () {
 
       server.on('request', writeEvents(['data: hello\n\n']))
       var es = new EventSource(server.url)
-      es.reconnectInterval = 0
+      es.setupReconnectInterval(0)
 
       es.onmessage = function (m) {
         assert.equal('hello', m.data)
@@ -701,7 +701,7 @@ describe('Reconnection', function () {
       })
 
       var es = new EventSource(server.url)
-      es.reconnectInterval = 0
+      es.setupReconnectInterval(0)
 
       var errored = false
 
@@ -732,7 +732,7 @@ describe('Reconnection', function () {
 
       server.on('request', writeEvents(['data: hello\n\n']))
       var es = new EventSource(server.url)
-      es.reconnectInterval = 0
+      es.setupReconnectInterval(0)
 
       es.onmessage = function (m) {
         assert.equal('hello', m.data)
@@ -777,7 +777,7 @@ describe('Reconnection', function () {
       })
 
       var es = new EventSource(server.url)
-      es.reconnectInterval = 0
+      es.setupReconnectInterval(0)
 
       es.onerror = function (e) {
         assert.equal(e.status, 204)
@@ -814,7 +814,7 @@ describe('Reconnection', function () {
       server.on('request', writeEvents(['id: 10\ndata: Hello\n\n']))
 
       var es = new EventSource(server.url)
-      es.reconnectInterval = 0
+      es.setupReconnectInterval(0)
 
       es.onmessage = function () {
         server.close(function (err) {
@@ -854,7 +854,7 @@ describe('Reconnection', function () {
       server.on('request', writeEvents(['data: Hello\n\n']))
 
       var es = new EventSource(server.url)
-      es.reconnectInterval = 0
+      es.setupReconnectInterval(0)
 
       es.onmessage = function () {
         server.close(function (err) {
@@ -897,9 +897,61 @@ describe('Reconnection', function () {
 
       var es = new EventSource(server.url)
       assert.equal(EventSource.CONNECTING, es.readyState)
-      es.reconnectInterval = 0
+      es.setupReconnectInterval(0)
       es.onerror = function (err) {
         errorOccurred = !!(errorOccurred || err)
+      }
+    })
+  })
+
+  it('should allow configurability of reconnect interval', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err)
+
+      server.on('request', function (req, res) {
+        res.writeHead(500)
+        res.end()
+      })
+
+      var es = new EventSource(server.url)
+      es.setupReconnectInterval(5, 60, 1.5)
+      assert.equal(es.reconnectInterval, 5)
+
+      var errored = false
+      es.onerror = function () {
+        if (errored) return
+        errored = true
+        server.close(function (err) {
+          if (err) return done(err)
+          assert.equal(es.reconnectInterval, 5 * 1.5)
+          done()
+        })
+      }
+    })
+  })
+
+  it('attempts to reconnect should increase the reconnect interval exponentially', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err)
+      var eventsSent = 0
+      server.on('request', function (req, res) {
+        if (eventsSent === 0) {
+          res.writeHead(500)
+          res.end()
+        }
+      })
+
+      var es = new EventSource(server.url)
+      es.setupReconnectInterval(5, 25, 10)
+      var errored = false
+      es.onerror = function () {
+        if (errored) return
+        errored = true
+        server.close(function (err) {
+          if (err) return done(err)
+          assert.equal(es.reconnectInterval, 25)
+          done()
+        })
       }
     })
   })
@@ -945,7 +997,7 @@ describe('readyState', function () {
 
       server.on('request', writeEvents([]))
       var es = new EventSource(server.url)
-      es.reconnectInterval = 0
+      es.setupReconnectInterval(0)
 
       es.onopen = function (m) {
         server.close(function (err) {
