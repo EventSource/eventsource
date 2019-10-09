@@ -466,6 +466,26 @@ describe('Parser', function () {
       }
     })
   })
+
+  it('parses a relatively huge message across many chunks efficiently', function (done) {
+    this.timeout(1000)
+
+    createServer(function (err, server) {
+      if (err) return done(err)
+
+      var longMessageContent = new Array(100000).join('a')
+      var longMessage = 'data: ' + longMessageContent + '\n\n'
+      var longMessageChunks = longMessage.match(/[\s\S]{1,10}/g) // Split the message into chunks of 10 characters
+      server.on('request', writeEvents(longMessageChunks))
+
+      var es = new EventSource(server.url)
+
+      es.onmessage = function (m) {
+        assert.equal(longMessageContent, m.data)
+        server.close(done)
+      }
+    })
+  })
 })
 
 describe('HTTP Request', function () {
