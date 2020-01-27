@@ -93,7 +93,7 @@ function createProxy (target, protocol, callback) {
       upstreamRes.pipe(res)
     })
 
-    proxied.push(upstreamReq)
+    proxied.push({req: upstreamReq, res: res})
     upstreamReq.end()
   })
 
@@ -101,8 +101,9 @@ function createProxy (target, protocol, callback) {
 
   var oldClose = server.close
   server.close = function (closeCb) {
-    proxied.forEach(function (res) {
-      res.abort()
+    proxied.forEach(function (pair) {
+      pair.req.abort()
+      pair.res.destroy()
     })
 
     oldClose.call(server, function () {
