@@ -1,8 +1,5 @@
 # EventSource [![npm version](http://img.shields.io/npm/v/eventsource.svg?style=flat-square)](http://browsenpm.org/package/eventsource)[![Build Status](http://img.shields.io/travis/EventSource/eventsource/master.svg?style=flat-square)](https://travis-ci.org/EventSource/eventsource)[![NPM Downloads](https://img.shields.io/npm/dm/eventsource.svg?style=flat-square)](http://npm-stat.com/charts.html?package=eventsource&from=2015-09-01)[![Dependencies](https://img.shields.io/david/EventSource/eventsource.svg?style=flat-square)](https://david-dm.org/EventSource/eventsource)
 
-Fork to merge this commit: https://github.com/tigertext/eventsource/commit/e39460e7b852a0b286d7b752efb8f0bcb04f1057#diff-bd6ddbbcfe0037b5a08d70a3b5f4930c
-in order to fix issue: https://github.com/EventSource/eventsource/issues/89
-
 This library is a pure JavaScript implementation of the [EventSource](https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events) client. The API aims to be W3C compatible.
 
 You can use it with Node.js or as a browser polyfill for
