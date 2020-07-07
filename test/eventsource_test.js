@@ -710,6 +710,34 @@ describe('Reconnection', function () {
     }
   })
 
+  it('continuing attempts when server is down', function (done) {
+    // Seems set reconnectInterval=0 not work here, this makes total time spent for current case more than 3S
+    this.timeout(4000)
+
+    var es = new EventSource('http://localhost:' + _port++)
+    es.reconnectInterval = 0
+    var reconnectCount = 0
+
+    es.onerror = function () {
+      reconnectCount++
+      // make sure client is keeping reconnecting
+      if (reconnectCount > 2) {
+        es.onerror = null
+        var port = u.parse(es.url).port
+        configureServer(http.createServer(), 'http', port, function (err, server) {
+          if (err) return done(err)
+
+          server.on('request', writeEvents(['data: hello\n\n']))
+
+          es.onmessage = function (m) {
+            assert.equal('hello', m.data)
+            server.close(done)
+          }
+        })
+      }
+    }
+  })
+
   it('is attempted when server goes down after connection', function (done) {
     createServer(function (err, server) {
       if (err) return done(err)
