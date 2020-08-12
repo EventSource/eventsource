@@ -646,6 +646,25 @@ describe('HTTP Request', function () {
       })
     })
   })
+
+  it('sends a payload to the server', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err)
+
+      server.on('request', function (req, res) {
+        assert.equal(req.method, 'POST')
+        req.on('data', function (data) {
+          assert.equal(data.toString(), 'data')
+        })
+        req.on('end', function () {
+          res.end('ok')
+          server.close(done)
+        })
+      })
+
+      new EventSource(server.url, { method: 'POST', body: 'data' })
+    })
+  })
 })
 
 describe('HTTPS Support', function () {

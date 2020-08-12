@@ -83,6 +83,13 @@ You can define a `proxy` option for the HTTP request to be used. This is typical
 var es = new EventSource(url, {proxy: 'http://your.proxy.com'});
 ```
 
+### Sending a POST request
+
+You can issue requests using other HTTP methods than GET.
+
+```javascript
+var es = new EventSource(url, {method: 'POST', body: your-data-here})
+```
 
 ## License
 
