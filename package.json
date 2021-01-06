@@ -22,6 +22,7 @@
     "lib": "./lib"
   },
   "main": "./lib/eventsource",
+  "browser": "browser.js",
   "license": "MIT",
   "licenses": [
     {
