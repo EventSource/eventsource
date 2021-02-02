@@ -77,10 +77,10 @@ es.onerror = function (err) {
 
 ### HTTP/HTTPS proxy
 
-You can define a `proxy` option for the HTTP request to be used. This is typically useful if you are behind a corporate firewall.
+You can define a `agent` option for the HTTP request to be used. This is typically useful if you are behind a corporate firewall.
 
 ```javascript
-var es = new EventSource(url, {proxy: 'http://your.proxy.com'});
+var es = new EventSource(url, {agent: new HttpsProxyAgent(process.env.PROXY)});
 ```
 
 
