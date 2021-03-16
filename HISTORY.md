@@ -5,6 +5,7 @@
 * Support HTTP 302 redirects ([#116](https://github.com/EventSource/eventsource/pull/116) Ryan Bonte)
 * Prevent sequential errors from attempting multiple reconnections ([#125](https://github.com/EventSource/eventsource/pull/125) David Patty)
 * Add `new` to correct test ([#111](https://github.com/EventSource/eventsource/pull/101) Stéphane Alnet)
+* Fix reconnections attempts now happen more than once ([#136](https://github.com/EventSource/eventsource/pull/136) Icy Fish)
 
 # [1.0.7](https://github.com/EventSource/eventsource/compare/v1.0.6...v1.0.7)
 
