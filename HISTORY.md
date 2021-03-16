@@ -1,4 +1,4 @@
-# Unreleased
+# [1.1.0](https://github.com/EventSource/eventsource/compare/v1.0.7...v1.1.0)
 
 * Improve performance for large messages across many chunks ([#130](https://github.com/EventSource/eventsource/pull/130) Trent Willis)
 * Add `createConnection` option for http or https requests ([#120](https://github.com/EventSource/eventsource/pull/120) Vasily Lavrov)
