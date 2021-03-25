@@ -46,7 +46,7 @@
     "coverage": "nyc --reporter=html --reporter=text _mocha --reporter spec"
   },
   "engines": {
-    "node": ">=0.12.0"
+    "node": ">=12.0.0"
   },
   "dependencies": {
     "original": "^1.0.0"
