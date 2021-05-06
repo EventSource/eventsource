@@ -1,3 +1,4 @@
 test/
 .nyc_output/
 coverage/
+.github/
