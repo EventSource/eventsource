@@ -454,7 +454,7 @@ describe('Parser', function () {
   })
 
   it('parses relatively huge messages efficiently', function (done) {
-    this.timeout(30)
+    this.timeout(200)
 
     createServer(function (err, server) {
       if (err) return done(err)
