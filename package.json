@@ -1,6 +1,6 @@
 {
   "name": "eventsource",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "W3C compliant EventSource client for Node.js and browser (polyfill)",
   "keywords": [
     "eventsource",
@@ -48,8 +48,7 @@
   "engines": {
     "node": ">=12.0.0"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "standard": {
     "ignore": [
       "example/eventsource-polyfill.js"
