@@ -1,3 +1,9 @@
+# [2.0.0](https://github.com/EventSource/eventsource/compare/v1.1.0...v2.0.0)
+
+* BREAKING: Node >= 12 now required ([#152](https://github.com/EventSource/eventsource/pull/152) @HonkingGoose)
+* Preallocate buffer size when reading data for increased performance with large messages ([#239](https://github.com/EventSource/eventsource/pull/239) Pau Freixes)
+* Removed dependency on url-parser. Fixes [CVE-2022-0512](https://www.whitesourcesoftware.com/vulnerability-database/CVE-2022-0512) & [CVE-2022-0691](https://nvd.nist.gov/vuln/detail/CVE-2022-0691) ([#249](https://github.com/EventSource/eventsource/pull/249) Alex Hladin)
+
 # [1.1.0](https://github.com/EventSource/eventsource/compare/v1.0.7...v1.1.0)
 
 * Improve performance for large messages across many chunks ([#130](https://github.com/EventSource/eventsource/pull/130) Trent Willis)
