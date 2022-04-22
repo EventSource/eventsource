@@ -52,6 +52,9 @@
   "standard": {
     "ignore": [
       "example/eventsource-polyfill.js"
+    ],
+    "globals": [
+      "URL"
     ]
   }
 }
