@@ -1,3 +1,7 @@
+# [2.0.1](https://github.com/EventSource/eventsource/compare/v2.0.0...v2.0.1)
+
+* Fix `URL is not a constructor` error for browser ([#268](https://github.com/EventSource/eventsource/pull/268) Ajinkya Rajput)
+
 # [2.0.0](https://github.com/EventSource/eventsource/compare/v1.1.0...v2.0.0)
 
 * BREAKING: Node >= 12 now required ([#152](https://github.com/EventSource/eventsource/pull/152) @HonkingGoose)
