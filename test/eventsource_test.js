@@ -581,6 +581,78 @@ describe('HTTP Request', function () {
       })
     })
 
+    it('follows http ' + status + ' redirect with only a path', function (done) {
+      var redirectSuffix = '/foobar'
+      var clientRequestedRedirectUrl = false
+      createServer(function (err, server) {
+        if (err) return done(err)
+
+        server.on('request', function (req, res) {
+          if (req.url === '/') {
+            res.writeHead(status, {
+              'Connection': 'Close',
+              'Location': redirectSuffix
+            })
+            res.end()
+          } else if (req.url === redirectSuffix) {
+            clientRequestedRedirectUrl = true
+            res.writeHead(200, {'Content-Type': 'text/event-stream'})
+            res.end()
+          }
+        })
+
+        var es = new EventSource(server.url)
+        es.onopen = function () {
+          assert.ok(clientRequestedRedirectUrl)
+          assert.equal(server.url + redirectSuffix, es.url)
+          server.close(done)
+        }
+      })
+    })
+
+    it('follows http ' + status + ' redirects, drops sensitive headers on origin change', function (done) {
+      var redirectSuffix = '/foobar'
+      var clientRequestedRedirectUrl = false
+      var receivedHeaders = {}
+      createServer(function (err, server) {
+        if (err) return done(err)
+
+        var newServerUrl = server.url.replace('http://localhost', 'http://127.0.0.1')
+
+        server.on('request', function (req, res) {
+          if (req.url === '/') {
+            res.writeHead(status, {
+              'Connection': 'Close',
+              'Location': newServerUrl + redirectSuffix
+            })
+            res.end()
+          } else if (req.url === redirectSuffix) {
+            clientRequestedRedirectUrl = true
+            receivedHeaders = req.headers
+            res.writeHead(200, {'Content-Type': 'text/event-stream'})
+            res.end()
+          }
+        })
+
+        var es = new EventSource(server.url, {
+          headers: {
+            keep: 'me',
+            authorization: 'Bearer someToken',
+            cookie: 'some-cookie=yep'
+          }
+        })
+
+        es.onopen = function () {
+          assert.ok(clientRequestedRedirectUrl)
+          assert.equal(newServerUrl + redirectSuffix, es.url)
+          assert.equal(receivedHeaders.keep, 'me', 'should keep safe headers')
+          assert.equal(typeof receivedHeaders.authorization, 'undefined', 'should strip auth')
+          assert.equal(typeof receivedHeaders.cookie, 'undefined', 'should strip cookie')
+          server.close(done)
+        }
+      })
+    })
+
     it('causes error event when response is ' + status + ' with missing location', function (done) {
       createServer(function (err, server) {
         if (err) return done(err)
