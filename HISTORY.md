@@ -1,3 +1,7 @@
+# [2.0.2](https://github.com/EventSource/eventsource/compare/v2.0.1...v2.0.2)
+
+* Do not include authorization and cookie headers on redirect to different origin ([#273](https://github.com/EventSource/eventsource/pull/273) Espen Hovlandsdal)
+
 # [2.0.1](https://github.com/EventSource/eventsource/compare/v2.0.0...v2.0.1)
 
 * Fix `URL is not a constructor` error for browser ([#268](https://github.com/EventSource/eventsource/pull/268) Ajinkya Rajput)
@@ -7,6 +11,10 @@
 * BREAKING: Node >= 12 now required ([#152](https://github.com/EventSource/eventsource/pull/152) @HonkingGoose)
 * Preallocate buffer size when reading data for increased performance with large messages ([#239](https://github.com/EventSource/eventsource/pull/239) Pau Freixes)
 * Removed dependency on url-parser. Fixes [CVE-2022-0512](https://www.whitesourcesoftware.com/vulnerability-database/CVE-2022-0512) & [CVE-2022-0691](https://nvd.nist.gov/vuln/detail/CVE-2022-0691) ([#249](https://github.com/EventSource/eventsource/pull/249) Alex Hladin)
+
+# [1.1.1](https://github.com/EventSource/eventsource/compare/v1.1.0...v1.1.1)
+
+* Do not include authorization and cookie headers on redirect to different origin ([#273](https://github.com/EventSource/eventsource/pull/273) Espen Hovlandsdal)
 
 # [1.1.0](https://github.com/EventSource/eventsource/compare/v1.0.7...v1.1.0)
 
