@@ -1,3 +1,7 @@
+# [1.1.1](https://github.com/EventSource/eventsource/compare/v1.1.0...v1.1.1)
+
+* Do not include authorization and cookie headers on redirect to different origin ([#273](https://github.com/EventSource/eventsource/pull/273) Espen Hovlandsdal)
+
 # [1.1.0](https://github.com/EventSource/eventsource/compare/v1.0.7...v1.1.0)
 
 * Improve performance for large messages across many chunks ([#130](https://github.com/EventSource/eventsource/pull/130) Trent Willis)
