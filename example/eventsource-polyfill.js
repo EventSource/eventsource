@@ -2141,7 +2141,7 @@ function isnan (val) {
 
 /*<replacement>*/
 
-var pna = __webpack_require__(7);
+var pna = __webpack_require__(6);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -2359,6 +2359,127 @@ function objectToString(o) {
 
 /***/ }),
 /* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+if (typeof process === 'undefined' ||
+    !process.version ||
+    process.version.indexOf('v0.') === 0 ||
+    process.version.indexOf('v1.') === 0 && process.version.indexOf('v1.8.') !== 0) {
+  module.exports = { nextTick: nextTick };
+} else {
+  module.exports = process
+}
+
+function nextTick(fn, arg1, arg2, arg3) {
+  if (typeof fn !== 'function') {
+    throw new TypeError('"callback" argument must be a function');
+  }
+  var len = arguments.length;
+  var args, i;
+  switch (len) {
+  case 0:
+  case 1:
+    return process.nextTick(fn);
+  case 2:
+    return process.nextTick(function afterTickOne() {
+      fn.call(null, arg1);
+    });
+  case 3:
+    return process.nextTick(function afterTickTwo() {
+      fn.call(null, arg1, arg2);
+    });
+  case 4:
+    return process.nextTick(function afterTickThree() {
+      fn.call(null, arg1, arg2, arg3);
+    });
+  default:
+    args = new Array(len - 1);
+    i = 0;
+    while (i < args.length) {
+      args[i++] = arguments[i];
+    }
+    return process.nextTick(function afterTick() {
+      fn.apply(null, args);
+    });
+  }
+}
+
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable node/no-deprecated-api */
+var buffer = __webpack_require__(3)
+var Buffer = buffer.Buffer
+
+// alternative to using Object.keys for old browsers
+function copyProps (src, dst) {
+  for (var key in src) {
+    dst[key] = src[key]
+  }
+}
+if (Buffer.from && Buffer.alloc && Buffer.allocUnsafe && Buffer.allocUnsafeSlow) {
+  module.exports = buffer
+} else {
+  // Copy properties from require('buffer')
+  copyProps(buffer, exports)
+  exports.Buffer = SafeBuffer
+}
+
+function SafeBuffer (arg, encodingOrOffset, length) {
+  return Buffer(arg, encodingOrOffset, length)
+}
+
+// Copy static methods from Buffer
+copyProps(Buffer, SafeBuffer)
+
+SafeBuffer.from = function (arg, encodingOrOffset, length) {
+  if (typeof arg === 'number') {
+    throw new TypeError('Argument must not be a number')
+  }
+  return Buffer(arg, encodingOrOffset, length)
+}
+
+SafeBuffer.alloc = function (size, fill, encoding) {
+  if (typeof size !== 'number') {
+    throw new TypeError('Argument must be a number')
+  }
+  var buf = Buffer(size)
+  if (fill !== undefined) {
+    if (typeof encoding === 'string') {
+      buf.fill(fill, encoding)
+    } else {
+      buf.fill(fill)
+    }
+  } else {
+    buf.fill(0)
+  }
+  return buf
+}
+
+SafeBuffer.allocUnsafe = function (size) {
+  if (typeof size !== 'number') {
+    throw new TypeError('Argument must be a number')
+  }
+  return Buffer(size)
+}
+
+SafeBuffer.allocUnsafeSlow = function (size) {
+  if (typeof size !== 'number') {
+    throw new TypeError('Argument must be a number')
+  }
+  return buffer.SlowBuffer(size)
+}
+
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3097,127 +3218,6 @@ Url.prototype.parseHost = function() {
 
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-if (typeof process === 'undefined' ||
-    !process.version ||
-    process.version.indexOf('v0.') === 0 ||
-    process.version.indexOf('v1.') === 0 && process.version.indexOf('v1.8.') !== 0) {
-  module.exports = { nextTick: nextTick };
-} else {
-  module.exports = process
-}
-
-function nextTick(fn, arg1, arg2, arg3) {
-  if (typeof fn !== 'function') {
-    throw new TypeError('"callback" argument must be a function');
-  }
-  var len = arguments.length;
-  var args, i;
-  switch (len) {
-  case 0:
-  case 1:
-    return process.nextTick(fn);
-  case 2:
-    return process.nextTick(function afterTickOne() {
-      fn.call(null, arg1);
-    });
-  case 3:
-    return process.nextTick(function afterTickTwo() {
-      fn.call(null, arg1, arg2);
-    });
-  case 4:
-    return process.nextTick(function afterTickThree() {
-      fn.call(null, arg1, arg2, arg3);
-    });
-  default:
-    args = new Array(len - 1);
-    i = 0;
-    while (i < args.length) {
-      args[i++] = arguments[i];
-    }
-    return process.nextTick(function afterTick() {
-      fn.apply(null, args);
-    });
-  }
-}
-
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* eslint-disable node/no-deprecated-api */
-var buffer = __webpack_require__(3)
-var Buffer = buffer.Buffer
-
-// alternative to using Object.keys for old browsers
-function copyProps (src, dst) {
-  for (var key in src) {
-    dst[key] = src[key]
-  }
-}
-if (Buffer.from && Buffer.alloc && Buffer.allocUnsafe && Buffer.allocUnsafeSlow) {
-  module.exports = buffer
-} else {
-  // Copy properties from require('buffer')
-  copyProps(buffer, exports)
-  exports.Buffer = SafeBuffer
-}
-
-function SafeBuffer (arg, encodingOrOffset, length) {
-  return Buffer(arg, encodingOrOffset, length)
-}
-
-// Copy static methods from Buffer
-copyProps(Buffer, SafeBuffer)
-
-SafeBuffer.from = function (arg, encodingOrOffset, length) {
-  if (typeof arg === 'number') {
-    throw new TypeError('Argument must not be a number')
-  }
-  return Buffer(arg, encodingOrOffset, length)
-}
-
-SafeBuffer.alloc = function (size, fill, encoding) {
-  if (typeof size !== 'number') {
-    throw new TypeError('Argument must be a number')
-  }
-  var buf = Buffer(size)
-  if (fill !== undefined) {
-    if (typeof encoding === 'string') {
-      buf.fill(fill, encoding)
-    } else {
-      buf.fill(fill)
-    }
-  } else {
-    buf.fill(0)
-  }
-  return buf
-}
-
-SafeBuffer.allocUnsafe = function (size) {
-  if (typeof size !== 'number') {
-    throw new TypeError('Argument must be a number')
-  }
-  return Buffer(size)
-}
-
-SafeBuffer.allocUnsafeSlow = function (size) {
-  if (typeof size !== 'number') {
-    throw new TypeError('Argument must be a number')
-  }
-  return buffer.SlowBuffer(size)
-}
-
-
-/***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3740,7 +3740,7 @@ module.exports = Array.isArray || function (arr) {
 var response = __webpack_require__(13)
 var extend = __webpack_require__(41)
 var statusCodes = __webpack_require__(42)
-var url = __webpack_require__(6)
+var url = __webpack_require__(8)
 
 var http = exports
 
@@ -4177,7 +4177,7 @@ exports.PassThrough = __webpack_require__(39);
 
 /*<replacement>*/
 
-var pna = __webpack_require__(7);
+var pna = __webpack_require__(6);
 /*</replacement>*/
 
 module.exports = Readable;
@@ -4206,7 +4206,7 @@ var Stream = __webpack_require__(16);
 
 /*<replacement>*/
 
-var Buffer = __webpack_require__(8).Buffer;
+var Buffer = __webpack_require__(7).Buffer;
 var OurUint8Array = global.Uint8Array || function () {};
 function _uint8ArrayToBuffer(chunk) {
   return Buffer.from(chunk);
@@ -5189,7 +5189,7 @@ module.exports = __webpack_require__(9).EventEmitter;
 
 /*<replacement>*/
 
-var pna = __webpack_require__(7);
+var pna = __webpack_require__(6);
 /*</replacement>*/
 
 // undocumented cb() API, needed for core, not for public API
@@ -5294,7 +5294,7 @@ module.exports = {
 
 /*<replacement>*/
 
-var pna = __webpack_require__(7);
+var pna = __webpack_require__(6);
 /*</replacement>*/
 
 module.exports = Writable;
@@ -5347,7 +5347,7 @@ var Stream = __webpack_require__(16);
 
 /*<replacement>*/
 
-var Buffer = __webpack_require__(8).Buffer;
+var Buffer = __webpack_require__(7).Buffer;
 var OurUint8Array = global.Uint8Array || function () {};
 function _uint8ArrayToBuffer(chunk) {
   return Buffer.from(chunk);
@@ -5984,7 +5984,7 @@ Writable.prototype._destroy = function (err, cb) {
 
 /*<replacement>*/
 
-var Buffer = __webpack_require__(8).Buffer;
+var Buffer = __webpack_require__(7).Buffer;
 /*</replacement>*/
 
 var isEncoding = Buffer.isEncoding || function (encoding) {
@@ -6495,8 +6495,7 @@ if (typeof window === 'object') {
 /* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(process, Buffer) {var parse = __webpack_require__(6).parse
-var URL = __webpack_require__(6).URL
+/* WEBPACK VAR INJECTION */(function(process, Buffer) {var parse = __webpack_require__(8).parse
 var events = __webpack_require__(9)
 var https = __webpack_require__(31)
 var http = __webpack_require__(11)
@@ -6514,6 +6513,8 @@ var lineFeed = 10
 var carriageReturn = 13
 // Beyond 256KB we could not observe any gain in performance
 var maxBufferAheadAllocation = 1024 * 256
+// Headers matching the pattern should be removed when redirecting to different origin
+var reUnsafeHeader = /^(cookie|authorization)$/i
 
 function hasBom (buf) {
   return bom.every(function (charCode, index) {
@@ -6530,6 +6531,8 @@ function hasBom (buf) {
  **/
 function EventSource (url, eventSourceInitDict) {
   var readyState = EventSource.CONNECTING
+  var headers = eventSourceInitDict && eventSourceInitDict.headers
+  var hasNewOrigin = false
   Object.defineProperty(this, 'readyState', {
     get: function () {
       return readyState
@@ -6551,11 +6554,12 @@ function EventSource (url, eventSourceInitDict) {
     readyState = EventSource.CONNECTING
     _emit('error', new Event('error', {message: message}))
 
-    // The url may have been changed by a temporary
-    // redirect. If that's the case, revert it now.
+    // The url may have been changed by a temporary redirect. If that's the case,
+    // revert it now, and flag that we are no longer pointing to a new origin
     if (reconnectUrl) {
       url = reconnectUrl
       reconnectUrl = null
+      hasNewOrigin = false
     }
     setTimeout(function () {
       if (readyState !== EventSource.CONNECTING || self.connectionInProgress) {
@@ -6568,9 +6572,9 @@ function EventSource (url, eventSourceInitDict) {
 
   var req
   var lastEventId = ''
-  if (eventSourceInitDict && eventSourceInitDict.headers && eventSourceInitDict.headers['Last-Event-ID']) {
-    lastEventId = eventSourceInitDict.headers['Last-Event-ID']
-    delete eventSourceInitDict.headers['Last-Event-ID']
+  if (headers && headers['Last-Event-ID']) {
+    lastEventId = headers['Last-Event-ID']
+    delete headers['Last-Event-ID']
   }
 
   var discardTrailingNewline = false
@@ -6584,9 +6588,10 @@ function EventSource (url, eventSourceInitDict) {
     var isSecure = options.protocol === 'https:'
     options.headers = { 'Cache-Control': 'no-cache', 'Accept': 'text/event-stream' }
     if (lastEventId) options.headers['Last-Event-ID'] = lastEventId
-    if (eventSourceInitDict && eventSourceInitDict.headers) {
-      for (var i in eventSourceInitDict.headers) {
-        var header = eventSourceInitDict.headers[i]
+    if (headers) {
+      var reqHeaders = hasNewOrigin ? removeUnsafeHeaders(headers) : headers
+      for (var i in reqHeaders) {
+        var header = reqHeaders[i]
         if (header) {
           options.headers[i] = header
         }
@@ -6646,13 +6651,17 @@ function EventSource (url, eventSourceInitDict) {
 
       // Handle HTTP redirects
       if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 307) {
-        if (!res.headers.location) {
+        var location = res.headers.location
+        if (!location) {
           // Server sent redirect response without Location header.
           _emit('error', new Event('error', {status: res.statusCode, message: res.statusMessage}))
           return
         }
+        var prevOrigin = new URL(url).origin
+        var nextOrigin = new URL(location).origin
+        hasNewOrigin = prevOrigin !== nextOrigin
         if (res.statusCode === 307) reconnectUrl = url
-        url = res.headers.location
+        url = location
         process.nextTick(connect)
         return
       }
@@ -6960,6 +6969,26 @@ function MessageEvent (type, eventInitDict) {
       Object.defineProperty(this, f, { writable: false, value: eventInitDict[f], enumerable: true })
     }
   }
+}
+
+/**
+ * Returns a new object of headers that does not include any authorization and cookie headers
+ *
+ * @param {Object} headers An object of headers ({[headerName]: headerValue})
+ * @return {Object} a new object of headers
+ * @api private
+ */
+function removeUnsafeHeaders (headers) {
+  var safe = {}
+  for (var key in headers) {
+    if (reUnsafeHeader.test(key)) {
+      continue
+    }
+
+    safe[key] = headers[key]
+  }
+
+  return safe
 }
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(3).Buffer))
@@ -8001,7 +8030,7 @@ var objectKeys = Object.keys || function (obj) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var http = __webpack_require__(11)
-var url = __webpack_require__(6)
+var url = __webpack_require__(8)
 
 var https = module.exports
 
@@ -8382,7 +8411,7 @@ var unsafeHeaders = [
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Buffer = __webpack_require__(8).Buffer;
+var Buffer = __webpack_require__(7).Buffer;
 var util = __webpack_require__(35);
 
 function copyBuffer(src, target, offset) {
