@@ -48,9 +48,6 @@
   "engines": {
     "node": ">=0.12.0"
   },
-  "dependencies": {
-    "original": "^1.0.0"
-  },
   "standard": {
     "ignore": [
       "example/eventsource-polyfill.js"
