@@ -12,6 +12,10 @@
 * Preallocate buffer size when reading data for increased performance with large messages ([#239](https://github.com/EventSource/eventsource/pull/239) Pau Freixes)
 * Removed dependency on url-parser. Fixes [CVE-2022-0512](https://www.whitesourcesoftware.com/vulnerability-database/CVE-2022-0512) & [CVE-2022-0691](https://nvd.nist.gov/vuln/detail/CVE-2022-0691) ([#249](https://github.com/EventSource/eventsource/pull/249) Alex Hladin)
 
+# [1.1.2](https://github.com/EventSource/eventsource/compare/v1.1.1...v1.1.2)
+
+* Inline origin resolution, drops `original` dependency ([#281](https://github.com/EventSource/eventsource/pull/281) Espen Hovlandsdal)
+
 # [1.1.1](https://github.com/EventSource/eventsource/compare/v1.1.0...v1.1.1)
 
 * Do not include authorization and cookie headers on redirect to different origin ([#273](https://github.com/EventSource/eventsource/pull/273) Espen Hovlandsdal)
