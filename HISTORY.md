@@ -1,3 +1,7 @@
+# [1.1.2](https://github.com/EventSource/eventsource/compare/v1.1.1...v1.1.2)
+
+* Inline origin resolution, drops `original` dependency ([#281](https://github.com/EventSource/eventsource/pull/281) Espen Hovlandsdal)
+
 # [1.1.1](https://github.com/EventSource/eventsource/compare/v1.1.0...v1.1.1)
 
 * Do not include authorization and cookie headers on redirect to different origin ([#273](https://github.com/EventSource/eventsource/pull/273) Espen Hovlandsdal)
