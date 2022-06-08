@@ -1,4 +1,4 @@
-# EventSource [![npm version](http://img.shields.io/npm/v/eventsource.svg?style=flat-square)](https://www.npmjs.com/package/eventsource)[![NPM Downloads](https://img.shields.io/npm/dm/eventsource.svg?style=flat-square)](http://npm-stat.com/charts.html?package=eventsource&from=2015-09-01)[![Dependencies](https://img.shields.io/david/EventSource/eventsource.svg?style=flat-square)](https://david-dm.org/EventSource/eventsource)
+# EventSource [![npm version](http://img.shields.io/npm/v/eventsource.svg?style=flat-square)](https://www.npmjs.com/package/eventsource)[![NPM Downloads](https://img.shields.io/npm/dm/eventsource.svg?style=flat-square)](http://npm-stat.com/charts.html?package=eventsource&from=2015-09-01)
 
 ![Build](https://github.com/EventSource/eventsource/actions/workflows/build.yml/badge.svg)
 
