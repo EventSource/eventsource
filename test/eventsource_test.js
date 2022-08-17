@@ -1314,7 +1314,7 @@ describe('Events', function () {
         server.close(done)
       })
 
-      es.dispatchEvent({type: 'greeting', detail: {data: 'Hello'}})
+      es.dispatchEvent({type: 'greeting', data: 'Hello'})
     })
   })
 })
