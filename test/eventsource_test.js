@@ -549,6 +549,64 @@ describe('HTTP Request', function () {
         }
       )
     })
+  })
+
+  it('sends payloads with default POST method', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err)
+
+      server.on('request', function (req) {
+        assert.equal(req.headers['content-type'], 'application/json')
+        assert.equal(req.headers['content-length'], '17')
+        assert.equal(req.method, 'POST')
+
+        let body = ''
+        req.setEncoding('utf8')
+        req
+          .on('data', (data) => {
+            body += data
+          })
+          .on('end', (data) => {
+            assert.equal(body, '{"hello":"world"}')
+            server.close(done)
+          })
+      })
+
+      assert.doesNotThrow(
+        function () {
+          new EventSource(server.url, {payload: {hello: 'world'}})
+        }
+      )
+    })
+  })
+
+  it('sends payloads with custom PUT method', function (done) {
+    createServer(function (err, server) {
+      if (err) return done(err)
+
+      server.on('request', function (req) {
+        assert.equal(req.headers['content-type'], 'application/json')
+        assert.equal(req.headers['content-length'], '17')
+        assert.equal(req.method, 'PUT')
+
+        let body = ''
+        req.setEncoding('utf8')
+        req
+          .on('data', (data) => {
+            body += data
+          })
+          .on('end', (data) => {
+            assert.equal(body, '{"hello":"world"}')
+            server.close(done)
+          })
+      })
+
+      assert.doesNotThrow(
+        function () {
+          new EventSource(server.url, {method: 'PUT', payload: {hello: 'world'}})
+        }
+      )
+    })
   });
 
   [301, 302, 307].forEach(function (status) {

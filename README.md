@@ -85,6 +85,16 @@ You can define a `proxy` option for the HTTP request to be used. This is typical
 var es = new EventSource(url, {proxy: 'http://your.proxy.com'});
 ```
 
+### HTTP methods other than GET
+
+You can define an optional payload, and a method for the HTTP request to be used. The method defaults to `GET`,
+unless a payload is given, in which case it defaults to `POST`. It can however be overridden in the `eventSourceInitDict`.
+The payload can be any JavaScript value, which will be automatically stringified for transmission.
+
+```javascript
+var es = new EventSource(url, {method: 'POST', payload: {hello: 'world!'}});
+```
+
 
 ## License
 
