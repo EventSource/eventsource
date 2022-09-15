@@ -1,3 +1,7 @@
+# [master](https://github.com/EventSource/eventsource/compare/v2.0.2...HEAD)
+
+* Fix dispatchEvent wrong implementation ([#288](https://github.com/EventSource/eventsource/issues/288) [#289](https://github.com/EventSource/eventsource/pull/289) Eddy D.)
+
 # [2.0.2](https://github.com/EventSource/eventsource/compare/v2.0.1...v2.0.2)
 
 * Do not include authorization and cookie headers on redirect to different origin ([#273](https://github.com/EventSource/eventsource/pull/273) Espen Hovlandsdal)
