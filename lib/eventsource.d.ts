@@ -28,6 +28,8 @@ declare class EventSource {
   onopen: (evt: MessageEvent) => any;
   onmessage: (evt: MessageEvent) => any;
   onerror: (evt: MessageEvent) => any;
+  onretrying: (evt: MessageEvent) => any;
+  onclosed: (evt: MessageEvent) => any;
   addEventListener(type: string, listener: EventListener): void;
   dispatchEvent(evt: Event): boolean;
   removeEventListener(type: string, listener?: EventListener): void;
