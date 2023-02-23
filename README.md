@@ -2,10 +2,14 @@
 
 ![Build](https://github.com/EventSource/eventsource/actions/workflows/build.yml/badge.svg)
 
+Fork of [EventSource](https://github.com/EventSource/eventsource) for Harness Feature Flag SDKs.
+
+
 This library is a pure JavaScript implementation of the [EventSource](https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events) client. The API aims to be W3C compatible.
 
 You can use it with Node.js or as a browser polyfill for
 [browsers that don't have native `EventSource` support](http://caniuse.com/#feat=eventsource).
+
 
 ## Install
 
@@ -38,6 +42,13 @@ If you're using [webpack](https://webpack.github.io/) or [browserify](http://bro
 you can of course build your own. (The `example/eventsource-polyfill.js` is built with webpack).
 
 ## Extensions to the W3C API
+
+### Extensions to event behaviour
+
+Emits new `retrying` event when the library is attempting to reconnect to the Harness.
+
+### Extensions to retry behaviour
+Instead of retrying every second, forever, this implementation uses exponential backoff and retry strategies.
 
 ### Setting HTTP request headers
 
@@ -85,6 +96,7 @@ You can define a `proxy` option for the HTTP request to be used. This is typical
 var es = new EventSource(url, {proxy: 'http://your.proxy.com'});
 ```
 
+# Extensions to retry behaviour
 
 ## License
 
