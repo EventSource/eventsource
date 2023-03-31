@@ -1,5 +1,5 @@
 declare module 'eventsource' {
-    declare class EventSource {
+    class EventSource {
         static readonly CLOSED: number;
         static readonly CONNECTING: number;
         static readonly OPEN: number;
@@ -23,7 +23,7 @@ declare module 'eventsource' {
         onreconnect: (evt: MessageEvent) => any;
       }
       
-      declare namespace EventSource {
+      namespace EventSource {
         enum ReadyState { CONNECTING = 0, OPEN = 1, CLOSED = 2 }
       
         interface EventSourceInitDict {
