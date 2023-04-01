@@ -32,6 +32,8 @@ declare module 'eventsource' {
           proxy?: string | undefined;
           https?: object | undefined;
           rejectUnauthorized?: boolean | undefined;
+          responseTimeout: number;
+          onreconnect: (evt: MessageEvent) => any;
         }
       }
 
