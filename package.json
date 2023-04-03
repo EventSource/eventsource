@@ -1,7 +1,7 @@
 {
-  "name": "eventsource",
+  "name": "@holium/eventsource",
   "version": "2.0.2",
-  "description": "W3C compliant EventSource client for Node.js and browser (polyfill)",
+  "description": "eventsource pinned at version 2.0.2",
   "keywords": [
     "eventsource",
     "http",
@@ -9,14 +9,14 @@
     "sse",
     "polyfill"
   ],
-  "homepage": "http://github.com/EventSource/eventsource",
+  "homepage": "https://github.com/holium/eventsource#master",
   "author": "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git://github.com/EventSource/eventsource.git"
+    "url": "https://github.com/holium/eventsource#master"
   },
   "bugs": {
-    "url": "http://github.com/EventSource/eventsource/issues"
+    "url": "https://github.com/holium/eventsource#master"
   },
   "directories": {
     "lib": "./lib"
