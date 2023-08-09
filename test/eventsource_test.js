@@ -705,6 +705,20 @@ describe('HTTPS Support', function () {
       }
     })
   })
+
+  it('fails to connect to self signed servers when options are provided but options.rejectUnauthorized is not specified', function (done) {
+    createHttpsServer(function (err, server) {
+      if (err) return done(err)
+
+      var es = new EventSource(server.url, {})
+      es.onopen = function () {
+        done(new Error('the socket should not have been opened, since options.rejectUnauthorized was not set to true'))
+      }
+      es.onerror = function () {
+        done()
+      }
+    })
+  })
 })
 
 describe('HTTPS Client Certificate Support', function () {
