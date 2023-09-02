@@ -33,7 +33,7 @@
     "buffer-from": "^1.1.1",
     "express": "^4.15.3",
     "mocha": "^3.5.3",
-    "nyc": "^11.2.1",
+    "nyc": "^15.1.0",
     "serve-static": "^1.12.3",
     "ssestream": "^1.0.0",
     "standard": "^10.0.2",
