@@ -502,7 +502,10 @@ export function registerTests(options: {
         auth: 'Bearer foo',
       })
 
-      expect(firstMessage.timeStamp).notToBe(lastMessage.timeStamp)
+      // Deno/Bun seems to set timeStamp to `0` 🤷‍♂️
+      if (firstMessage.timeStamp > 0) {
+        expect(firstMessage.timeStamp).notToBe(lastMessage.timeStamp)
+      }
 
       await deferClose(es)
     })
@@ -559,7 +562,10 @@ export function registerTests(options: {
         auth: null, // Authorization header should not follow cross-origin redirects
       })
 
-      expect(firstMessage.timeStamp).notToBe(lastMessage.timeStamp)
+      // Deno/Bun seems to set timeStamp to `0` 🤷‍♂️
+      if (firstMessage.timeStamp > 0) {
+        expect(firstMessage.timeStamp).notToBe(lastMessage.timeStamp)
+      }
 
       await deferClose(es)
     })
