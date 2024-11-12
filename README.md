@@ -1,91 +1,141 @@
-# EventSource [![npm version](http://img.shields.io/npm/v/eventsource.svg?style=flat-square)](https://www.npmjs.com/package/eventsource)[![NPM Downloads](https://img.shields.io/npm/dm/eventsource.svg?style=flat-square)](http://npm-stat.com/charts.html?package=eventsource&from=2015-09-01)
+# eventsource
 
-![Build](https://github.com/EventSource/eventsource/actions/workflows/build.yml/badge.svg)
+[![npm version](https://img.shields.io/npm/v/eventsource.svg?style=flat-square)](http://npmjs.org/package/eventsource)[![npm bundle size](https://img.shields.io/bundlephobia/minzip/eventsource?style=flat-square)](https://bundlephobia.com/result?p=eventsource)
 
-This library is a pure JavaScript implementation of the [EventSource](https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events) client. The API aims to be W3C compatible.
+WhatWG/W3C-compatible [server-sent events/eventsource](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events) client. The module attempts to implement an absolute minimal amount of features/changes beyond the specification.
 
-You can use it with Node.js or as a browser polyfill for
-[browsers that don't have native `EventSource` support](http://caniuse.com/#feat=eventsource).
+If you're looking for a modern alternative with a less constrained API, check out the [`eventsource-client` package](https://www.npmjs.com/package/eventsource-client).
 
-## Install
+## Installation
 
-    npm install eventsource
-
-## Example
-
-    npm install
-    node ./example/sse-server.js
-    node ./example/sse-client.js    # Node.js client
-    open http://localhost:8080      # Browser client - both native and polyfill
-    curl http://localhost:8080/sse  # Enjoy the simplicity of SSE
-
-## Browser Polyfill
-
-Just add `example/eventsource-polyfill.js` file to your web page:
-
-```html
-<script src=/eventsource-polyfill.js></script>
+```bash
+npm install --save eventsource
 ```
 
-Now you will have two global constructors:
+## Supported engines
 
-```javascript
-window.EventSourcePolyfill
-window.EventSource // Unchanged if browser has defined it. Otherwise, same as window.EventSourcePolyfill
+- Node.js >= 18
+- Chrome >= 63
+- Safari >= 11.3
+- Firefox >= 65
+- Edge >= 79
+- Deno >= 1.30
+- Bun >= 1.1.23
+
+Basically, any environment that supports:
+
+- [fetch](https://developer.mozilla.org/en-US/docs/Web/API/fetch)
+- [ReadableStream](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream)
+- [TextDecoderStream](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoderStream)
+- [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL)
+- [Event](https://developer.mozilla.org/en-US/docs/Web/API/Event), [MessageEvent](https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent), [EventTarget](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget)
+
+If you need to support older runtimes, try the `1.x` branch/version range (note: 1.x branch is primarily targetted at Node.js, not browsers).
+
+## Usage
+
+```ts
+import {EventSource} from 'eventsource'
+
+const es = new EventSource('https://my-server.com/sse')
+
+/*
+ * This will listen for events with the field `event: notice`.
+ */
+es.addEventListener('notice', (event) => {
+  console.log(event.data)
+})
+
+/*
+ * This will listen for events with the field `event: update`.
+ */
+es.addEventListener('update', (event) => {
+  console.log(event.data)
+})
+
+/*
+ * The event "message" is a special case, as it will capture events _without_ an
+ * event field, as well as events that have the specific type `event: message`.
+ * It will not trigger on any other event type.
+ */
+es.addEventListener('message', (event) => {
+  console.log(event.data)
+})
+
+/**
+ * To explicitly close the connection, call the `close` method.
+ * This will prevent any reconnection from happening.
+ */
+setTimeout(() => {
+  es.close()
+}, 10_000)
 ```
 
-If you're using [webpack](https://webpack.github.io/) or [browserify](http://browserify.org/)
-you can of course build your own. (The `example/eventsource-polyfill.js` is built with webpack).
+## Extensions to the WhatWG/W3C API
 
-## Extensions to the W3C API
+### Message and code properties on errors
 
-### Setting HTTP request headers
+The `error` event has a `message` and `code` property that can be used to get more information about the error. In the specification, the Event
 
-You can define custom HTTP headers for the initial HTTP request. This can be useful for e.g. sending cookies
-or to specify an initial `Last-Event-ID` value.
-
-HTTP headers are defined by assigning a `headers` attribute to the optional `eventSourceInitDict` argument:
-
-```javascript
-var eventSourceInitDict = {headers: {'Cookie': 'test=test'}};
-var es = new EventSource(url, eventSourceInitDict);
-```
-
-### Allow unauthorized HTTPS requests
-
-By default, https requests that cannot be authorized will cause the connection to fail and an exception
-to be emitted. You can override this behaviour, along with other https options:
-
-```javascript
-var eventSourceInitDict = {https: {rejectUnauthorized: false}};
-var es = new EventSource(url, eventSourceInitDict);
-```
-
-Note that for Node.js < v0.10.x this option has no effect - unauthorized HTTPS requests are *always* allowed.
-
-### HTTP status code on error events
-
-Unauthorized and redirect error status codes (for example 401, 403, 301, 307) are available in the `status` property in the error event.
-
-```javascript
-es.onerror = function (err) {
-  if (err) {
-    if (err.status === 401 || err.status === 403) {
-      console.log('not authorized');
-    }
+```ts
+es.addEventListener('error', (err) => {
+  if (err.code === 401 || err.code === 403) {
+    console.log('not authorized')
   }
-};
+})
 ```
 
-### HTTP/HTTPS proxy
+### Specify `fetch` implementation
 
-You can define a `proxy` option for the HTTP request to be used. This is typically useful if you are behind a corporate firewall.
+The `EventSource` constructor accepts an optional `fetch` property in the second argument that can be used to specify the `fetch` implementation to use.
 
-```javascript
-var es = new EventSource(url, {proxy: 'http://your.proxy.com'});
+This can be useful in environments where the global `fetch` function is not available - but it can also be used to alter the request/response behaviour.
+
+#### Setting HTTP request headers
+
+```ts
+const es = new EventSource('https://my-server.com/sse', {
+  fetch: (input, init) =>
+    fetch(input, {
+      ...init,
+      headers: {
+        ...init.headers,
+        Authorization: 'Bearer myToken',
+      },
+    }),
+})
 ```
 
+#### HTTP/HTTPS proxy
+
+Use a package like [`node-fetch-native`](https://github.com/unjs/node-fetch-native) to add proxy support, either through environment variables or explicit configuration.
+
+```ts
+// npm install node-fetch-native --save
+import {fetch} from 'node-fetch-native/proxy'
+
+const es = new EventSource('https://my-server.com/sse', {
+  fetch: (input, init) => fetch(input, init),
+})
+```
+
+#### Allow unauthorized HTTPS requests
+
+Use a package like [`undici`](https://github.com/nodejs/undici) for more control of fetch options through the use of an [`Agent`](https://undici.nodejs.org/#/docs/api/Agent.md).
+
+```ts
+// npm install undici --save
+import {fetch, Agent} from 'undici'
+
+await fetch('https://my-server.com/sse', {
+  dispatcher: new Agent({
+    connect: {
+      rejectUnauthorized: false,
+    },
+  }),
+})
+```
 
 ## License
 
-MIT-licensed. See LICENSE
+MIT-licensed. See [LICENSE](LICENSE).

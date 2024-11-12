@@ -1,60 +1,124 @@
 {
   "name": "eventsource",
-  "version": "2.0.2",
-  "description": "W3C compliant EventSource client for Node.js and browser (polyfill)",
-  "keywords": [
-    "eventsource",
-    "http",
-    "streaming",
-    "sse",
-    "polyfill"
-  ],
-  "homepage": "http://github.com/EventSource/eventsource",
-  "author": "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/EventSource/eventsource.git"
-  },
-  "bugs": {
-    "url": "http://github.com/EventSource/eventsource/issues"
-  },
-  "directories": {
-    "lib": "./lib"
-  },
-  "main": "./lib/eventsource",
-  "license": "MIT",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://github.com/EventSource/eventsource/raw/master/LICENSE"
-    }
-  ],
-  "devDependencies": {
-    "buffer-from": "^1.1.1",
-    "express": "^4.15.3",
-    "mocha": "^3.5.3",
-    "nyc": "^11.2.1",
-    "serve-static": "^1.12.3",
-    "ssestream": "^1.0.0",
-    "standard": "^10.0.2",
-    "webpack": "^3.5.6"
+  "version": "0.0.0",
+  "description": "WhatWG/W3C compliant EventSource client for Node.js and browsers",
+  "sideEffects": false,
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "deno": "./dist/index.js",
+      "bun": "./dist/index.js",
+      "source": "./src/index.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "mocha --reporter spec && standard",
-    "polyfill": "webpack lib/eventsource-polyfill.js example/eventsource-polyfill.js",
-    "postpublish": "git push && git push --tags",
-    "coverage": "nyc --reporter=html --reporter=text _mocha --reporter spec"
+    "build": "pkg-utils build && pkg-utils --strict",
+    "build:watch": "pkg-utils watch",
+    "clean": "rimraf dist coverage",
+    "lint": "eslint . && tsc --noEmit",
+    "posttest": "npm run lint",
+    "prebuild": "npm run clean",
+    "prepublishOnly": "npm run build",
+    "test": "npm run test:node && npm run test:browser",
+    "test:browser": "tsx test/browser/client.browser.test.ts",
+    "test:bun": "bun run test/bun/client.bun.test.ts",
+    "test:deno": "deno run --allow-net --allow-read --allow-env --unstable-sloppy-imports test/deno/client.deno.test.ts",
+    "test:node": "tsx test/node/client.node.test.ts"
   },
+  "files": [
+    "!dist/stats.html",
+    "dist",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/eventsource/eventsource.git"
+  },
+  "keywords": [
+    "sse",
+    "eventsource",
+    "server-sent-events"
+  ],
+  "author": "Espen Hovlandsdal <espen@hovlandsdal.com>",
+  "contributors": [
+    "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
+    "Einar Otto Stangvik <einaro.s@gmail.com>"
+  ],
+  "license": "MIT",
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=18.0.0"
   },
-  "dependencies": {},
-  "standard": {
-    "ignore": [
-      "example/eventsource-polyfill.js"
+  "browserslist": [
+    "node >= 18",
+    "chrome >= 71",
+    "safari >= 14.1",
+    "firefox >= 105",
+    "edge >= 79"
+  ],
+  "dependencies": {
+    "eventsource-parser": "^3.0.0"
+  },
+  "devDependencies": {
+    "@sanity/pkg-utils": "^6.11.10",
+    "@sanity/semantic-release-preset": "^5.0.0",
+    "@tsconfig/strictest": "^2.0.5",
+    "@types/sinon": "^17.0.3",
+    "@typescript-eslint/eslint-plugin": "^6.11.0",
+    "@typescript-eslint/parser": "^6.11.0",
+    "esbuild": "^0.24.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-sanity": "^7.1.3",
+    "eventsource-encoder": "^1.0.0",
+    "playwright": "^1.48.2",
+    "prettier": "^3.2.5",
+    "rimraf": "^5.0.5",
+    "rollup-plugin-visualizer": "^5.12.0",
+    "semantic-release": "^24.2.0",
+    "sinon": "^17.0.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "undici": "^6.20.1"
+  },
+  "bugs": {
+    "url": "https://github.com/eventsource/eventsource/issues"
+  },
+  "homepage": "https://github.com/eventsource/eventsource#readme",
+  "prettier": {
+    "semi": false,
+    "printWidth": 100,
+    "bracketSpacing": false,
+    "singleQuote": true
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 9,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "modules": true
+      }
+    },
+    "extends": [
+      "sanity",
+      "sanity/typescript",
+      "prettier"
     ],
-    "globals": [
-      "URL"
-    ]
+    "ignorePatterns": [
+      "lib/**/"
+    ],
+    "globals": {
+      "globalThis": false
+    },
+    "rules": {
+      "no-undef": "off",
+      "no-empty": "off"
+    }
   }
 }

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>eventsource-client tests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      html,
+      body,
+      #wrapper,
+      #waffletest {
+        width: 100%;
+        margin: 0;
+      }
+      #wrapper {
+        height: 100vh;
+        font-family: sans-serif;
+        font-size: 3rem;
+        text-align: center;
+        display: flex;
+      }
+      #waffletest {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .fail {
+        background: red;
+        color: white;
+      }
+      .success {
+        background: green;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="waffletest">Preparing test environment…</div>
+    </div>
+
+    <script src="/browser-test.js"></script>
+  </body>
+</html>
