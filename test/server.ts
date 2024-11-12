@@ -9,7 +9,6 @@ import {
 } from 'node:http'
 import {dirname, resolve as resolvePath} from 'node:path'
 import {fileURLToPath} from 'node:url'
-import {promisify} from 'node:util'
 
 import esbuild from 'esbuild'
 import {encode} from 'eventsource-encoder'
@@ -23,10 +22,13 @@ const connectCounts = new Map<string, number>()
 export async function getServer(port: number): Promise<{close: () => Promise<void>}> {
   const server = await promServer(port)
 
-  const closeServer = promisify(server.close.bind(server))
+  const closeServer = () =>
+    new Promise<void>((resolve, reject) => {
+      server.close((err) => (err ? reject(err) : resolve()))
+    })
 
   return {
-    close: () => closeServer(),
+    close: closeServer,
   }
 
   function promServer(portNumber: number) {

@@ -19,7 +19,7 @@ const BUN_TEST_PORT = 3946
   const result = await runner.runTests()
 
   // Teardown
-  await server.close()
+  await Promise.race([server.close(), new Promise((resolve) => setTimeout(resolve, 5000))])
 
   // eslint-disable-next-line no-process-exit
   process.exit(result.failures)
