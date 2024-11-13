@@ -135,7 +135,7 @@ async function writeCounter(req: IncomingMessage, res: ServerResponse) {
         id: `${counter}`,
       }),
     )
-    await delay(25)
+    await delay(5)
   }
 
   res.end()
@@ -379,6 +379,16 @@ async function writeRedirectTarget(req: IncomingMessage, res: ServerResponse) {
       }),
     }),
   )
+
+  // Bun behaves weirdly when transfer-encoding is not chunked, which it automatically
+  // does for smaller packets. By trickling out some comments, we hackishly prevent
+  // this from happening. Trying to get a reproducible test case for this so I can file
+  // a bug report upstream, but working around it for now.
+  for (let i = 0; i < 20; i++) {
+    await delay(20)
+    tryWrite(res, ':\n')
+  }
+
   res.end()
 }
 
