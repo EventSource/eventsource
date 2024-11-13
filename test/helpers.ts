@@ -48,8 +48,10 @@ export function getCallCounter({name = '', onCall}: CallCounterOptions = {}): Me
   const fn = spy as unknown as MessageReceiver
   fn.waitForCallCount = (num: number, timeout: number = 10000) => {
     return Promise.race([
-      new Promise<void>((resolve) => {
-        if (numCalls === num) {
+      new Promise<void>((resolve, reject) => {
+        if (numCalls > num) {
+          reject(new Error(`Already past ${name} call count of ${num}`))
+        } else if (numCalls === num) {
           resolve()
         } else {
           listeners.push([num, resolve])
