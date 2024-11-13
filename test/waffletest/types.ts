@@ -17,6 +17,7 @@ export type RegisterTest = ((
   timeout?: number,
   only?: boolean,
 ) => void) & {
+  skip: (...args: unknown[]) => void
   only: (title: string, fn: TestFn, timeout?: number) => void
 }
 

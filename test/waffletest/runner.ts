@@ -1,7 +1,6 @@
 import {ExpectationError} from '../helpers.js'
 import type {
   TestEndEvent,
-  TestEvent,
   TestFailEvent,
   TestFn,
   TestPassEvent,
@@ -20,7 +19,7 @@ interface TestDefinition {
 const DEFAULT_TIMEOUT = 15000
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const noop = (_event: TestEvent) => {
+const noop = (_event: unknown) => {
   /* intentional noop */
 }
 
@@ -56,6 +55,8 @@ export function createRunner(options: TestRunnerOptions = {}): TestRunner {
       })
     }
   }
+
+  registerTest.skip = (...args: unknown[]): void => noop(args)
 
   registerTest.only = (title: string, fn: TestFn, timeout?: number): void => {
     return registerTest(title, fn, timeout, true)
