@@ -694,12 +694,12 @@ export function registerTests(options: {
     await deferClose(es)
   })
 
-  test('has CONNECTING constant', () => {
+  test('has CONNECTING constant', async () => {
     const es = new OurEventSource(`${baseUrl}:${port}/`)
     expect(es.readyState).toBe(OurEventSource.CONNECTING)
     expect(es.CONNECTING).toBe(0)
     expect(OurEventSource.CONNECTING).toBe(0)
-    es.close()
+    await deferClose(es)
   })
 
   test('has OPEN constant', async () => {
@@ -710,15 +710,16 @@ export function registerTests(options: {
     expect(es.readyState).toBe(OurEventSource.OPEN)
     expect(es.OPEN).toBe(1)
     expect(OurEventSource.OPEN).toBe(1)
-    es.close()
+    await deferClose(es)
   })
 
-  test('has CLOSED constant', () => {
+  test('has CLOSED constant', async () => {
     const es = new OurEventSource(`${baseUrl}:${port}/`)
     es.close()
     expect(es.readyState).toBe(OurEventSource.CLOSED)
     expect(es.CLOSED).toBe(2)
     expect(OurEventSource.CLOSED).toBe(2)
+    await deferClose(es)
   })
 
   return runner
