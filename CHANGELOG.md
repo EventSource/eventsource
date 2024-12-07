@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.1](https://github.com/EventSource/eventsource/compare/v3.0.0...v3.0.1) (2024-12-07)
+
+### Bug Fixes
+
+* run build prior to publishing ([f86df19](https://github.com/EventSource/eventsource/commit/f86df19333b0e4f06a20d79458d52a2b57265e74))
+
 ## [3.0.0](https://github.com/EventSource/eventsource/compare/v2.0.2...v3.0.0) (2024-12-07)
 
 ### ⚠ BREAKING CHANGES
