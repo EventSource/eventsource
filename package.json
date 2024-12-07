@@ -123,5 +123,8 @@
       "no-undef": "off",
       "no-empty": "off"
     }
+  },
+  "publishConfig": {
+    "provenance": true
   }
 }
