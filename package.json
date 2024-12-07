@@ -87,6 +87,9 @@
     "typescript": "^5.6.3",
     "undici": "^6.20.1"
   },
+  "overrides": {
+    "cross-spawn": "7.0.6"
+  },
   "bugs": {
     "url": "https://github.com/EventSource/eventsource/issues"
   },
