@@ -47,6 +47,9 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
   release:
     name: 'Release: Publish to NPM'
+    permissions:
+      contents: read # for checkout
+      id-token: write # to enable use of OIDC for npm provenanc
     if: always() && github.event.inputs.release == 'true' && github.event.inputs.dryrun == 'false'
     runs-on: ubuntu-latest
     steps:
@@ -67,3 +70,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
