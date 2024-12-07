@@ -1,6 +1,6 @@
 # eventsource
 
-[![npm version](https://img.shields.io/npm/v/eventsource.svg?style=flat-square)](http://npmjs.org/package/eventsource)[![npm bundle size](https://img.shields.io/bundlephobia/minzip/eventsource?style=flat-square)](https://bundlephobia.com/result?p=eventsource)
+[![npm version](https://img.shields.io/npm/v/eventsource.svg?style=flat-square)](https://www.npmjs.com/package/eventsource)[![npm bundle size](https://img.shields.io/bundlephobia/minzip/eventsource?style=flat-square)](https://bundlephobia.com/result?p=eventsource)[![npm weekly downloads](https://img.shields.io/npm/dw/eventsource.svg?style=flat-square)](https://www.npmjs.com/package/eventsource)
 
 WhatWG/W3C-compatible [server-sent events/eventsource](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events) client. The module attempts to implement an absolute minimal amount of features/changes beyond the specification.
 
