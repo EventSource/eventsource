@@ -1,3 +1,32 @@
+<!-- markdownlint-disable --><!-- textlint-disable -->
+
+# 📓 Changelog
+
+All notable changes to this project will be documented in this file. See
+[Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [3.0.0](https://github.com/EventSource/eventsource/compare/v2.0.2...v3.0.0) (2024-12-07)
+
+### ⚠ BREAKING CHANGES
+
+* Drop support for Node.js versions below v18
+* The module now uses a named export instead of a default export.
+* UMD bundle dropped. Use a bundler.
+* `headers` in init dict dropped, pass a custom `fetch` function instead.
+* HTTP/HTTPS proxy support dropped. Pass a custom `fetch` function instead.
+* `https.*` options dropped. Pass a custom `fetch` function that provides an agent/dispatcher instead.
+* New default reconnect delay: 3 seconds instead of 1 second.
+* Reconnecting after a redirect will now always use the original URL, even if the status code was HTTP 307.
+
+### Features
+
+* modernize - use `fetch`, WebStreams, TypeScript, ESM ([#330](https://github.com/EventSource/eventsource/issues/330)) ([40655f7](https://github.com/EventSource/eventsource/commit/40655f7c418b8fff274e471c47f5fd2acd056318))
+
+### Bug Fixes
+
+* `dispatchEvent` now emits entire event object ([eb430c0](https://github.com/EventSource/eventsource/commit/eb430c0d70941956fb1042b946806c3adef94061))
+* empty options no longer disable certificate checks ([372d387](https://github.com/EventSource/eventsource/commit/372d387b0ca0046e798f272bbe8f42a002103c3a))
+
 ## [2.0.2](https://github.com/EventSource/eventsource/compare/v2.0.1...v2.0.2) (2022-05-12)
 
 
