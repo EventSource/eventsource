@@ -48,7 +48,8 @@ jobs:
   release:
     name: 'Release: Publish to NPM'
     permissions:
-      contents: read # for checkout
+      issues: write # for release notes, comments…
+      contents: write # for checkout + push + release creation
       id-token: write # to enable use of OIDC for npm provenanc
     if: always() && github.event.inputs.release == 'true' && github.event.inputs.dryrun == 'false'
     runs-on: ubuntu-latest
