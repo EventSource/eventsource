@@ -36,6 +36,27 @@ export function registerTests(options: {
     await deferClose(es)
   })
 
+  test('`target` on open, message and error events is the EventSource instance', async () => {
+    const onOpen = getCallCounter({name: 'onOpen'})
+    const onMessage = getCallCounter({name: 'onMessage'})
+    const onError = getCallCounter({name: 'onError'})
+    const es = new OurEventSource(`${baseUrl}:${port}/end-after-one`)
+
+    es.addEventListener('open', onOpen)
+    es.addEventListener('progress', onMessage)
+    es.addEventListener('error', onError)
+
+    await onOpen.waitForCallCount(1)
+    await onMessage.waitForCallCount(1)
+    await onError.waitForCallCount(1)
+
+    expect(onOpen.lastCall.lastArg.target).toBe(es)
+    expect(onMessage.lastCall.lastArg.target).toBe(es)
+    expect(onError.lastCall.lastArg.target).toBe(es)
+
+    await deferClose(es)
+  })
+
   test('can connect using URL string only', async () => {
     const es = new OurEventSource(`${baseUrl}:${port}/`)
     const onMessage = getCallCounter({name: 'onMessage'})
