@@ -25,7 +25,7 @@
     "lint": "eslint . && tsc --noEmit",
     "posttest": "npm run lint",
     "prebuild": "npm run clean",
-    "prepublishOnly": "npm run build",
+    "prepare": "npm run build",
     "test": "npm run test:node && npm run test:browser",
     "test:browser": "tsx test/browser/client.browser.test.ts",
     "test:bun": "bun run test/bun/client.bun.test.ts",
