@@ -71,6 +71,10 @@ setTimeout(() => {
 }, 10_000)
 ```
 
+## Migrating from v1 / v2
+
+See [MIGRATION.md](MIGRATION.md#v2-to-v3) for a detailed migration guide.
+
 ## Extensions to the WhatWG/W3C API
 
 ### Message and code properties on errors
