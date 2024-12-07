@@ -30,7 +30,7 @@ Basically, any environment that supports:
 - [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL)
 - [Event](https://developer.mozilla.org/en-US/docs/Web/API/Event), [MessageEvent](https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent), [EventTarget](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget)
 
-If you need to support older runtimes, try the `1.x` branch/version range (note: 1.x branch is primarily targetted at Node.js, not browsers).
+If you need to support older runtimes, try the `2.x` branch/version range (note: 2.x branch is primarily targetted at Node.js, not browsers).
 
 ## Usage
 
