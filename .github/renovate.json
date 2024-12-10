@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "dependencyDashboard": true,
+  "schedule": ["before 3am on Friday"],
+  "semanticCommitType": "chore",
+  "rangeStrategy": "bump",
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["major"],
+      "semanticCommitType": "chore",
+      "automerge": false,
+      "dependencyDashboardApproval": true
+    },
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchPackagePatterns": ["*"],
+      "semanticCommitType": "chore",
+      "schedule": ["before 3am on Friday"],
+      "automerge": false
+    }
+  ]
+}
