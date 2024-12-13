@@ -19,7 +19,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "pkg-utils build && pkg-utils --strict",
+    "build": "pkg-utils build && pkg-utils --strict && tsx scripts/referenceEventTypings.ts",
     "build:watch": "pkg-utils watch",
     "clean": "rimraf dist coverage",
     "lint": "eslint . && tsc --noEmit",
