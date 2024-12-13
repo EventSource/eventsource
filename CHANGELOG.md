@@ -53,7 +53,7 @@ All notable changes to this project will be documented in this file. See
 
 * Fix `URL is not a constructor` error for browser ([#268](https://github.com/EventSource/eventsource/pull/268) Ajinkya Rajput)
 
-# [2.0.0](https://github.com/EventSource/eventsource/compare/v1.1.0...v2.0.0) (2022-03-02)
+## [2.0.0](https://github.com/EventSource/eventsource/compare/v1.1.0...v2.0.0) (2022-03-02)
 
 ### ⚠ BREAKING CHANGES
 
@@ -68,19 +68,19 @@ All notable changes to this project will be documented in this file. See
 
 * NPM download badge links to malware ([8954d63](https://github.com/EventSource/eventsource/commit/8954d633f0b222a79d1650b05f37e9d118c27ed5))
 
-# [1.1.2](https://github.com/EventSource/eventsource/compare/v1.1.1...v1.1.2) (2022-06-08)
+## [1.1.2](https://github.com/EventSource/eventsource/compare/v1.1.1...v1.1.2) (2022-06-08)
 
 ### Features
 
 * Inline origin resolution, drops `original` dependency ([#281](https://github.com/EventSource/eventsource/pull/281) Espen Hovlandsdal)
 
-# [1.1.1](https://github.com/EventSource/eventsource/compare/v1.1.0...v1.1.1) (2022-05-11)
+## [1.1.1](https://github.com/EventSource/eventsource/compare/v1.1.0...v1.1.1) (2022-05-11)
 
 ### Bug Fixes
 
 * Do not include authorization and cookie headers on redirect to different origin ([#273](https://github.com/EventSource/eventsource/pull/273) Espen Hovlandsdal)
 
-# [1.1.0](https://github.com/EventSource/eventsource/compare/v1.0.7...v1.1.0) (2021-03-18)
+## [1.1.0](https://github.com/EventSource/eventsource/compare/v1.0.7...v1.1.0) (2021-03-18)
 
 ### Features
 
@@ -133,7 +133,7 @@ All notable changes to this project will be documented in this file. See
 
 * Reconnect if server responds with HTTP 500, 502, 503 or 504. ([#74](https://github.com/EventSource/eventsource/pull/74) Vykintas Narmontas)
 
-# [1.0.0](https://github.com/EventSource/eventsource/compare/v0.2.3...v1.0.0) (2017-04-17)
+## [1.0.0](https://github.com/EventSource/eventsource/compare/v0.2.3...v1.0.0) (2017-04-17)
 
 ### Features
 
@@ -173,7 +173,7 @@ All notable changes to this project will be documented in this file. See
 * Fix `close()` for polyfill. ([#52](https://github.com/EventSource/eventsource/pull/52) brian-medendorp)
 * Fix reconnect for polyfill. Only disable reconnect when server status is 204. (Aslak Hellesøy).
 
-# [0.2.0](https://github.com/EventSource/eventsource/compare/v0.1.6...v0.2.0) (2016-02-11)
+## [0.2.0](https://github.com/EventSource/eventsource/compare/v0.1.6...v0.2.0) (2016-02-11)
 
 ### Features
 
@@ -220,7 +220,7 @@ All notable changes to this project will be documented in this file. See
 
 * Fix message type. ([#33](https://github.com/EventSource/eventsource/pull/33) Romain Gauthier)
 
-# [0.1.0](https://github.com/EventSource/eventsource/compare/v0.0.10...v0.1.0) (2014-03-07)
+## [0.1.0](https://github.com/EventSource/eventsource/compare/v0.0.10...v0.1.0) (2014-03-07)
 
 ### Bug Fixes
 
