@@ -1,5 +1,10 @@
 import {copyFile, readdir, readFile, writeFile} from 'node:fs/promises'
-import {join as joinPath} from 'node:path'
+import {dirname, join as joinPath} from 'node:path'
+import {fileURLToPath} from 'node:url'
+
+const rootDir = joinPath(dirname(fileURLToPath(import.meta.url)), '..')
+const distDir = joinPath(rootDir, 'dist')
+const srcDir = joinPath(rootDir, 'src')
 
 const referenceDirective = `/// <reference path="events.d.ts" />`
 
@@ -16,9 +21,6 @@ const referenceDirective = `/// <reference path="events.d.ts" />`
  * directly, so we have to do this as a post-build step.
  */
 async function referenceEventTypings() {
-  const distDir = joinPath(import.meta.dirname, '..', 'dist')
-  const srcDir = joinPath(import.meta.dirname, '..', 'src')
-
   const entries = await readdir(distDir)
 
   const typeEntries = entries.filter(
