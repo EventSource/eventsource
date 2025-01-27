@@ -85,6 +85,14 @@ Make sure you have configured your TSConfig so it matches the environment you ar
 
 If you're using Node.js, ensure you have `@types/node` installed (and it is version 18 or higher). Cloudflare workers have `@cloudflare/workers-types` etc.
 
+The following errors are caused by targetting an environment that does not have the necessary types available:
+
+```
+error TS2304: Cannot find name 'Event'.
+error TS2304: Cannot find name 'EventTarget'.
+error TS2304: Cannot find name 'MessageEvent'.
+```
+
 ## Migrating from v1 / v2
 
 See [MIGRATION.md](MIGRATION.md#v2-to-v3) for a detailed migration guide.
