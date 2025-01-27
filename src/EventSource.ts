@@ -202,6 +202,7 @@ export class EventSource extends EventTarget {
     this.#reconnectInterval = 3000
     this.#fetch = eventSourceInitDict?.fetch ?? globalThis.fetch
     this.#withCredentials = eventSourceInitDict?.withCredentials ?? false
+    this.#strictContentType = eventSourceInitDict?.strictContentType ?? true
 
     this.#connect()
   }
@@ -252,6 +253,13 @@ export class EventSource extends EventTarget {
    * @internal
    */
   #withCredentials: boolean
+
+  /**
+   * Whether to enforce `Content-Type: text/event-stream` header presence on responses.
+   * 
+   * @internal
+   */
+  #strictContentType: boolean
 
   /**
    * The fetch implementation to use
@@ -373,10 +381,13 @@ export class EventSource extends EventTarget {
     }
 
     // [spec] …or if res's `Content-Type` is not `text/event-stream`, then fail the connection.
-    const contentType = headers.get('content-type') || ''
-    if (!contentType.startsWith('text/event-stream')) {
-      this.#failConnection('Invalid content type, expected "text/event-stream"', status)
-      return
+    // ... excepting if switched off by our compatibility-mode option.
+    if (this.#strictContentType) {
+      const contentType = headers.get('content-type') || ''
+      if (!contentType.startsWith('text/event-stream')) {
+        this.#failConnection('Invalid content type, expected "text/event-stream"', status)
+        return
+      }
     }
 
     // [spec] …if the readyState attribute is set to a value other than CLOSED…

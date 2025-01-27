@@ -81,6 +81,12 @@ export interface EventSourceInit {
   withCredentials?: boolean
 
   /**
+   * A boolean value, defaulting to `true`, indicating if strict enforcement of 'Content-Type' header should be enabled.
+   * If this is true, connections will fail and not reconnect unless a `Content-Type: text/event-stream` header is returned.
+   */
+  strictContentType?: boolean
+
+  /**
    * Optional fetch implementation to use. Defaults to `globalThis.fetch`.
    * Can also be used for advanced use cases like mocking, proxying, custom certs etc.
    */
