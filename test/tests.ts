@@ -697,7 +697,28 @@ export function registerTests(options: {
     await deferClose(es)
   })
 
-  test('[NON-SPEC] message event contains extended properties', async () => {
+  test('[NON-SPEC] message event contains extended properties (failed connection)', async () => {
+    const onError = getCallCounter({name: 'onError'})
+    const es = new OurEventSource(`${baseUrl}:9999/should-not-connect`, {fetch})
+
+    es.addEventListener('error', onError)
+    await onError.waitForCallCount(1)
+
+    expect(onError.lastCall.lastArg).toMatchObject({
+      type: 'error',
+      defaultPrevented: false,
+      cancelable: false,
+      timeStamp: expect.any('number'),
+      // Node, Deno, Bun, Chromium, Webkit, Firefox _ALL_ have different messages 😅
+      message: expect.stringMatching(
+        /fetch failed|failed to fetch|load failed|attempting to fetch|connection refused|unable to connect/i,
+      ),
+      code: undefined,
+    })
+    await deferClose(es)
+  })
+
+  test('[NON-SPEC] message event contains extended properties (invalid http response)', async () => {
     const onError = getCallCounter({name: 'onError'})
     const es = new OurEventSource(`${baseUrl}:${port}/end-after-one`, {fetch})
 

@@ -21,6 +21,12 @@ export class ErrorEvent extends Event {
    * @public
    */
   public message?: string | undefined
+
+  constructor(type: string, code?: number, message?: string) {
+    super(type)
+    this.code = code ?? undefined
+    this.message = message ?? undefined
+  }
 }
 
 /**
@@ -42,4 +48,28 @@ export function syntaxError(message: string): SyntaxError {
   }
 
   return new SyntaxError(message)
+}
+
+/**
+ * Flatten an error into a single error message string.
+ * Unwraps nested errors and joins them with a comma.
+ *
+ * @param err - The error to flatten
+ * @returns A string representation of the error
+ * @internal
+ */
+export function flattenError(err: unknown): string {
+  if (!(err instanceof Error)) {
+    return `${err}`
+  }
+
+  if ('errors' in err && Array.isArray(err.errors)) {
+    return err.errors.map(flattenError).join(', ')
+  }
+
+  if ('cause' in err && err.cause instanceof Error) {
+    return `${err}: ${flattenError(err.cause)}`
+  }
+
+  return err.message
 }

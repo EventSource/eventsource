@@ -7,6 +7,7 @@ type MessageReceiver = SinonSpy & {
 }
 
 const TYPE_ASSERTER = Symbol.for('waffle.type-asserter')
+const PATTERN_ASSERTER = Symbol.for('waffle.pattern-asserter')
 
 export class ExpectationError extends Error {
   type = 'ExpectationError'
@@ -146,6 +147,38 @@ export function expect(
           return
         }
 
+        if (
+          typeof expected[key] === 'object' &&
+          expected[key] !== null &&
+          PATTERN_ASSERTER in expected[key]
+        ) {
+          if (typeof thing[key] !== 'string') {
+            throw new ExpectationError(
+              `Expected key "${key}" of ${descriptor || 'object'} to be a string, got ${typeof thing[key]}`,
+            )
+          }
+
+          if (typeof expected[key][PATTERN_ASSERTER] === 'string') {
+            if (!thing[key].includes(expected[key][PATTERN_ASSERTER])) {
+              throw new ExpectationError(
+                `Expected key "${key}" of ${descriptor || 'object'} to include "${expected[key][PATTERN_ASSERTER]}", got "${thing[key]}"`,
+              )
+            }
+            return
+          }
+
+          if (expected[key][PATTERN_ASSERTER] instanceof RegExp) {
+            if (!expected[key][PATTERN_ASSERTER].test(thing[key])) {
+              throw new ExpectationError(
+                `Expected key "${key}" of ${descriptor || 'object'} to match pattern ${expected[key][PATTERN_ASSERTER]}, got "${thing[key]}"`,
+              )
+            }
+            return
+          }
+
+          throw new Error('Invalid pattern asserter')
+        }
+
         if (thing[key] !== expected[key]) {
           throw new ExpectationError(
             `Expected key "${key}" of ${descriptor || 'object'} to be ${JSON.stringify(expected[key])}, was ${JSON.stringify(
@@ -185,6 +218,12 @@ expect.any = (
 ) => {
   return {
     [TYPE_ASSERTER]: type,
+  }
+}
+
+expect.stringMatching = (expected: string | RegExp) => {
+  return {
+    [PATTERN_ASSERTER]: expected,
   }
 }
 

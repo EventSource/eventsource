@@ -1,6 +1,6 @@
 import {createParser, type EventSourceMessage, type EventSourceParser} from 'eventsource-parser'
 
-import {ErrorEvent, syntaxError} from './errors.js'
+import {ErrorEvent, flattenError, syntaxError} from './errors.js'
 import type {
   AddEventListenerOptions,
   EventListenerOptions,
@@ -438,7 +438,7 @@ export class EventSource extends EventTarget {
       return
     }
 
-    this.#scheduleReconnect()
+    this.#scheduleReconnect(flattenError(err))
   }
 
   /**
@@ -514,6 +514,7 @@ export class EventSource extends EventTarget {
    * Handles the process referred to in the EventSource specification as "failing a connection".
    *
    * @param error - The error causing the connection to fail
+   * @param code - The HTTP status code, if available
    * @internal
    */
   #failConnection(error?: string, code?: number) {
@@ -525,14 +526,11 @@ export class EventSource extends EventTarget {
 
     // [spec] …and fires an event named `error` at the `EventSource` object.
     // [spec] Once the user agent has failed the connection, it does not attempt to reconnect.
-    const errorEvent = new ErrorEvent('error')
-
     // [spec] > Implementations are especially encouraged to report detailed information
     // [spec] > to their development consoles whenever an error event is fired, since little
     // [spec] > to no information can be made available in the events themselves.
     // Printing to console is not very programatically helpful, though, so we emit a custom event.
-    errorEvent.code = code
-    errorEvent.message = error
+    const errorEvent = new ErrorEvent('error', code, error)
 
     this.#onError?.(errorEvent)
     this.dispatchEvent(errorEvent)
@@ -541,9 +539,11 @@ export class EventSource extends EventTarget {
   /**
    * Schedules a reconnection attempt against the EventSource endpoint.
    *
+   * @param error - The error causing the connection to fail
+   * @param code - The HTTP status code, if available
    * @internal
    */
-  #scheduleReconnect() {
+  #scheduleReconnect(error?: string, code?: number) {
     // [spec] If the readyState attribute is set to CLOSED, abort the task.
     if (this.#readyState === this.CLOSED) {
       return
@@ -553,7 +553,7 @@ export class EventSource extends EventTarget {
     this.#readyState = this.CONNECTING
 
     // [spec] Fire an event named `error` at the EventSource object.
-    const errorEvent = new ErrorEvent('error')
+    const errorEvent = new ErrorEvent('error', code, error)
     this.#onError?.(errorEvent)
     this.dispatchEvent(errorEvent)
 
