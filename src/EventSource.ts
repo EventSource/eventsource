@@ -2,6 +2,9 @@ import {createParser, type EventSourceMessage, type EventSourceParser} from 'eve
 
 import {ErrorEvent, syntaxError} from './errors.js'
 import type {
+  AddEventListenerOptions,
+  EventListenerOptions,
+  EventListenerOrEventListenerObject,
   EventSourceEventMap,
   EventSourceInit,
   FetchLike,

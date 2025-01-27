@@ -71,6 +71,20 @@ setTimeout(() => {
 }, 10_000)
 ```
 
+### TypeScript
+
+Make sure you have configured your TSConfig so it matches the environment you are targetting. If you are targetting browsers, this would be `dom`:
+
+```jsonc
+{
+  "compilerOptions": {
+    "lib": ["dom"],
+  },
+}
+```
+
+If you're using Node.js, ensure you have `@types/node` installed (and it is version 18 or higher). Cloudflare workers have `@cloudflare/workers-types` etc.
+
 ## Migrating from v1 / v2
 
 See [MIGRATION.md](MIGRATION.md#v2-to-v3) for a detailed migration guide.

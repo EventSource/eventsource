@@ -86,3 +86,52 @@ export interface EventSourceInit {
    */
   fetch?: FetchLike
 }
+
+/**
+ * Mirrors the official DOM typings (sorta).
+ *
+ * @public
+ */
+export interface EventListenerOptions {
+  /** Not directly used by Node.js. Added for API completeness. Default: `false`. */
+  capture?: boolean
+}
+
+/**
+ * Mirrors the official DOM typings (sorta).
+ *
+ * @public
+ */
+export interface AddEventListenerOptions extends EventListenerOptions {
+  /** When `true`, the listener is automatically removed when it is first invoked. Default: `false`. */
+  once?: boolean
+  /** When `true`, serves as a hint that the listener will not call the `Event` object's `preventDefault()` method. Default: false. */
+  passive?: boolean
+  /** The listener will be removed when the given AbortSignal object's `abort()` method is called. */
+  signal?: AbortSignal
+}
+
+/**
+ * Mirrors the official DOM typings.
+ *
+ * @public
+ */
+export type EventListenerOrEventListenerObject = EventListener | EventListenerObject
+
+/**
+ * Mirrors the official DOM typings.
+ *
+ * @public
+ */
+export interface EventListener {
+  (evt: Event | MessageEvent): void
+}
+
+/**
+ * Mirrors the official DOM typings.
+ *
+ * @public
+ */
+export interface EventListenerObject {
+  handleEvent(object: Event): void
+}
