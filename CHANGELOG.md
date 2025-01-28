@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.4](https://github.com/EventSource/eventsource/compare/v3.0.3...v3.0.4) (2025-01-28)
+
+### Bug Fixes
+
+* ensure `message` is set on ErrorEvent on network errors ([d1dc711](https://github.com/EventSource/eventsource/commit/d1dc71170750112e7e0d33cafd4aa4e0ab3c536c))
+
 ## [3.0.3](https://github.com/EventSource/eventsource/compare/v3.0.2...v3.0.3) (2025-01-27)
 
 ### Bug Fixes
