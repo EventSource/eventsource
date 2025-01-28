@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.5](https://github.com/EventSource/eventsource/compare/v3.0.4...v3.0.5) (2025-01-28)
+
+### Bug Fixes
+
+* include `message` and `code` on errors when logging in node.js and deno ([f2596b3](https://github.com/EventSource/eventsource/commit/f2596b34de972db0c979651173ab9dc37d3ad1a6))
+
 ## [3.0.4](https://github.com/EventSource/eventsource/compare/v3.0.3...v3.0.4) (2025-01-28)
 
 ### Bug Fixes

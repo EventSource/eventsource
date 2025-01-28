@@ -1,6 +1,6 @@
 {
   "name": "eventsource",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "WhatWG/W3C compliant EventSource client for Node.js and browsers",
   "sideEffects": false,
   "type": "module",
