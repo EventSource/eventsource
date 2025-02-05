@@ -10,4 +10,4 @@
 
 ## Reporting a Vulnerability
 
-If you find a security vulnerability, do **NOT** open an issue. Use the [https://github.com/EventSource/eventsource/security/advisories/new](GitHub Security Advisory) page instead.
+If you find a security vulnerability, do **NOT** open an issue. Use the [GitHub Security Advisory](https://github.com/EventSource/eventsource/security/advisories/new) page instead.
