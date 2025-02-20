@@ -85,3 +85,33 @@ The default reconnect timeout is now 3 seconds - up from 1 second in v1/v2. This
 Redirect handling now matches Chrome/Safari. On disconnects, we will always reconnect to the _original_ URL. In v1/v2, only HTTP 307 would reconnect to the original, while 301 and 302 would both redirect to the _destination_.
 
 While the _ideal_ behavior would be for 301 and 308 to reconnect to the redirect _destination_, and 302/307 to reconnect to the _original_ URL, this is not possible to do cross-platform (cross-origin requests in browsers do not allow reading location headers, and redirect handling will have to be done manually).
+
+#### Strict checking of Content-Type header
+
+The `Content-Type` header is now checked. It's value must be `text/event-stream` (or
+`text/event-stream; charset=utf-8`), and the connection will be failed otherwise.
+
+To maintain the previous behaviour, you can use the `fetch` option to override the
+returned `Content-Type` header if your server does not send the required header:
+
+```ts
+const es = new EventSource('https://my-server.com/sse', {
+  fetch: async (input, init) => {
+    const response = await fetch(input, init)
+
+    if (response.headers.get('content-type').startsWith('text/event-stream')) {
+      // Valid header, forward response
+      return response
+    }
+
+    // Server did not respond with the correct content-type - override it
+    const newHeaders = new Headers(response.headers)
+    newHeaders.set('content-type', 'text/event-stream')
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: newHeaders,
+    })
+  },
+})
+```
