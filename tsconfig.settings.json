@@ -6,6 +6,7 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
+    "erasableSyntaxOnly": true,
 
     // Module resolution
     "moduleResolution": "bundler",
