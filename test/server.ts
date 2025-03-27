@@ -578,8 +578,12 @@ function tryWrite(res: ServerResponse, chunk: string | Uint8Array) {
   try {
     res.write(chunk)
   } catch (err: unknown) {
-    // Deno randomly throws on write after close, it seems
+    // Deno/Bun sometimes throws on write after close
     if (err instanceof TypeError && err.message.includes('cannot close or enqueue')) {
+      return
+    }
+
+    if (err instanceof Error && err.message.includes('Stream already ended')) {
       return
     }
 
