@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.6](https://github.com/EventSource/eventsource/compare/v3.0.5...v3.0.6) (2025-03-27)
+
+### Bug Fixes
+
+* upgrade parser to latest version, improving performance ([59a5ddd](https://github.com/EventSource/eventsource/commit/59a5ddd135da957456ab93e72fd65a87a9578204))
+
 ## [3.0.5](https://github.com/EventSource/eventsource/compare/v3.0.4...v3.0.5) (2025-01-28)
 
 ### Bug Fixes
