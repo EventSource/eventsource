@@ -125,7 +125,7 @@ const es = new EventSource('https://my-server.com/sse', {
     fetch(input, {
       ...init,
       headers: {
-        ...init.headers,
+        ...(init?.headers ?? {}),
         Authorization: 'Bearer myToken',
       },
     }),

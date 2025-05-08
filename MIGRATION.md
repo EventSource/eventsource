@@ -39,7 +39,7 @@ const es = new EventSource('https://my-server.com/sse', {
 -  headers: {Authorization: 'Bearer foobar'}
 +  fetch: (input, init) => fetch(input, {
 +    ...init,
-+    headers: {...init.headers, Authorization: 'Bearer foobar'},
++    headers: { ...(init?.headers ?? {}), Authorization: 'Bearer foobar'},
 +  }),
 })
 ```

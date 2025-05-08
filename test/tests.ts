@@ -489,7 +489,7 @@ export function registerTests(options: {
         fetch(dstUrl, init) {
           return request(dstUrl, {
             ...init,
-            headers: {...init?.headers, authorization: 'Bearer foo'},
+            headers: {...(init?.headers ?? {}), authorization: 'Bearer foo'},
           })
         },
       })
@@ -549,7 +549,7 @@ export function registerTests(options: {
         fetch(dstUrl, init) {
           return request(dstUrl, {
             ...init,
-            headers: {...init?.headers, authorization: 'Bearer foo'},
+            headers: {...(init?.headers ?? {}), authorization: 'Bearer foo'},
           })
         },
       })
