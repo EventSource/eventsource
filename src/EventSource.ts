@@ -515,7 +515,7 @@ export class EventSource extends EventTarget {
   }
 
   /**
-   * Called by EventSourceParser instance when a commend is receivedfrom the EventSource endpoint.
+   * Called by EventSourceParser instance when a comment is receivedfrom the EventSource endpoint.
    *
    * @param comment - The comment
    * @internal
