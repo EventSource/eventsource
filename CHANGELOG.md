@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.7](https://github.com/EventSource/eventsource/compare/v3.0.6...v3.0.7) (2025-05-09)
+
+### Bug Fixes
+
+* mark fetch init properties required in typings ([1282872](https://github.com/EventSource/eventsource/commit/12828720c73c6df0561dd4b0f4d37dc7a3ddd59f))
+
 ## [3.0.6](https://github.com/EventSource/eventsource/compare/v3.0.5...v3.0.6) (2025-03-27)
 
 ### Bug Fixes
