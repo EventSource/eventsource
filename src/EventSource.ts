@@ -121,6 +121,13 @@ export class EventSource extends EventTarget {
     this.#onMessage = value
   }
 
+  public get oncomment(): ((comment: string) => unknown) | null {
+    return this.#onComment
+  }
+  public set oncomment(value: ((comment: string) => unknown) | null) {
+    this.#onComment = value
+  }
+
   /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/open_event) */
   public get onopen(): ((ev: Event) => unknown) | null {
     return this.#onOpen
@@ -199,6 +206,7 @@ export class EventSource extends EventTarget {
     this.#parser = createParser({
       onEvent: this.#onEvent,
       onRetry: this.#onRetryChange,
+      onComment: this.#onCommentInternal
     })
 
     this.#readyState = this.CONNECTING
@@ -314,6 +322,14 @@ export class EventSource extends EventTarget {
    * @internal
    */
   #onMessage: ((ev: MessageEvent) => unknown) | null = null
+
+  /**
+   * Holds the current comment handler, attached through `oncomment` property directly.
+   * Note that `addEventListener('comment', …)` will not be stored here.
+   *
+   * @internal
+   */
+  #onComment: ((comment: string) => unknown) | null = null
 
   /**
    * Holds the current open handler, attached through `onopen` property directly.
@@ -496,6 +512,16 @@ export class EventSource extends EventTarget {
     }
 
     this.dispatchEvent(messageEvent)
+  }
+
+  /**
+   * Called by EventSourceParser instance when a commend is receivedfrom the EventSource endpoint.
+   *
+   * @param comment - The comment
+   * @internal
+   */
+  #onCommentInternal = (comment: string) => {
+    this.#onComment?.(comment)
   }
 
   /**
