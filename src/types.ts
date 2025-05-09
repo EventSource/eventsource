@@ -43,13 +43,6 @@ export interface EventSourceFetchInit {
 }
 
 /**
- * @public
- * @deprecated Use `EventSourceFetchInit` instead.
- * This type is only here for backwards compatibility and will be removed in a future version.
- */
-export type FetchLikeInit = EventSourceFetchInit
-
-/**
  * Stripped down version of `ReadableStreamDefaultReader`, only defining the parts we care about.
  *
  * @public
