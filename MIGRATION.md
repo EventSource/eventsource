@@ -1,5 +1,20 @@
 # Migration guide
 
+## v3 to v4
+
+### Runtime support
+
+Dropped support for Node.js version 18, as it is no longer maintained. While
+there are no explicit changes that makes it incompatible, we make no guarantees of it being supported going forward.
+
+### Code changes
+
+#### Dropped `FetchLikeInit` type
+
+If you're using TypeScript, `FetchLikeInit` is now called `EventSourceFetchInit` and
+most of it's properties are now marked as required - since they will always be passed
+from the EventSource library to your custom `fetch` method. This makes it easier to use.
+
 ## v2 to v3
 
 ### Code changes
