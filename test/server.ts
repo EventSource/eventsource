@@ -122,7 +122,7 @@ async function writeCounter(req: IncomingMessage, res: ServerResponse) {
 
   const event = new URL(req.url || '/', 'http://localhost').searchParams.get('event')
 
-  tryWrite(res, encode({retry: 50, data: ''}))
+  tryWrite(res, encode({retry: 50}))
 
   let counter = parseInt(getLastEventId(req) || '0', 10)
   for (let i = 0; i < 3; i++) {
@@ -164,7 +164,7 @@ async function writeIdentifiedListeners(req: IncomingMessage, res: ServerRespons
       'Cache-Control': 'no-cache',
       Connection: 'keep-alive',
     })
-    tryWrite(res, encode({data: '', retry: 250}))
+    tryWrite(res, encode({retry: 250}))
     tryWrite(res, encode({data: `${connectCounts.get(clientId)}`}))
 
     if (url.searchParams.get('auto-close')) {
@@ -192,7 +192,7 @@ function writeOne(req: IncomingMessage, res: ServerResponse) {
   })
 
   if (!last) {
-    tryWrite(res, encode({retry: 50, data: ''}))
+    tryWrite(res, encode({retry: 50}))
     tryWrite(
       res,
       encode({
