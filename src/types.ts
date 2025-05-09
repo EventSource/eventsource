@@ -6,33 +6,48 @@ import type {ErrorEvent} from './errors.js'
  *
  * @public
  */
-export type FetchLike = (url: string | URL, init?: FetchLikeInit) => Promise<FetchLikeResponse>
+export type FetchLike = (
+  url: string | URL,
+  init: EventSourceFetchInit,
+) => Promise<FetchLikeResponse>
 
 /**
- * Stripped down version of `RequestInit`, only defining the parts we care about.
+ * Subset of `RequestInit` used for `fetch()` calls made by the `EventSource` class.
+ * As we know that we will be passing certain values, we can be more specific and have
+ * users not have to do optional chaining and similar for things that will always be there.
  *
  * @public
  */
-export interface FetchLikeInit {
+export interface EventSourceFetchInit {
   /** An AbortSignal to set request's signal. Typed as `any` because of polyfill inconsistencies. */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  signal?: {aborted: boolean} | any
+  signal: {aborted: boolean} | any
 
   /** A Headers object, an object literal, or an array of two-item arrays to set request's headers. */
-  headers?: Record<string, string>
+  headers: {
+    [key: string]: string
+    Accept: 'text/event-stream'
+  }
 
   /** A string to indicate whether the request will use CORS, or will be restricted to same-origin URLs. Sets request's mode. */
-  mode?: 'cors' | 'no-cors' | 'same-origin'
+  mode: 'cors' | 'no-cors' | 'same-origin'
 
   /** A string indicating whether credentials will be sent with the request always, never, or only when sent to a same-origin URL. Sets request's credentials. */
   credentials?: 'include' | 'omit' | 'same-origin'
 
   /** Controls how the request is cached. */
-  cache?: 'no-store'
+  cache: 'no-store'
 
   /** A string indicating whether request follows redirects, results in an error upon encountering a redirect, or returns the redirect (in an opaque fashion). Sets request's redirect. */
-  redirect?: 'error' | 'follow' | 'manual'
+  redirect: 'error' | 'follow' | 'manual'
 }
+
+/**
+ * @public
+ * @deprecated Use `EventSourceFetchInit` instead.
+ * This type is only here for backwards compatibility and will be removed in a future version.
+ */
+export type FetchLikeInit = EventSourceFetchInit
 
 /**
  * Stripped down version of `ReadableStreamDefaultReader`, only defining the parts we care about.

@@ -1,4 +1,8 @@
-import {EventSource as OurEventSource, type FetchLike, type FetchLikeInit} from '../src/index.js'
+import {
+  EventSource as OurEventSource,
+  type EventSourceFetchInit,
+  type FetchLike,
+} from '../src/index.js'
 import {unicodeLines} from './fixtures.js'
 import {deferClose, expect, getCallCounter} from './helpers.js'
 import type {TestRunner} from './waffletest/index.js'
@@ -67,7 +71,7 @@ export function registerTests(options: {
   })
 
   test('passes `no-store` to `fetch`, avoiding cache', async () => {
-    let passedInit: FetchLikeInit | undefined
+    let passedInit: EventSourceFetchInit | undefined
 
     const onMessage = getCallCounter({name: 'onMessage'})
     const es = new OurEventSource(new URL(`${baseUrl}:${port}/debug`), {

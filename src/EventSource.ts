@@ -6,9 +6,9 @@ import type {
   EventListenerOptions,
   EventListenerOrEventListenerObject,
   EventSourceEventMap,
+  EventSourceFetchInit,
   EventSourceInit,
   FetchLike,
-  FetchLikeInit,
   FetchLikeResponse,
 } from './types.js'
 
@@ -447,16 +447,15 @@ export class EventSource extends EventTarget {
    * @returns The request options
    * @internal
    */
-  #getRequestOptions(): FetchLikeInit {
+  #getRequestOptions(): EventSourceFetchInit {
     const lastEvent = this.#lastEventId ? {'Last-Event-ID': this.#lastEventId} : undefined
-    const headers = {Accept: 'text/event-stream', ...lastEvent}
 
-    const init: FetchLikeInit = {
+    const init: EventSourceFetchInit = {
       // [spec] Let `corsAttributeState` be `Anonymous`…
       // [spec] …will have their mode set to "cors"…
       mode: 'cors',
       redirect: 'follow',
-      headers,
+      headers: {Accept: 'text/event-stream', ...lastEvent},
       cache: 'no-store',
       signal: this.#controller?.signal,
     }
