@@ -5,6 +5,22 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0](https://github.com/EventSource/eventsource/compare/v3.0.7...v4.0.0) (2025-05-13)
+
+### ⚠ BREAKING CHANGES
+
+* `FetchLikeInit` is now removed. Use
+`EventSourceFetchInit`.
+* Drop support for Node.js v18, as it is end-of-life.
+
+### Features
+
+* require node.js v20 or higher ([91a3a48](https://github.com/EventSource/eventsource/commit/91a3a486fbc73e2299fc23ef376552b4de662144))
+
+### Bug Fixes
+
+* drop `FetchLikeInit` type. Use `EventSourceFetchInit` instead. ([6786e46](https://github.com/EventSource/eventsource/commit/6786e467bb7d99281b42348f869006caefb33b7f))
+
 ## [3.0.7](https://github.com/EventSource/eventsource/compare/v3.0.6...v3.0.7) (2025-05-09)
 
 ### Bug Fixes
