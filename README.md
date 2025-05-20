@@ -134,14 +134,16 @@ const es = new EventSource('https://my-server.com/sse', {
 
 #### HTTP/HTTPS proxy
 
-Use a package like [`node-fetch-native`](https://github.com/unjs/node-fetch-native) to add proxy support, either through environment variables or explicit configuration.
+Use a package like [`undici`](https://github.com/nodejs/undici) to add proxy support, either through environment variables or explicit configuration.
 
 ```ts
-// npm install node-fetch-native --save
-import {fetch} from 'node-fetch-native/proxy'
+// npm install undici --save
+import {fetch, EnvHttpProxyAgent} from 'undici'
+
+const proxyAgent = new EnvHttpProxyAgent()
 
 const es = new EventSource('https://my-server.com/sse', {
-  fetch: (input, init) => fetch(input, init),
+  fetch: (input, init) => fetch(input, {...init, dispatcher: proxyAgent}),
 })
 ```
 
@@ -153,12 +155,14 @@ Use a package like [`undici`](https://github.com/nodejs/undici) for more control
 // npm install undici --save
 import {fetch, Agent} from 'undici'
 
+const unsafeAgent = new Agent({
+  connect: {
+    rejectUnauthorized: false,
+  },
+})
+
 await fetch('https://my-server.com/sse', {
-  dispatcher: new Agent({
-    connect: {
-      rejectUnauthorized: false,
-    },
-  }),
+  dispatcher: unsafeAgent,
 })
 ```
 
