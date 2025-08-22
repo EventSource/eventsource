@@ -147,6 +147,21 @@ const es = new EventSource('https://my-server.com/sse', {
 })
 ```
 
+#### Using HTTP2
+
+Use a package like [`undici`](https://github.com/nodejs/undici) that supports HTTP2.
+
+```ts
+// npm install undici --save
+import {Agent, fetch} from "undici";
+
+const http2Dispatcher = new Agent({allowH2: true})
+
+const es = new EventSource('https://my-server.com/sse', {
+  fetch: (url, init) => fetch(url, { ...init, dispatcher: http2Dispatcher })
+})
+```
+
 #### Allow unauthorized HTTPS requests
 
 Use a package like [`undici`](https://github.com/nodejs/undici) for more control of fetch options through the use of an [`Agent`](https://undici.nodejs.org/#/docs/api/Agent.md).
