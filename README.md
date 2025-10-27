@@ -26,7 +26,7 @@ Basically, any environment that supports:
 
 - [fetch](https://developer.mozilla.org/en-US/docs/Web/API/fetch)
 - [ReadableStream](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream)
-- [TextDecoderStream](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoderStream)
+- [TextDecoder](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder)
 - [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL)
 - [Event](https://developer.mozilla.org/en-US/docs/Web/API/Event), [MessageEvent](https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent), [EventTarget](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget)
 
