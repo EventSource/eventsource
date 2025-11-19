@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.0](https://github.com/EventSource/eventsource/compare/v4.0.0...v4.1.0) (2025-11-19)
+
+### Features
+
+* declare fetch override support symbol on class ([5575122](https://github.com/EventSource/eventsource/commit/557512235ce4ffa6386919cf8cac975e021ca848))
+
 ## [4.0.0](https://github.com/EventSource/eventsource/compare/v3.0.7...v4.0.0) (2025-05-13)
 
 ### ⚠ BREAKING CHANGES
