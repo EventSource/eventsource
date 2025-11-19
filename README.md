@@ -183,7 +183,7 @@ await fetch('https://my-server.com/sse', {
 
 #### Feature checking
 
-For library authors, you may want to feature-check if an EventSource implementation supports passing a custom `fetch` implementation (such as this library does). We declare (from 4.1.0 and onwards) a non-enumerable symbol on the EventSource class to indicate this, named `eventsource.supports-fetch-override`. It can be used downstream such as:
+For library authors, you may want to feature-check if an EventSource implementation supports passing a custom `fetch` implementation (such as this library does). We declare (from [v4.1.0](https://github.com/EventSource/eventsource/releases/tag/v4.1.0) and onwards) a non-enumerable symbol on the EventSource class to indicate this, named `eventsource.supports-fetch-override`. It can be used downstream such as:
 
 ```ts
 function yourLibrary(options) {
