@@ -768,5 +768,12 @@ export function registerTests(options: {
     await deferClose(es)
   })
 
+  test('has non-enumarable `eventsource.supports-fetch-override` symbol', async () => {
+    const supportsFetchOverride = Symbol.for('eventsource.supports-fetch-override')
+    expect(Object.getOwnPropertySymbols(OurEventSource).includes(supportsFetchOverride)).toBe(true)
+    expect(Object.keys(OurEventSource).includes('supports-fetch-override')).toBe(false)
+    expect(Symbol.for('eventsource.supports-fetch-override') in OurEventSource)
+  })
+
   return runner
 }

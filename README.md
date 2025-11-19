@@ -153,12 +153,12 @@ Use a package like [`undici`](https://github.com/nodejs/undici) that supports HT
 
 ```ts
 // npm install undici --save
-import {Agent, fetch} from "undici";
+import {Agent, fetch} from 'undici'
 
 const http2Dispatcher = new Agent({allowH2: true})
 
 const es = new EventSource('https://my-server.com/sse', {
-  fetch: (url, init) => fetch(url, { ...init, dispatcher: http2Dispatcher })
+  fetch: (url, init) => fetch(url, {...init, dispatcher: http2Dispatcher}),
 })
 ```
 
@@ -179,6 +179,31 @@ const unsafeAgent = new Agent({
 await fetch('https://my-server.com/sse', {
   dispatcher: unsafeAgent,
 })
+```
+
+#### Feature checking
+
+For library authors, you may want to feature-check if an EventSource implementation supports passing a custom `fetch` implementation (such as this library does). We declare (from 4.1.0 and onwards) a non-enumerable symbol on the EventSource class to indicate this, named `eventsource.supports-fetch-override`. It can be used downstream such as:
+
+```ts
+function yourLibrary(options) {
+  const OurEventSource = options.polyfills.EventSource || globalThis.EventSource
+
+  if (OurEventSource && Symbol.for('eventsource.supports-fetch-override') in OurEventSource) {
+    // We can safely assume this supports overriding/specifying `fetch`!
+    const es = new OurEventSource('https://some.url', {
+      fetch: (input, init) =>
+        fetch(input, {
+          ...init,
+          headers: {
+            ...(init.headers || {}),
+            'x-some-header': 'foo',
+          },
+        }),
+    })
+    // …
+  }
+}
 ```
 
 ## License

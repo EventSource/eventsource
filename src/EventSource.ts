@@ -577,6 +577,15 @@ export class EventSource extends EventTarget {
   }
 }
 
+// Provides a way to detect that the EventSource implementation supports passing `fetch`
+// that can be used to customize the request, eg custom headers and similar.
+Object.defineProperty(EventSource, Symbol.for('eventsource.supports-fetch-override'), {
+  value: true,
+  writable: false,
+  configurable: false,
+  enumerable: false,
+})
+
 /**
  * According to spec, when constructing a URL:
  * > 1. Let baseURL be environment's base URL, if environment is a Document object
