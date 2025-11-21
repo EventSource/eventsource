@@ -29,6 +29,7 @@ Basically, any environment that supports:
 - [TextDecoder](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder)
 - [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL)
 - [Event](https://developer.mozilla.org/en-US/docs/Web/API/Event), [MessageEvent](https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent), [EventTarget](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget)
+- [Symbol.for](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/for)
 
 If you need to support older runtimes, try the `2.x` branch/version range (note: 2.x branch is primarily targetted at Node.js, not browsers).
 
