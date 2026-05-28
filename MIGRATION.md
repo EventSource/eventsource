@@ -4,7 +4,7 @@
 
 ### Runtime support
 
-Dropped support for Node.js versions below 22.12), as it is no longer maintained. While there are no explicit changes that makes it incompatible, we make no guarantees of it being supported going forward.
+Dropped support for Node.js versions below 22.19), as it is no longer maintained. While there are no explicit changes that makes it incompatible, we make no guarantees of it being supported going forward.
 
 Also dropped support for any javascript environment where private fields, methods and accessors are not supported - which includes older browsers.
 
