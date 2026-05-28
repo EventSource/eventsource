@@ -14,12 +14,12 @@ npm install --save eventsource
 
 ## Supported engines
 
-- Node.js >= 20
+- Node.js >= 22.12
 - Chrome >= 71
 - Safari >= 11.3
 - Firefox >= 65
 - Edge >= 79
-- Deno >= 1.30
+- Deno >= 2
 - Bun >= 1.1.23
 
 Basically, any environment that supports:
@@ -84,7 +84,7 @@ Make sure you have configured your TSConfig so it matches the environment you ar
 }
 ```
 
-If you're using Node.js, ensure you have `@types/node` installed (and it is version 18 or higher). Cloudflare workers have `@cloudflare/workers-types` etc.
+If you're using Node.js, ensure you have `@types/node` installed (and it is version 22 or higher). Cloudflare workers have `@cloudflare/workers-types` etc.
 
 The following errors are caused by targetting an environment that does not have the necessary types available:
 

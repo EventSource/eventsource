@@ -27,7 +27,6 @@ npm test
 - Commit to that branch locally and regularly push your work to the same named branch on the remote.
 - Rebase your feature branch regularly against `main`. Make sure its even with `main` while it is awaiting review.
 - Pull requests should be as ready as possible for merge. Unless stated otherwise, it should be safe to assume that:
-
   - The changes/feature are reviewed and tested by you
   - You think it's production ready
   - The code is linted and the test suite is passing
