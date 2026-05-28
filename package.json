@@ -4,16 +4,10 @@
   "description": "WhatWG/W3C compliant EventSource client for Node.js and browsers",
   "sideEffects": false,
   "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "deno": "./dist/index.js",
-      "bun": "./dist/index.js",
       "source": "./src/index.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
       "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
@@ -23,17 +17,18 @@
     "build:watch": "pkg-utils watch",
     "changeset": "changeset",
     "changeset:status": "changeset status --since=origin/main",
-    "clean": "rimraf dist coverage",
-    "lint": "eslint . && tsc --noEmit",
+    "clean": "node scripts/clean.ts",
+    "format": "oxfmt --write .",
+    "lint": "oxlint . && tsc --noEmit",
     "posttest": "npm run lint",
     "prebuild": "npm run clean",
     "prepare": "npm run build",
     "release": "changeset publish",
     "test": "npm run test:node && npm run test:browser",
-    "test:browser": "tsx test/browser/client.browser.test.ts",
+    "test:browser": "node test/browser/client.browser.test.ts",
     "test:bun": "bun run test/bun/client.bun.test.ts",
     "test:deno": "deno run --allow-net --allow-read --allow-env --unstable-sloppy-imports test/deno/client.deno.test.ts",
-    "test:node": "tsx test/node/client.node.test.ts",
+    "test:node": "node test/node/client.node.test.ts",
     "version:packages": "changeset version && npm install --package-lock-only --no-audit --no-fund"
   },
   "files": [
@@ -57,10 +52,10 @@
   ],
   "license": "MIT",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.12.0"
   },
   "browserslist": [
-    "node >= 20",
+    "node >= 22.12.0",
     "chrome >= 71",
     "safari >= 14.1",
     "firefox >= 105",
@@ -72,63 +67,23 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.1",
-    "@sanity/pkg-utils": "^7.2.2",
-    "@tsconfig/strictest": "^2.0.5",
-    "@types/node": "^22.20.1",
-    "@types/sinon": "^17.0.4",
-    "@typescript-eslint/eslint-plugin": "^6.11.0",
-    "@typescript-eslint/parser": "^6.11.0",
+    "@sanity/pkg-utils": "^10.5.1",
+    "@tsconfig/strictest": "^2.0.8",
+    "@types/node": "^22.19.19",
+    "@types/sinon": "^21.0.1",
     "esbuild": "^0.25.1",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-config-sanity": "^7.1.4",
-    "eventsource-encoder": "^1.0.1",
-    "playwright": "^1.52.0",
-    "prettier": "^3.5.3",
-    "rimraf": "^6.0.1",
-    "rollup-plugin-visualizer": "^5.14.0",
-    "sinon": "^20.0.0",
-    "tsx": "^4.19.4",
-    "typescript": "^5.8.3",
+    "eventsource-encoder": "^1.0.2",
+    "oxfmt": "^0.52.0",
+    "oxlint": "^1.67.0",
+    "playwright": "^1.60.0",
+    "sinon": "^22.0.0",
+    "typescript": "^6.0.3",
     "undici": "^7.8.0"
-  },
-  "overrides": {
-    "cross-spawn": "7.0.6"
   },
   "bugs": {
     "url": "https://github.com/EventSource/eventsource/issues"
   },
   "homepage": "https://github.com/EventSource/eventsource#readme",
-  "prettier": {
-    "semi": false,
-    "printWidth": 100,
-    "bracketSpacing": false,
-    "singleQuote": true
-  },
-  "eslintConfig": {
-    "parserOptions": {
-      "ecmaVersion": 9,
-      "sourceType": "module",
-      "ecmaFeatures": {
-        "modules": true
-      }
-    },
-    "extends": [
-      "sanity",
-      "sanity/typescript",
-      "prettier"
-    ],
-    "ignorePatterns": [
-      "lib/**/"
-    ],
-    "globals": {
-      "globalThis": false
-    },
-    "rules": {
-      "no-undef": "off",
-      "no-empty": "off"
-    }
-  },
   "publishConfig": {
     "provenance": true
   }

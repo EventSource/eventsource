@@ -199,7 +199,7 @@ export class EventSource extends EventTarget {
       } else {
         throw new Error('Invalid URL')
       }
-    } catch (err) {
+    } catch {
       throw syntaxError('An invalid or illegal string was specified')
     }
 
