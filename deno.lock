@@ -14,7 +14,7 @@
     "npm:eslint-config-sanity@^7.1.4": "7.1.4_@typescript-eslint+eslint-plugin@6.21.0__@typescript-eslint+parser@6.21.0___eslint@8.57.1___typescript@5.8.3__eslint@8.57.1__typescript@5.8.3_@typescript-eslint+parser@6.21.0__eslint@8.57.1__typescript@5.8.3_eslint@8.57.1_typescript@5.8.3",
     "npm:eslint@^8.57.0": "8.57.1",
     "npm:eventsource-encoder@^1.0.1": "1.0.1",
-    "npm:eventsource-parser@^3.0.1": "3.0.1",
+    "npm:eventsource-parser@^3.1.0": "3.1.0",
     "npm:playwright@^1.52.0": "1.52.0",
     "npm:prettier@^3.5.3": "3.5.3",
     "npm:rimraf@^6.0.1": "6.0.1",
@@ -1645,8 +1645,8 @@
     "eventsource-encoder@1.0.1": {
       "integrity": "sha512-57iFiUzq6/LZSrY1vuE8pdko9ip7/gpX6zfpT16r70fyrqAWwtMHhKKPbxoJJN5E9XfG4hJBi44U3/MSj8TD5Q=="
     },
-    "eventsource-parser@3.0.1": {
-      "integrity": "sha512-VARTJ9CYeuQYb0pZEPbzi740OWFgpHe7AYJ2WFZVnUDUQp5Dk2yJUgF36YsZ81cOyxT0QxmXD2EQpapAouzWVA=="
+    "eventsource-parser@3.1.0": {
+      "integrity": "sha512-kJezFj9YFAMLeORyi7aCLxLbD5/qWMQnoMVlVPyHIll7lgRJCc3JVln9Vgl9nwQi0YkMnhdGTMNn7CkRRAptMg=="
     },
     "extendable-error@0.1.7": {
       "integrity": "sha512-UOiS2in6/Q0FK0R0q6UY9vYpQ21mr/Qn1KOnte7vsACuNJf514WvCCUHSRCPcgjPT2bAhNIJdlE6bVap1GKmeg=="
@@ -2971,7 +2971,7 @@
         "npm:eslint-config-sanity@^7.1.4",
         "npm:eslint@^8.57.0",
         "npm:eventsource-encoder@^1.0.1",
-        "npm:eventsource-parser@^3.0.1",
+        "npm:eventsource-parser@^3.1.0",
         "npm:playwright@^1.52.0",
         "npm:prettier@^3.5.3",
         "npm:rimraf@^6.0.1",

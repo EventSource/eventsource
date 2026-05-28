@@ -67,7 +67,7 @@
     "edge >= 79"
   ],
   "dependencies": {
-    "eventsource-parser": "^3.0.1"
+    "eventsource-parser": "^3.1.0"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.7.0",

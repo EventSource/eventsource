@@ -740,6 +740,49 @@ export function registerTests(options: {
     await deferClose(es)
   })
 
+  test('[NON-SPEC] custom `maxBufferSize` fails connection on parser buffer overflow', async () => {
+    const url = `${baseUrl}:${port}/`
+    let fetchCount = 0
+
+    const faultyFetch: FetchLike = async () => {
+      fetchCount++
+      return {
+        body: new ReadableStream({
+          start(controller) {
+            const encoder = new TextEncoder()
+            controller.enqueue(encoder.encode('retry: 10\n'))
+            controller.enqueue(encoder.encode(`data: ${'x'.repeat(32)}\n`))
+            controller.close()
+          },
+        }),
+        redirected: false,
+        status: 200,
+        headers: new Headers({'content-type': 'text/event-stream'}),
+        url,
+      }
+    }
+
+    const onError = getCallCounter({name: 'onError'})
+    const es = new OurEventSource(url, {fetch: faultyFetch, maxBufferSize: 16})
+
+    es.addEventListener('error', onError)
+    await onError.waitForCallCount(1)
+
+    expect(onError.lastCall.lastArg).toMatchObject({
+      type: 'error',
+      defaultPrevented: false,
+      cancelable: false,
+      timeStamp: expect.any('number'),
+      message: expect.stringMatching(/Buffered data exceeded max buffer size/),
+      code: undefined,
+    })
+    expect(es.readyState, 'readyState').toBe(OurEventSource.CLOSED)
+
+    await new Promise((resolve) => setTimeout(resolve, 50))
+    expect(fetchCount).toBe(1)
+    await deferClose(es)
+  })
+
   test('has CONNECTING constant', async () => {
     const es = new OurEventSource(`${baseUrl}:${port}/`)
     expect(es.readyState).toBe(OurEventSource.CONNECTING)

@@ -1,4 +1,9 @@
-import {createParser, type EventSourceMessage, type EventSourceParser} from 'eventsource-parser'
+import {
+  createParser,
+  type EventSourceMessage,
+  type EventSourceParser,
+  type ParseError,
+} from 'eventsource-parser'
 
 import {ErrorEvent, flattenError, syntaxError} from './errors.js'
 import type {
@@ -11,6 +16,8 @@ import type {
   FetchLike,
   FetchLikeResponse,
 } from './types.js'
+
+const DEFAULT_MAX_BUFFER_SIZE = 100 * 1024 * 1024
 
 /**
  * An `EventSource` instance opens a persistent connection to an HTTP server, which sends events
@@ -197,7 +204,9 @@ export class EventSource extends EventTarget {
     }
 
     this.#parser = createParser({
+      maxBufferSize: eventSourceInitDict?.maxBufferSize ?? DEFAULT_MAX_BUFFER_SIZE,
       onEvent: this.#onEvent,
+      onError: this.#onParseError,
       onRetry: this.#onRetryChange,
     })
 
@@ -409,6 +418,11 @@ export class EventSource extends EventTarget {
 
     do {
       const {done, value} = await reader.read()
+      if (this.#readyState === this.CLOSED) {
+        open = false
+        break
+      }
+
       if (value) {
         this.#parser.feed(decoder.decode(value, {stream: !done}))
       }
@@ -507,6 +521,21 @@ export class EventSource extends EventTarget {
    */
   #onRetryChange = (value: number) => {
     this.#reconnectInterval = value
+  }
+
+  /**
+   * Called by EventSourceParser instance when a parse error occurs.
+   *
+   * @param error - The parser error
+   * @internal
+   */
+  #onParseError = (error: ParseError) => {
+    if (error.type !== 'max-buffer-size-exceeded') {
+      return
+    }
+
+    this.close()
+    this.#failConnection(error.message)
   }
 
   /**
