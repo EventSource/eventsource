@@ -52,10 +52,10 @@
   ],
   "license": "MIT",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=22.19.0"
   },
   "browserslist": [
-    "node >= 22.12.0",
+    "node >= 22.19.0",
     ">0.3%",
     "chrome >= 84",
     "safari >= 15",
@@ -72,14 +72,14 @@
     "@tsconfig/strictest": "^2.0.8",
     "@types/node": "^22.19.19",
     "@types/sinon": "^21.0.1",
-    "esbuild": "^0.25.1",
+    "esbuild": "^0.28.0",
     "eventsource-encoder": "^1.0.2",
     "oxfmt": "^0.52.0",
     "oxlint": "^1.67.0",
     "playwright": "^1.60.0",
     "sinon": "^22.0.0",
     "typescript": "^6.0.3",
-    "undici": "^7.8.0"
+    "undici": "^8.3.0"
   },
   "bugs": {
     "url": "https://github.com/EventSource/eventsource/issues"
