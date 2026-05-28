@@ -2,10 +2,10 @@ import {
   EventSource as OurEventSource,
   type EventSourceFetchInit,
   type FetchLike,
-} from '../src/index.js'
-import {unicodeLines} from './fixtures.js'
-import {deferClose, expect, getCallCounter} from './helpers.js'
-import type {TestRunner} from './waffletest/index.js'
+} from '../src/index.ts'
+import {unicodeLines} from './fixtures.ts'
+import {deferClose, expect, getCallCounter} from './helpers.ts'
+import type {TestRunner} from './waffletest/index.ts'
 
 export function registerTests(options: {
   environment: string

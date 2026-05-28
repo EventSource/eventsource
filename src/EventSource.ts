@@ -5,7 +5,7 @@ import {
   type ParseError,
 } from 'eventsource-parser'
 
-import {ErrorEvent, flattenError, syntaxError} from './errors.js'
+import {ErrorEvent, flattenError, syntaxError} from './errors.ts'
 import type {
   AddEventListenerOptions,
   EventListenerOptions,
@@ -15,7 +15,7 @@ import type {
   EventSourceInit,
   FetchLike,
   FetchLikeResponse,
-} from './types.js'
+} from './types.ts'
 
 const DEFAULT_MAX_BUFFER_SIZE = 100 * 1024 * 1024
 

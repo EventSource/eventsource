@@ -1,8 +1,8 @@
 {
   "extends": "@tsconfig/strictest/tsconfig.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["ES2020"],
+    "target": "ES2023",
+    "lib": ["ES2023"],
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -11,6 +11,9 @@
     // Module resolution
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+    "verbatimModuleSyntax": true,
     "esModuleInterop": true
   }
 }
