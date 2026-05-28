@@ -13,7 +13,7 @@ import {fileURLToPath} from 'node:url'
 import esbuild from 'esbuild'
 import {encode} from 'eventsource-encoder'
 
-import {unicodeLines} from './fixtures.js'
+import {unicodeLines} from './fixtures.ts'
 
 const isDeno = typeof globalThis.Deno !== 'undefined'
 /* {[client id]: number of connects} */

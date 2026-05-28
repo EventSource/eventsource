@@ -1,6 +1,6 @@
 import sinon, {type SinonSpy} from 'sinon'
 
-import {EventSource} from '../src/EventSource'
+import {EventSource} from '../src/EventSource.ts'
 
 type MessageReceiver = SinonSpy & {
   waitForCallCount: (num: number, timeout?: number) => Promise<void>

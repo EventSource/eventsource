@@ -1,3 +1,3 @@
-export {ErrorEvent} from './errors.js'
-export {EventSource} from './EventSource.js'
-export type * from './types.js'
+export {ErrorEvent} from './errors.ts'
+export {EventSource} from './EventSource.ts'
+export type * from './types.ts'

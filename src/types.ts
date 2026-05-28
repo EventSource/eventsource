@@ -1,4 +1,4 @@
-import type {ErrorEvent} from './errors.js'
+import type {ErrorEvent} from './errors.ts'
 
 /**
  * Stripped down version of `fetch()`, only defining the parts we care about.

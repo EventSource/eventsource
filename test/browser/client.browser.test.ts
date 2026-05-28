@@ -19,9 +19,9 @@
  */
 import {type BrowserType, chromium, firefox, webkit} from 'playwright'
 
-import {getServer} from '../server.js'
-import {type TestEvent} from '../waffletest/index.js'
-import {nodeReporter} from '../waffletest/reporters/nodeReporter.js'
+import {getServer} from '../server.ts'
+import {type TestEvent} from '../waffletest/index.ts'
+import {nodeReporter} from '../waffletest/reporters/nodeReporter.ts'
 
 type BrowserName = 'firefox' | 'chromium' | 'webkit'
 
