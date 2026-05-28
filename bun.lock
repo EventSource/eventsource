@@ -5,7 +5,7 @@
     "": {
       "name": "eventsource",
       "dependencies": {
-        "eventsource-parser": "^3.0.1",
+        "eventsource-parser": "^3.1.0",
       },
       "devDependencies": {
         "@changesets/changelog-github": "^0.7.0",
@@ -492,7 +492,7 @@
 
     "eventsource-encoder": ["eventsource-encoder@1.0.1", "", {}, "sha512-57iFiUzq6/LZSrY1vuE8pdko9ip7/gpX6zfpT16r70fyrqAWwtMHhKKPbxoJJN5E9XfG4hJBi44U3/MSj8TD5Q=="],
 
-    "eventsource-parser": ["eventsource-parser@3.0.1", "", {}, "sha512-VARTJ9CYeuQYb0pZEPbzi740OWFgpHe7AYJ2WFZVnUDUQp5Dk2yJUgF36YsZ81cOyxT0QxmXD2EQpapAouzWVA=="],
+    "eventsource-parser": ["eventsource-parser@3.1.0", "", {}, "sha512-kJezFj9YFAMLeORyi7aCLxLbD5/qWMQnoMVlVPyHIll7lgRJCc3JVln9Vgl9nwQi0YkMnhdGTMNn7CkRRAptMg=="],
 
     "extendable-error": ["extendable-error@0.1.7", "", {}, "sha512-UOiS2in6/Q0FK0R0q6UY9vYpQ21mr/Qn1KOnte7vsACuNJf514WvCCUHSRCPcgjPT2bAhNIJdlE6bVap1GKmeg=="],
 

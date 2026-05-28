@@ -103,3 +103,7 @@ function testFetchCompat() {
 }
 
 testFetchCompat()
+
+new EventSourcePolyfill('https://foo.bar', {
+  maxBufferSize: 1024,
+}).close()

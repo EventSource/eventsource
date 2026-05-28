@@ -112,6 +112,18 @@ es.addEventListener('error', (err) => {
 })
 ```
 
+### Limit parser buffer size
+
+The parser buffers up to 100 MB while waiting for an event to complete. To change that limit, pass `maxBufferSize` in the constructor options:
+
+```ts
+const es = new EventSource('https://my-server.com/sse', {
+  maxBufferSize: 10 * 1024 * 1024, // 10 MB
+})
+```
+
+If the limit is exceeded, the connection fails and emits an `error` event, and will not reconnect.
+
 ### Specify `fetch` implementation
 
 The `EventSource` constructor accepts an optional `fetch` property in the second argument that can be used to specify the `fetch` implementation to use.

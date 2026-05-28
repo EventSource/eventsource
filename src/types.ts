@@ -97,6 +97,12 @@ export interface EventSourceInit {
    * Can also be used for advanced use cases like mocking, proxying, custom certs etc.
    */
   fetch?: FetchLike
+
+  /**
+   * Maximum number of characters to buffer while parsing an incomplete event.
+   * Defaults to 100 MB.
+   */
+  maxBufferSize?: number
 }
 
 /**
