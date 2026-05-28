@@ -15,10 +15,10 @@ npm install --save eventsource
 ## Supported engines
 
 - Node.js >= 22.12
-- Chrome >= 71
-- Safari >= 11.3
-- Firefox >= 65
-- Edge >= 79
+- Chrome >= 84
+- Safari >= 15
+- Firefox >= 105
+- Edge >= 84
 - Deno >= 2
 - Bun >= 1.1.23
 
@@ -29,9 +29,12 @@ Basically, any environment that supports:
 - [TextDecoder](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder)
 - [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL)
 - [Event](https://developer.mozilla.org/en-US/docs/Web/API/Event), [MessageEvent](https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent), [EventTarget](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget)
+- [Private class fields, methods, and accessors](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_elements)
 - [Symbol.for](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/for)
 
-If you need to support older runtimes, try the `2.x` branch/version range (note: 2.x branch is primarily targetted at Node.js, not browsers).
+If you need to support runtimes without private class fields, methods and accessors, try the `4.x` branch/version range.
+
+If you need to support even older runtimes, try the `2.x` branch/version range (note: 2.x branch is primarily targetted at Node.js, not browsers).
 
 ## Usage
 
