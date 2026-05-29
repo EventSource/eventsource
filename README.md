@@ -117,7 +117,7 @@ es.addEventListener('error', (err) => {
 
 ### Limit parser buffer size
 
-The parser buffers up to 100 MB while waiting for an event to complete. To change that limit, pass `maxBufferSize` in the constructor options:
+The parser buffers up to 100 MB while waiting for a complete EventSource line. To change that limit, pass `maxBufferSize` in the constructor options:
 
 ```ts
 const es = new EventSource('https://my-server.com/sse', {

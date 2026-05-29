@@ -99,7 +99,7 @@ export interface EventSourceInit {
   fetch?: FetchLike
 
   /**
-   * Maximum number of characters to buffer while parsing an incomplete event.
+   * Maximum number of characters to buffer while parsing an incomplete EventSource line.
    * Defaults to 100 MB.
    */
   maxBufferSize?: number
