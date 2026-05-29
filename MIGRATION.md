@@ -6,7 +6,7 @@
 
 Dropped support for Node.js versions below 22.19, as they are no longer maintained. While there are no explicit changes that make it incompatible, we make no guarantees of it being supported going forward.
 
-Also dropped support for any javascript environment where private fields, methods and accessors are not supported - which includes older browsers.
+Also dropped support for any JavaScript environment where private fields, methods and accessors are not supported - which includes older browsers.
 
 ## v3 to v4
 
