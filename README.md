@@ -34,7 +34,7 @@ Basically, any environment that supports:
 
 If you need to support runtimes without private class fields, methods and accessors, try the `4.x` branch/version range.
 
-If you need to support even older runtimes, try the `2.x` branch/version range (note: 2.x branch is primarily targetted at Node.js, not browsers).
+If you need to support even older runtimes, try the `2.x` branch/version range (note: 2.x branch is primarily targeted at Node.js, not browsers).
 
 ## Usage
 
