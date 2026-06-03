@@ -1,3 +1,5 @@
+import sinon from 'sinon'
+
 import {
   EventSource as OurEventSource,
   type EventSourceFetchInit,
@@ -781,6 +783,57 @@ export function registerTests(options: {
     await new Promise((resolve) => setTimeout(resolve, 50))
     expect(fetchCount).toBe(1)
     await deferClose(es)
+  })
+
+  test('[NON-SPEC] unrefs the reconnection timer where supported, so it does not keep the event loop alive', async () => {
+    // `unref()` only exists on timer handles in Node.js and Bun. In browsers and Deno,
+    // `setTimeout` returns a number, so there is nothing to unref - skip in those environments.
+    // eslint-disable-next-line no-empty-function
+    const probe = setTimeout(() => {}, 0)
+    const supportsUnref = typeof probe === 'object' && probe !== null && 'unref' in probe
+    clearTimeout(probe)
+    if (!supportsUnref) {
+      return
+    }
+
+    // `/counter` sends `retry: 50`, then disconnects after 3 messages - so the reconnection
+    // timer is scheduled with a 50ms delay. Capture those specific timers and track whether
+    // `unref()` was called on them.
+    const reconnectTimers: Array<{unrefCalled: boolean}> = []
+    const realSetTimeout = globalThis.setTimeout
+    const stub = sinon.stub(globalThis, 'setTimeout')
+    stub.callsFake((callback, ms, ...rest) => {
+      const handle = realSetTimeout(callback, ms, ...rest)
+      if (ms === 50 && typeof handle === 'object' && handle !== null && 'unref' in handle) {
+        const record = {unrefCalled: false}
+        reconnectTimers.push(record)
+        const realUnref = handle.unref.bind(handle)
+        handle.unref = () => {
+          record.unrefCalled = true
+          return realUnref()
+        }
+      }
+      return handle
+    })
+
+    try {
+      const onError = getCallCounter({name: 'onError'})
+      const es = new OurEventSource(`${baseUrl}:${port}/counter`, {fetch})
+      es.addEventListener('error', onError)
+
+      // Wait for the disconnect, which schedules the reconnection timer.
+      await onError.waitForCallCount(1)
+
+      expect(reconnectTimers.length > 0, 'a reconnection timer was scheduled').toBe(true)
+      expect(
+        reconnectTimers.every((timer) => timer.unrefCalled),
+        'reconnection timer was unref-ed',
+      ).toBe(true)
+
+      es.close()
+    } finally {
+      stub.restore()
+    }
   })
 
   test('has CONNECTING constant', async () => {
