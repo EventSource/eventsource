@@ -586,7 +586,16 @@ export class EventSource extends EventTarget {
     this.dispatchEvent(errorEvent)
 
     // [spec] Wait a delay equal to the reconnection time of the event source.
-    this.#reconnectTimer = setTimeout(this.#reconnect, this.#reconnectInterval)
+    const timer = setTimeout(this.#reconnect, this.#reconnectInterval)
+
+    // In Node.js (and Bun), a pending timer keeps the event loop alive, preventing the
+    // process from exiting while we wait to reconnect. `unref()` opts out of that. Browsers
+    // and Deno return a numeric handle with no `unref()`, so only call it when available.
+    if (typeof timer === 'object' && timer !== null && 'unref' in timer) {
+      timer.unref()
+    }
+
+    this.#reconnectTimer = timer
   }
 
   /**
