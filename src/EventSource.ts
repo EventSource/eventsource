@@ -117,7 +117,13 @@ export class EventSource extends EventTarget {
     return this.#onError
   }
   public set onerror(value: ((ev: ErrorEvent) => unknown) | null) {
+    if (this.#onError) {
+      this.removeEventListener('error', this.#onError)
+    }
     this.#onError = value
+    if (value) {
+      this.addEventListener('error', value)
+    }
   }
 
   /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/message_event) */
@@ -125,7 +131,13 @@ export class EventSource extends EventTarget {
     return this.#onMessage
   }
   public set onmessage(value: ((ev: MessageEvent) => unknown) | null) {
+    if (this.#onMessage) {
+      this.removeEventListener('message', this.#onMessage)
+    }
     this.#onMessage = value
+    if (value) {
+      this.addEventListener('message', value)
+    }
   }
 
   /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/open_event) */
@@ -133,7 +145,13 @@ export class EventSource extends EventTarget {
     return this.#onOpen
   }
   public set onopen(value: ((ev: Event) => unknown) | null) {
+    if (this.#onOpen) {
+      this.removeEventListener('open', this.#onOpen)
+    }
     this.#onOpen = value
+    if (value) {
+      this.addEventListener('open', value)
+    }
   }
 
   override addEventListener<K extends keyof EventSourceEventMap>(
@@ -401,7 +419,6 @@ export class EventSource extends EventTarget {
     this.#readyState = this.OPEN
 
     const openEvent = new Event('open')
-    this.#onOpen?.(openEvent)
     this.dispatchEvent(openEvent)
 
     // Ensure that the response stream is a web stream
@@ -503,12 +520,9 @@ export class EventSource extends EventTarget {
       lastEventId: event.id || '',
     })
 
-    // The `onmessage` property of the EventSource instance only triggers on messages without an
-    // `event` field, or ones that explicitly set `message`.
-    if (this.#onMessage && (!event.event || event.event === 'message')) {
-      this.#onMessage(messageEvent)
-    }
-
+    // The `onmessage` property only triggers on messages without an `event` field, or ones that
+    // explicitly set `message`. This is handled automatically: the event is dispatched with type
+    // `event.event || 'message'`, and `onmessage` is registered as a `message` event listener.
     this.dispatchEvent(messageEvent)
   }
 
@@ -559,8 +573,6 @@ export class EventSource extends EventTarget {
     // [spec] > to no information can be made available in the events themselves.
     // Printing to console is not very programatically helpful, though, so we emit a custom event.
     const errorEvent = new ErrorEvent('error', {code, message})
-
-    this.#onError?.(errorEvent)
     this.dispatchEvent(errorEvent)
   }
 
@@ -582,7 +594,6 @@ export class EventSource extends EventTarget {
 
     // [spec] Fire an event named `error` at the EventSource object.
     const errorEvent = new ErrorEvent('error', {code, message})
-    this.#onError?.(errorEvent)
     this.dispatchEvent(errorEvent)
 
     // [spec] Wait a delay equal to the reconnection time of the event source.

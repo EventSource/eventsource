@@ -265,6 +265,28 @@ export function registerTests(options: {
     await deferClose(es)
   })
 
+  test('on-handlers fire in registration order relative to `addEventListener`', async () => {
+    const order: string[] = []
+    const onOpen = getCallCounter({name: 'onOpen'})
+    const es = new OurEventSource(`${baseUrl}:${port}/`, {fetch})
+
+    // `addEventListener` is registered _before_ the `onopen` handler is assigned, so per spec
+    // the `addEventListener` callback must fire first (the event handler IDL attribute fires
+    // in the order it was set, relative to other listeners).
+    es.addEventListener('open', () => order.push('addEventListener'))
+    es.onopen = () => {
+      order.push('onopen')
+      onOpen()
+    }
+
+    await onOpen.waitForCallCount(1)
+
+    expect(order[0], 'first handler to fire').toBe('addEventListener')
+    expect(order[1], 'second handler to fire').toBe('onopen')
+
+    await deferClose(es)
+  })
+
   test('message event contains correct properties', async () => {
     const onMessage = getCallCounter({name: 'onMessage'})
     const es = new OurEventSource(`${baseUrl}:${port}/counter`, {fetch})
