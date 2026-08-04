@@ -1,74 +1,44 @@
 name: Release
 
-# Workflow name based on selected inputs.
-# Fallback to default GitHub naming when expression evaluates to empty string
-run-name: >
-  ${{ inputs.release && 'Release ➤ Publish to NPM' || inputs.dryrun && 'Release ➤ Dry-run' || '' }}
 on:
-  pull_request:
   push:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      release:
-        description: 'Publish new release'
-        default: false
-        type: boolean
-      dryrun:
-        description: 'Dry run'
-        default: false
-        type: boolean
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  dryrun:
-    # only run if opt-in during workflow_dispatch
-    name: 'Release: Dry-run release process'
-    if: always() && github.event.inputs.dryrun == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          # Need to fetch entire commit history to
-          # analyze every commit since last release
-          fetch-depth: 0
-      - uses: actions/setup-node@v7
-        with:
-          node-version: lts/*
-          cache: npm
-      - run: npm ci
-      - run: npx semantic-release --dry-run
-        if: always()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
   release:
-    name: 'Release: Publish to NPM'
-    permissions:
-      issues: write # for release notes, comments…
-      contents: write # for checkout + push + release creation
-      id-token: write # to enable use of OIDC for npm provenanc
-    if: always() && github.event.inputs.release == 'true' && github.event.inputs.dryrun == 'false'
+    name: 'Release: Version PR or publish to npm'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # to push the version commit and tag, and create the GitHub release
+      pull-requests: write # to open and update the "Version Packages" pull request
+      id-token: write # to authenticate with npm through OIDC (trusted publishing)
     steps:
       - uses: actions/checkout@v7
         with:
-          # Need to fetch entire commit history to
-          # analyze every commit since last release
           fetch-depth: 0
+
       - uses: actions/setup-node@v7
         with:
           node-version: lts/*
           cache: npm
+
+      # Trusted publishing needs npm >= 11.5.1. Older versions silently skip OIDC
+      # rather than erroring, so don't rely on whatever npm the runner ships with.
+      - run: npm install --global npm@latest
+
       - run: npm ci
-      - run: npx semantic-release
-        # Don't allow interrupting the release step if the job is cancelled, as it can lead to an inconsistent state
-        # e.g. git tags were pushed but it exited before `npm publish`
-        if: always() && github.event.inputs.release == 'true'
+
+      - name: Create version pull request or publish to npm
+        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
+        with:
+          version: npm run version:packages
+          publish: npm run release
+          commit: 'chore(release): version packages'
+          title: 'chore(release): version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true

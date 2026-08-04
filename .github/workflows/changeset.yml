@@ -1,0 +1,30 @@
+name: Changeset
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  status:
+    name: 'Changeset: Status'
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # `changeset status` diffs against the base branch, so it needs the history
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: npm
+      # Only the changesets CLI is needed here, so skip the build that `prepare` triggers
+      - run: npm ci --ignore-scripts
+      - name: Check that user-facing changes have a changeset
+        run: npx changeset status --since=origin/${{ github.base_ref }}
