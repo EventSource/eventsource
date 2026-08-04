@@ -42,6 +42,24 @@ fix: double reconnect attempt on error
 docs: clarify usage of `fetch` option
 ```
 
+## Changesets
+
+Releases are driven by [changesets](https://github.com/changesets/changesets), not by commit messages. If your pull request changes anything under `src/`, add a changeset describing the change:
+
+```sh
+npm run changeset
+```
+
+Pick `patch`, `minor` or `major`, then write a sentence aimed at someone reading the changelog. Commit the generated file in `.changeset/` along with the rest of your changes.
+
+Changes that do not affect the published package - docs, tests, CI, internal refactors that leave behaviour untouched - do not need one. If a change touches `src/` but genuinely should not trigger a release, run `npx changeset add --empty`.
+
+## Releasing
+
+Maintainers only. When changesets land on `main`, the release workflow opens a "Version Packages" pull request that applies the version bump and updates the changelog. Merging that pull request publishes to npm, pushes the git tag and creates the GitHub release.
+
+Publishing uses [npm trusted publishing](https://docs.npmjs.com/trusted-publishers) over OIDC, so there is no npm token to rotate. The trusted publisher is configured on npm against the `release.yml` workflow in this repository - renaming that file will break publishing until the npm setting is updated to match.
+
 # How to file a security issue
 
 If you find a security vulnerability, do **NOT** open an issue. Use the [https://github.com/EventSource/eventsource/security/advisories/new](GitHub Security Advisory) page instead.

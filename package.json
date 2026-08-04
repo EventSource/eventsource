@@ -21,21 +21,25 @@
   "scripts": {
     "build": "pkg-utils build && pkg-utils --strict",
     "build:watch": "pkg-utils watch",
+    "changeset": "changeset",
+    "changeset:status": "changeset status --since=origin/main",
     "clean": "rimraf dist coverage",
     "lint": "eslint . && tsc --noEmit",
     "posttest": "npm run lint",
     "prebuild": "npm run clean",
     "prepare": "npm run build",
+    "release": "changeset publish",
     "test": "npm run test:node && npm run test:browser",
     "test:browser": "tsx test/browser/client.browser.test.ts",
     "test:bun": "bun run test/bun/client.bun.test.ts",
     "test:deno": "deno run --allow-net --allow-read --allow-env --unstable-sloppy-imports test/deno/client.deno.test.ts",
-    "test:node": "tsx test/node/client.node.test.ts"
+    "test:node": "tsx test/node/client.node.test.ts",
+    "version:packages": "changeset version && npm install --package-lock-only --no-audit --no-fund"
   },
   "files": [
-    "!dist/stats.html",
     "dist",
-    "src"
+    "src",
+    "!dist/stats.html"
   ],
   "repository": {
     "type": "git",
@@ -66,9 +70,11 @@
     "eventsource-parser": "^3.0.1"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.7.0",
+    "@changesets/cli": "^2.31.1",
     "@sanity/pkg-utils": "^7.2.2",
-    "@sanity/semantic-release-preset": "^5.0.0",
     "@tsconfig/strictest": "^2.0.5",
+    "@types/node": "^22.20.1",
     "@types/sinon": "^17.0.4",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
@@ -81,7 +87,6 @@
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
     "rollup-plugin-visualizer": "^5.14.0",
-    "semantic-release": "^24.2.3",
     "sinon": "^20.0.0",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3",
