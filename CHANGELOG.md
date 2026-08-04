@@ -1,5 +1,11 @@
 # 📓 Changelog
 
+## 4.1.1
+
+### Patch Changes
+
+- [#351](https://github.com/EventSource/eventsource/pull/351) [`6127f40`](https://github.com/EventSource/eventsource/commit/6127f40c8dc2007329a99531343e0d438f5066fd) Thanks [@rexxars](https://github.com/rexxars)! - Allow a `value` of any type in `ReaderLike` done-results. TypeScript 5.9's DOM lib types `ReadableStreamDefaultReader.read()`'s done-result as `{done: true, value: T | undefined}`, so a custom `fetch` returning a `Response`-shaped body no longer satisfied `FetchLikeResponse` on TypeScript 5.9 and newer, forcing consumers to hand-wrap the reader.
+
 ## [4.1.0](https://github.com/EventSource/eventsource/compare/v4.0.0...v4.1.0) (2025-11-19)
 
 ### Features
