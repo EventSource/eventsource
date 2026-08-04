@@ -3,6 +3,7 @@
  * WhatWG EventSource implementation/types (defined in TypeScript's `lib.dom.d.ts`).
  */
 import {EventSource as EventSourcePolyfill} from '../src/EventSource'
+import type {EventSourceInit, FetchLike} from '../src/types'
 
 function testESImpl(EvtSource: typeof globalThis.EventSource | typeof EventSourcePolyfill) {
   const es = new EvtSource('https://foo.bar', {
@@ -76,3 +77,29 @@ function testESImpl(EvtSource: typeof globalThis.EventSource | typeof EventSourc
 
 testESImpl(EventSourcePolyfill)
 testESImpl(globalThis.EventSource)
+
+/**
+ * `FetchLike` must accept standard fetch implementations: TypeScript 5.9's DOM lib types
+ * `ReadableStreamDefaultReader.read()`'s done-result as `{done: true, value: T | undefined}`,
+ * which `ReaderLike` needs to allow for `Response`-shaped bodies (and structurally compatible
+ * streams like `ReadableStream<Uint8Array<ArrayBufferLike>>`) to remain assignable.
+ */
+function testFetchCompat() {
+  const globalFetchInit: EventSourceInit = {fetch: globalThis.fetch}
+
+  const customStreamFetch: FetchLike = async (url, init) => {
+    const res = await globalThis.fetch(url, init)
+    const body: ReadableStream<Uint8Array<ArrayBufferLike>> | null = res.body
+    return {
+      body,
+      url: res.url,
+      status: res.status,
+      redirected: res.redirected,
+      headers: res.headers,
+    }
+  }
+
+  return [globalFetchInit, {fetch: customStreamFetch} satisfies EventSourceInit]
+}
+
+testFetchCompat()

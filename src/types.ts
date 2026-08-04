@@ -45,10 +45,14 @@ export interface EventSourceFetchInit {
 /**
  * Stripped down version of `ReadableStreamDefaultReader`, only defining the parts we care about.
  *
+ * Note that the `done: true` result allows a `value` of any type: TypeScript 5.9's DOM lib types
+ * `ReadableStreamDefaultReader.read()`'s done-result as `{done: true, value: T | undefined}`, so
+ * requiring `value` to be absent/undefined would reject standard readers.
+ *
  * @public
  */
 export interface ReaderLike {
-  read(): Promise<{done: false; value: unknown} | {done: true; value?: undefined}>
+  read(): Promise<{done: false; value: unknown} | {done: true; value?: unknown}>
   cancel(): Promise<void>
 }
 
