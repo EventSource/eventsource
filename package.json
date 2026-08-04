@@ -37,9 +37,9 @@
     "version:packages": "changeset version && npm install --package-lock-only --no-audit --no-fund"
   },
   "files": [
-    "!dist/stats.html",
     "dist",
-    "src"
+    "src",
+    "!dist/stats.html"
   ],
   "repository": {
     "type": "git",

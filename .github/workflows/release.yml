@@ -33,9 +33,8 @@ jobs:
 
       # Trusted publishing needs npm >= 11.5.1. Older versions silently skip OIDC
       # rather than erroring, so don't rely on whatever npm the runner ships with.
-      # Held to the 11 line: `@latest` is npm 12 already, and a publish path should
-      # not pick up a new npm major unattended.
-      - run: npm install --global npm@11
+      # Pinned to the major so a new npm release can't land here unattended.
+      - run: npm install --global npm@12
 
       - run: npm ci
 
