@@ -12,6 +12,10 @@ concurrency:
 jobs:
   release:
     name: 'Release: Version PR or publish to npm'
+    # `workflow_dispatch` can be triggered on any ref, and npm's trusted publisher
+    # config pins the workflow file but not the branch. Without this, dispatching
+    # from a feature branch could version and publish from an unreviewed ref.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write # to push the version commit and tag, and create the GitHub release
@@ -29,7 +33,9 @@ jobs:
 
       # Trusted publishing needs npm >= 11.5.1. Older versions silently skip OIDC
       # rather than erroring, so don't rely on whatever npm the runner ships with.
-      - run: npm install --global npm@latest
+      # Held to the 11 line: `@latest` is npm 12 already, and a publish path should
+      # not pick up a new npm major unattended.
+      - run: npm install --global npm@11
 
       - run: npm ci
 
