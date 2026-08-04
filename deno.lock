@@ -2,9 +2,10 @@
   "version": "5",
   "specifiers": {
     "npm:@changesets/changelog-github@0.7": "0.7.0",
-    "npm:@changesets/cli@^2.31.1": "2.31.1",
-    "npm:@sanity/pkg-utils@^7.2.2": "7.2.2_typescript@5.8.3_@babel+core@7.27.1_rollup@4.40.2_esbuild@0.25.4_zod@3.24.2",
+    "npm:@changesets/cli@^2.31.1": "2.31.1_@types+node@22.20.1",
+    "npm:@sanity/pkg-utils@^7.2.2": "7.2.2_typescript@5.8.3_@types+node@22.20.1",
     "npm:@tsconfig/strictest@^2.0.5": "2.0.5",
+    "npm:@types/node@^22.20.1": "22.20.1",
     "npm:@types/sinon@^17.0.4": "17.0.4",
     "npm:@typescript-eslint/eslint-plugin@^6.11.0": "6.21.0_@typescript-eslint+parser@6.21.0__eslint@8.57.1__typescript@5.8.3_eslint@8.57.1_typescript@5.8.3",
     "npm:@typescript-eslint/parser@^6.11.0": "6.21.0_eslint@8.57.1_typescript@5.8.3",
@@ -289,7 +290,7 @@
         "dotenv"
       ]
     },
-    "@changesets/cli@2.31.1": {
+    "@changesets/cli@2.31.1_@types+node@22.20.1": {
       "integrity": "sha512-uO05WTcRBwuVOJVSW8Cmpqw6q0WDL53ajGCMyszutvOe5toOnunbpM4jZzf+qxBOz7i0AzopZ8diBuewjmF40w==",
       "dependencies": [
         "@changesets/apply-release-plan",
@@ -604,11 +605,15 @@
       "integrity": "sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==",
       "deprecated": true
     },
-    "@inquirer/external-editor@1.0.3": {
+    "@inquirer/external-editor@1.0.3_@types+node@22.20.1": {
       "integrity": "sha512-RWbSrDiYmO4LbejWY7ttpxczuwQyZLBUyygsA9Nsv95hpzUWwnNTVQmAq3xuh7vNwCp07UTmE5i11XAEExx4RA==",
       "dependencies": [
+        "@types/node@22.20.1",
         "chardet",
         "iconv-lite"
+      ],
+      "optionalPeers": [
+        "@types/node@22.20.1"
       ]
     },
     "@isaacs/cliui@8.0.2": {
@@ -657,7 +662,7 @@
       "integrity": "sha512-mki5uBvhHzO8kYYix/WRy2WX8S3B5wdVSc9D6KcU5lQNglP2yt58/VfLuAK49glRXChosY8ap2oJ1qgma3GUVA==",
       "dependencies": [
         "@babel/runtime",
-        "@types/node",
+        "@types/node@12.20.55",
         "find-up@4.1.0",
         "fs-extra@8.1.0"
       ]
@@ -673,7 +678,7 @@
         "read-yaml-file"
       ]
     },
-    "@microsoft/api-extractor-model@7.30.5": {
+    "@microsoft/api-extractor-model@7.30.5_@types+node@22.20.1": {
       "integrity": "sha512-0ic4rcbcDZHz833RaTZWTGu+NpNgrxVNjVaor0ZDUymfDFzjA/Uuk8hYziIUIOEOSTfmIQqyzVwlzxZxPe7tOA==",
       "dependencies": [
         "@microsoft/tsdoc",
@@ -681,7 +686,7 @@
         "@rushstack/node-core-library"
       ]
     },
-    "@microsoft/api-extractor@7.52.2": {
+    "@microsoft/api-extractor@7.52.2_@types+node@22.20.1": {
       "integrity": "sha512-RX37V5uhBBPUvrrcmIxuQ8TPsohvr6zxo7SsLPOzBYcH9nbjbvtdXrts4cxHCXGOin9JR5ar37qfxtCOuEBTHA==",
       "dependencies": [
         "@microsoft/api-extractor-model",
@@ -957,9 +962,10 @@
       "os": ["win32"],
       "cpu": ["x64"]
     },
-    "@rushstack/node-core-library@5.13.0_ajv@8.13.0": {
+    "@rushstack/node-core-library@5.13.0_@types+node@22.20.1": {
       "integrity": "sha512-IGVhy+JgUacAdCGXKUrRhwHMTzqhWwZUI+qEPcdzsb80heOw0QPbhhoVsoiMF7Klp8eYsp7hzpScMXmOa3Uhfg==",
       "dependencies": [
+        "@types/node@22.20.1",
         "ajv@8.13.0",
         "ajv-draft-04",
         "ajv-formats",
@@ -968,6 +974,9 @@
         "jju",
         "resolve",
         "semver@7.5.4"
+      ],
+      "optionalPeers": [
+        "@types/node@22.20.1"
       ]
     },
     "@rushstack/rig-package@0.5.3": {
@@ -977,14 +986,18 @@
         "strip-json-comments@3.1.1"
       ]
     },
-    "@rushstack/terminal@0.15.2": {
+    "@rushstack/terminal@0.15.2_@types+node@22.20.1": {
       "integrity": "sha512-7Hmc0ysK5077R/IkLS9hYu0QuNafm+TbZbtYVzCMbeOdMjaRboLKrhryjwZSRJGJzu+TV1ON7qZHeqf58XfLpA==",
       "dependencies": [
         "@rushstack/node-core-library",
+        "@types/node@22.20.1",
         "supports-color@8.1.1"
+      ],
+      "optionalPeers": [
+        "@types/node@22.20.1"
       ]
     },
-    "@rushstack/ts-command-line@4.23.7": {
+    "@rushstack/ts-command-line@4.23.7_@types+node@22.20.1": {
       "integrity": "sha512-Gr9cB7DGe6uz5vq2wdr89WbVDKz0UeuFEn5H2CfWDe7JvjFFaiV15gi6mqDBTbHhHCWS7w8mF1h3BnIfUndqdA==",
       "dependencies": [
         "@rushstack/terminal",
@@ -996,7 +1009,7 @@
     "@sanity/browserslist-config@1.0.5": {
       "integrity": "sha512-so+/UtCge8t1jq509hH0otbbptRz0zM/Aa0dh5MhMD7HGT6n2igWIL2VWH/9QR9e77Jn3dJsjz23mW1WCxT+sg=="
     },
-    "@sanity/pkg-utils@7.2.2_typescript@5.8.3_@babel+core@7.27.1_rollup@4.40.2_esbuild@0.25.4_zod@3.24.2": {
+    "@sanity/pkg-utils@7.2.2_typescript@5.8.3_@types+node@22.20.1": {
       "integrity": "sha512-r51X1qTPR/BB416DI3R+ea6ois6rZLm7TsRJCt/7p2NjGoWRDScjL9hgA/Y6QClcFPixnwXS9l/ah/rCv2Zp5g==",
       "dependencies": [
         "@babel/core",
@@ -1041,6 +1054,7 @@
         "zod",
         "zod-validation-error"
       ],
+      "deprecated": true,
       "bin": true
     },
     "@sinonjs/commons@3.0.1": {
@@ -1075,7 +1089,7 @@
     "@types/follow-redirects@1.14.4": {
       "integrity": "sha512-GWXfsD0Jc1RWiFmMuMFCpXMzi9L7oPDVwxUnZdg89kDNnqsRfUKXEtUYtA98A6lig1WXH/CYY/fvPW9HuN5fTA==",
       "dependencies": [
-        "@types/node"
+        "@types/node@22.20.1"
       ]
     },
     "@types/json-schema@7.0.15": {
@@ -1083,6 +1097,12 @@
     },
     "@types/node@12.20.55": {
       "integrity": "sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ=="
+    },
+    "@types/node@22.20.1": {
+      "integrity": "sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q==",
+      "dependencies": [
+        "undici-types"
+      ]
     },
     "@types/parse-path@7.1.0": {
       "integrity": "sha512-EULJ8LApcVEPbrfND0cRQqutIOdiIgJ1Mgrhpy755r14xMohPTEpkV/k28SJvuOs9bHRFW8x+KeDAEPiGQPB9Q==",
@@ -2812,6 +2832,9 @@
       "integrity": "sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==",
       "bin": true
     },
+    "undici-types@6.21.0": {
+      "integrity": "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="
+    },
     "undici@7.8.0": {
       "integrity": "sha512-vFv1GA99b7eKO1HG/4RPu2Is3FBTWBrmzqzO0mz+rLxN3yXkE4mqRcb8g8fHxzX4blEysrNZLqg5RbJLqX5buA=="
     },
@@ -2939,6 +2962,7 @@
         "npm:@changesets/cli@^2.31.1",
         "npm:@sanity/pkg-utils@^7.2.2",
         "npm:@tsconfig/strictest@^2.0.5",
+        "npm:@types/node@^22.20.1",
         "npm:@types/sinon@^17.0.4",
         "npm:@typescript-eslint/eslint-plugin@^6.11.0",
         "npm:@typescript-eslint/parser@^6.11.0",
