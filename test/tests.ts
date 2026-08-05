@@ -1,4 +1,3 @@
-import sinon from 'sinon'
 
 import {
   EventSource as OurEventSource,
@@ -808,8 +807,7 @@ export function registerTests(options: {
   })
 
   test('[NON-SPEC] unrefs the reconnection timer where supported, so it does not keep the event loop alive', async () => {
-    // `unref()` only exists on timer handles in Node.js and Bun. In browsers and Deno,
-    // `setTimeout` returns a number, so there is nothing to unref - skip in those environments.
+    // Browsers return numeric timer handles, so there is nothing to unref there.
     // eslint-disable-next-line no-empty-function
     const probe = setTimeout(() => {}, 0)
     const supportsUnref = typeof probe === 'object' && probe !== null && 'unref' in probe
@@ -823,8 +821,7 @@ export function registerTests(options: {
     // `unref()` was called on them.
     const reconnectTimers: Array<{unrefCalled: boolean}> = []
     const realSetTimeout = globalThis.setTimeout
-    const stub = sinon.stub(globalThis, 'setTimeout')
-    stub.callsFake((callback, ms, ...rest) => {
+    const setTimeoutStub: typeof globalThis.setTimeout = (callback, ms, ...rest) => {
       const handle = realSetTimeout(callback, ms, ...rest)
       if (ms === 50 && typeof handle === 'object' && handle !== null && 'unref' in handle) {
         const record = {unrefCalled: false}
@@ -836,7 +833,8 @@ export function registerTests(options: {
         }
       }
       return handle
-    })
+    }
+    globalThis.setTimeout = setTimeoutStub
 
     try {
       const onError = getCallCounter({name: 'onError'})
@@ -854,7 +852,7 @@ export function registerTests(options: {
 
       es.close()
     } finally {
-      stub.restore()
+      globalThis.setTimeout = realSetTimeout
     }
   })
 
