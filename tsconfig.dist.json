@@ -3,7 +3,7 @@
   "include": ["./src"],
   "exclude": ["**/__tests__/**"],
   "compilerOptions": {
-    "outDir": "./dist/types",
-    "rootDir": "."
+    "outDir": "./dist",
+    "rootDir": "./src"
   }
 }

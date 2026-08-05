@@ -1,6 +1,11 @@
-import {createParser, type EventSourceMessage, type EventSourceParser} from 'eventsource-parser'
+import {
+  createParser,
+  type EventSourceMessage,
+  type EventSourceParser,
+  type ParseError,
+} from 'eventsource-parser'
 
-import {ErrorEvent, flattenError, syntaxError} from './errors.js'
+import {ErrorEvent, flattenError, syntaxError} from './errors.ts'
 import type {
   AddEventListenerOptions,
   EventListenerOptions,
@@ -10,7 +15,9 @@ import type {
   EventSourceInit,
   FetchLike,
   FetchLikeResponse,
-} from './types.js'
+} from './types.ts'
+
+const DEFAULT_MAX_BUFFER_SIZE = 100 * 1024 * 1024
 
 /**
  * An `EventSource` instance opens a persistent connection to an HTTP server, which sends events
@@ -110,7 +117,13 @@ export class EventSource extends EventTarget {
     return this.#onError
   }
   public set onerror(value: ((ev: ErrorEvent) => unknown) | null) {
+    if (this.#onError) {
+      this.removeEventListener('error', this.#onError)
+    }
     this.#onError = value
+    if (value) {
+      this.addEventListener('error', value)
+    }
   }
 
   /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/message_event) */
@@ -118,7 +131,13 @@ export class EventSource extends EventTarget {
     return this.#onMessage
   }
   public set onmessage(value: ((ev: MessageEvent) => unknown) | null) {
+    if (this.#onMessage) {
+      this.removeEventListener('message', this.#onMessage)
+    }
     this.#onMessage = value
+    if (value) {
+      this.addEventListener('message', value)
+    }
   }
 
   /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/open_event) */
@@ -126,7 +145,13 @@ export class EventSource extends EventTarget {
     return this.#onOpen
   }
   public set onopen(value: ((ev: Event) => unknown) | null) {
+    if (this.#onOpen) {
+      this.removeEventListener('open', this.#onOpen)
+    }
     this.#onOpen = value
+    if (value) {
+      this.addEventListener('open', value)
+    }
   }
 
   override addEventListener<K extends keyof EventSourceEventMap>(
@@ -192,12 +217,14 @@ export class EventSource extends EventTarget {
       } else {
         throw new Error('Invalid URL')
       }
-    } catch (err) {
+    } catch {
       throw syntaxError('An invalid or illegal string was specified')
     }
 
     this.#parser = createParser({
+      maxBufferSize: eventSourceInitDict?.maxBufferSize ?? DEFAULT_MAX_BUFFER_SIZE,
       onEvent: this.#onEvent,
+      onError: this.#onParseError,
       onRetry: this.#onRetryChange,
     })
 
@@ -392,7 +419,6 @@ export class EventSource extends EventTarget {
     this.#readyState = this.OPEN
 
     const openEvent = new Event('open')
-    this.#onOpen?.(openEvent)
     this.dispatchEvent(openEvent)
 
     // Ensure that the response stream is a web stream
@@ -409,6 +435,11 @@ export class EventSource extends EventTarget {
 
     do {
       const {done, value} = await reader.read()
+      if (this.#readyState === this.CLOSED) {
+        open = false
+        break
+      }
+
       if (value) {
         this.#parser.feed(decoder.decode(value, {stream: !done}))
       }
@@ -489,12 +520,9 @@ export class EventSource extends EventTarget {
       lastEventId: event.id || '',
     })
 
-    // The `onmessage` property of the EventSource instance only triggers on messages without an
-    // `event` field, or ones that explicitly set `message`.
-    if (this.#onMessage && (!event.event || event.event === 'message')) {
-      this.#onMessage(messageEvent)
-    }
-
+    // The `onmessage` property only triggers on messages without an `event` field, or ones that
+    // explicitly set `message`. This is handled automatically: the event is dispatched with type
+    // `event.event || 'message'`, and `onmessage` is registered as a `message` event listener.
     this.dispatchEvent(messageEvent)
   }
 
@@ -507,6 +535,21 @@ export class EventSource extends EventTarget {
    */
   #onRetryChange = (value: number) => {
     this.#reconnectInterval = value
+  }
+
+  /**
+   * Called by EventSourceParser instance when a parse error occurs.
+   *
+   * @param error - The parser error
+   * @internal
+   */
+  #onParseError = (error: ParseError) => {
+    if (error.type !== 'max-buffer-size-exceeded') {
+      return
+    }
+
+    this.close()
+    this.#failConnection(error.message)
   }
 
   /**
@@ -530,8 +573,6 @@ export class EventSource extends EventTarget {
     // [spec] > to no information can be made available in the events themselves.
     // Printing to console is not very programatically helpful, though, so we emit a custom event.
     const errorEvent = new ErrorEvent('error', {code, message})
-
-    this.#onError?.(errorEvent)
     this.dispatchEvent(errorEvent)
   }
 
@@ -553,11 +594,19 @@ export class EventSource extends EventTarget {
 
     // [spec] Fire an event named `error` at the EventSource object.
     const errorEvent = new ErrorEvent('error', {code, message})
-    this.#onError?.(errorEvent)
     this.dispatchEvent(errorEvent)
 
     // [spec] Wait a delay equal to the reconnection time of the event source.
-    this.#reconnectTimer = setTimeout(this.#reconnect, this.#reconnectInterval)
+    const timer = setTimeout(this.#reconnect, this.#reconnectInterval)
+
+    // In Node.js (and Bun), a pending timer keeps the event loop alive, preventing the
+    // process from exiting while we wait to reconnect. `unref()` opts out of that. Browsers
+    // and Deno return a numeric handle with no `unref()`, so only call it when available.
+    if (typeof timer === 'object' && timer !== null && 'unref' in timer) {
+      timer.unref()
+    }
+
+    this.#reconnectTimer = timer
   }
 
   /**

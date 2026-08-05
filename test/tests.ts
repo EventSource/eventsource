@@ -1,11 +1,12 @@
+
 import {
   EventSource as OurEventSource,
   type EventSourceFetchInit,
   type FetchLike,
-} from '../src/index.js'
-import {unicodeLines} from './fixtures.js'
-import {deferClose, expect, getCallCounter} from './helpers.js'
-import type {TestRunner} from './waffletest/index.js'
+} from '../src/index.ts'
+import {unicodeLines} from './fixtures.ts'
+import {deferClose, expect, getCallCounter} from './helpers.ts'
+import type {TestRunner} from './waffletest/index.ts'
 
 export function registerTests(options: {
   environment: string
@@ -260,6 +261,28 @@ export function registerTests(options: {
     // since each connect emits 3 message then closes
     expect(onMessage.callCount).toBe(6)
     expect(onMessageNew.callCount).toBe(3)
+    await deferClose(es)
+  })
+
+  test('on-handlers fire in registration order relative to `addEventListener`', async () => {
+    const order: string[] = []
+    const onOpen = getCallCounter({name: 'onOpen'})
+    const es = new OurEventSource(`${baseUrl}:${port}/`, {fetch})
+
+    // `addEventListener` is registered _before_ the `onopen` handler is assigned, so per spec
+    // the `addEventListener` callback must fire first (the event handler IDL attribute fires
+    // in the order it was set, relative to other listeners).
+    es.addEventListener('open', () => order.push('addEventListener'))
+    es.onopen = () => {
+      order.push('onopen')
+      onOpen()
+    }
+
+    await onOpen.waitForCallCount(1)
+
+    expect(order[0], 'first handler to fire').toBe('addEventListener')
+    expect(order[1], 'second handler to fire').toBe('onopen')
+
     await deferClose(es)
   })
 
@@ -738,6 +761,99 @@ export function registerTests(options: {
       code: 204,
     })
     await deferClose(es)
+  })
+
+  test('[NON-SPEC] custom `maxBufferSize` fails connection on parser buffer overflow', async () => {
+    const url = `${baseUrl}:${port}/`
+    let fetchCount = 0
+
+    const faultyFetch: FetchLike = async () => {
+      fetchCount++
+      return {
+        body: new ReadableStream({
+          start(controller) {
+            const encoder = new TextEncoder()
+            controller.enqueue(encoder.encode('retry: 10\n'))
+            controller.enqueue(encoder.encode(`data: ${'x'.repeat(32)}\n`))
+            controller.close()
+          },
+        }),
+        redirected: false,
+        status: 200,
+        headers: new Headers({'content-type': 'text/event-stream'}),
+        url,
+      }
+    }
+
+    const onError = getCallCounter({name: 'onError'})
+    const es = new OurEventSource(url, {fetch: faultyFetch, maxBufferSize: 16})
+
+    es.addEventListener('error', onError)
+    await onError.waitForCallCount(1)
+
+    expect(onError.lastCall.lastArg).toMatchObject({
+      type: 'error',
+      defaultPrevented: false,
+      cancelable: false,
+      timeStamp: expect.any('number'),
+      message: expect.stringMatching(/Buffered data exceeded max buffer size/),
+      code: undefined,
+    })
+    expect(es.readyState, 'readyState').toBe(OurEventSource.CLOSED)
+
+    await new Promise((resolve) => setTimeout(resolve, 50))
+    expect(fetchCount).toBe(1)
+    await deferClose(es)
+  })
+
+  test('[NON-SPEC] unrefs the reconnection timer where supported, so it does not keep the event loop alive', async () => {
+    // Browsers return numeric timer handles, so there is nothing to unref there.
+    // eslint-disable-next-line no-empty-function
+    const probe = setTimeout(() => {}, 0)
+    const supportsUnref = typeof probe === 'object' && probe !== null && 'unref' in probe
+    clearTimeout(probe)
+    if (!supportsUnref) {
+      return
+    }
+
+    // `/counter` sends `retry: 50`, then disconnects after 3 messages - so the reconnection
+    // timer is scheduled with a 50ms delay. Capture those specific timers and track whether
+    // `unref()` was called on them.
+    const reconnectTimers: Array<{unrefCalled: boolean}> = []
+    const realSetTimeout = globalThis.setTimeout
+    const setTimeoutStub: typeof globalThis.setTimeout = (callback, ms, ...rest) => {
+      const handle = realSetTimeout(callback, ms, ...rest)
+      if (ms === 50 && typeof handle === 'object' && handle !== null && 'unref' in handle) {
+        const record = {unrefCalled: false}
+        reconnectTimers.push(record)
+        const realUnref = handle.unref.bind(handle)
+        handle.unref = () => {
+          record.unrefCalled = true
+          return realUnref()
+        }
+      }
+      return handle
+    }
+    globalThis.setTimeout = setTimeoutStub
+
+    try {
+      const onError = getCallCounter({name: 'onError'})
+      const es = new OurEventSource(`${baseUrl}:${port}/counter`, {fetch})
+      es.addEventListener('error', onError)
+
+      // Wait for the disconnect, which schedules the reconnection timer.
+      await onError.waitForCallCount(1)
+
+      expect(reconnectTimers.length > 0, 'a reconnection timer was scheduled').toBe(true)
+      expect(
+        reconnectTimers.every((timer) => timer.unrefCalled),
+        'reconnection timer was unref-ed',
+      ).toBe(true)
+
+      es.close()
+    } finally {
+      globalThis.setTimeout = realSetTimeout
+    }
   })
 
   test('has CONNECTING constant', async () => {

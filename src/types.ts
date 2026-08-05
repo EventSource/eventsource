@@ -1,4 +1,4 @@
-import type {ErrorEvent} from './errors.js'
+import type {ErrorEvent} from './errors.ts'
 
 /**
  * Stripped down version of `fetch()`, only defining the parts we care about.
@@ -97,6 +97,12 @@ export interface EventSourceInit {
    * Can also be used for advanced use cases like mocking, proxying, custom certs etc.
    */
   fetch?: FetchLike
+
+  /**
+   * Maximum number of characters to buffer while parsing an incomplete EventSource line.
+   * Defaults to 100 MB.
+   */
+  maxBufferSize?: number
 }
 
 /**

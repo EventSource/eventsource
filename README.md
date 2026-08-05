@@ -14,12 +14,12 @@ npm install --save eventsource
 
 ## Supported engines
 
-- Node.js >= 20
-- Chrome >= 71
-- Safari >= 11.3
-- Firefox >= 65
-- Edge >= 79
-- Deno >= 1.30
+- Node.js >= 22.12
+- Chrome >= 84
+- Safari >= 15
+- Firefox >= 105
+- Edge >= 84
+- Deno >= 2
 - Bun >= 1.1.23
 
 Basically, any environment that supports:
@@ -29,9 +29,12 @@ Basically, any environment that supports:
 - [TextDecoder](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder)
 - [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL)
 - [Event](https://developer.mozilla.org/en-US/docs/Web/API/Event), [MessageEvent](https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent), [EventTarget](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget)
+- [Private class fields, methods, and accessors](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_elements)
 - [Symbol.for](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/for)
 
-If you need to support older runtimes, try the `2.x` branch/version range (note: 2.x branch is primarily targetted at Node.js, not browsers).
+If you need to support runtimes without private class fields, methods and accessors, try the `4.x` branch/version range.
+
+If you need to support even older runtimes, try the `2.x` branch/version range (note: 2.x branch is primarily targeted at Node.js, not browsers).
 
 ## Usage
 
@@ -84,7 +87,7 @@ Make sure you have configured your TSConfig so it matches the environment you ar
 }
 ```
 
-If you're using Node.js, ensure you have `@types/node` installed (and it is version 18 or higher). Cloudflare workers have `@cloudflare/workers-types` etc.
+If you're using Node.js, ensure you have `@types/node` installed (and it is version 22 or higher). Cloudflare workers have `@cloudflare/workers-types` etc.
 
 The following errors are caused by targetting an environment that does not have the necessary types available:
 
@@ -111,6 +114,18 @@ es.addEventListener('error', (err) => {
   }
 })
 ```
+
+### Limit parser buffer size
+
+The parser buffers up to 100 MB while waiting for a complete EventSource line. To change that limit, pass `maxBufferSize` in the constructor options:
+
+```ts
+const es = new EventSource('https://my-server.com/sse', {
+  maxBufferSize: 10 * 1024 * 1024, // 10 MB
+})
+```
+
+If the limit is exceeded, the connection fails and emits an `error` event, and will not reconnect.
 
 ### Specify `fetch` implementation
 

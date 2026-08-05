@@ -1,7 +1,7 @@
-import {getServer} from '../server.js'
-import {registerTests} from '../tests.js'
-import {createRunner} from '../waffletest/index.js'
-import {nodeReporter} from '../waffletest/reporters/nodeReporter.js'
+import {getServer} from '../server.ts'
+import {registerTests} from '../tests.ts'
+import {createRunner} from '../waffletest/index.ts'
+import {nodeReporter} from '../waffletest/reporters/nodeReporter.ts'
 
 const DENO_TEST_PORT = 3950
 
