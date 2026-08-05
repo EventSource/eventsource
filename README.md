@@ -14,7 +14,7 @@ npm install --save eventsource
 
 ## Supported engines
 
-- Node.js >= 22.19
+- Node.js >= 22.12
 - Chrome >= 84
 - Safari >= 15
 - Firefox >= 105
