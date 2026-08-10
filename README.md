@@ -125,7 +125,7 @@ const es = new EventSource('https://my-server.com/sse', {
 })
 ```
 
-If the limit is exceeded, the connection fails and emits an `error` event, and will not reconnect.
+If the limit is exceeded, the connection fails and emits an `error` event, and will not reconnect. Prefer servers that emit smaller chunks or newlines more frequently over increasing this limit.
 
 ### Specify `fetch` implementation
 

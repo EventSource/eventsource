@@ -4,9 +4,23 @@
 
 ### Runtime support
 
-Dropped support for Node.js versions below 22.12, as they are no longer maintained. While there are no explicit changes that make it incompatible, we make no guarantees of it being supported going forward.
+Node.js 22.12 or later is now required. Older Node.js versions may still work, but are not supported or guaranteed going forward because Node.js 20 is out of LTS.
 
-Also dropped support for any JavaScript environment where private fields, methods and accessors are not supported - which includes older browsers.
+Support for Chrome versions before 84, Safari before 15, Firefox before 105, and Edge before 84 has been dropped. This also applies to JavaScript environments that do not support private fields, methods, and accessors.
+
+### CommonJS distribution
+
+The separate CommonJS variant is no longer published. Node.js 22.12 and later transparently supports `require()` of ESM, so most CommonJS consumers should continue to work. Removing the CommonJS variant avoids the dual-package hazard.
+
+### Parser buffer limit
+
+The client now fails the connection, emits an `error` event, and does not reconnect if it buffers 100 MB without receiving a valid, complete EventSource line. Pass `maxBufferSize` in the constructor options to configure another limit.
+
+Servers should ideally emit smaller chunks or newlines more frequently rather than requiring a larger buffer.
+
+### Event handler order
+
+When both an `on*` property handler and an `addEventListener()` listener are registered for the same event, they now run in registration order. Previously, the `on*` handler always ran first. Code that relied on the old order can observe a different callback sequence.
 
 ## v3 to v4
 
