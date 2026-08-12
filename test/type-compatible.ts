@@ -28,9 +28,10 @@ function testESImpl(EvtSource: EventSourceConstructor) {
   /* eslint-disable no-console */
 
   // Message.
-  // Note that unlike `lib.dom.d.ts`, we do not declare a `this` type for the `on*` handler
-  // properties, so functions relying on `this` have to annotate it explicitly.
-  es.onmessage = function (this: EventSourcePolyfill, evt) {
+  // Both the `on*` properties and `addEventListener` declare the `this` type, so it is inferred
+  // for inline handlers. Standalone function declarations still have to annotate it, since
+  // TypeScript only contextually types `this` for function expressions.
+  es.onmessage = function (evt) {
     console.log(typeof evt.data === 'string')
     console.log(evt.defaultPrevented === false)
     console.log(evt.type === 'message')
@@ -47,13 +48,12 @@ function testESImpl(EvtSource: EventSourceConstructor) {
   es.addEventListener('message', onMessage)
   es.removeEventListener('message', onMessage)
 
-  // `addEventListener` _does_ declare the `this` type, so it is inferred for inline listeners
   es.addEventListener('message', function (evt) {
     console.log(this.url, evt.data)
   })
 
   // Error
-  es.onerror = function (this: EventSourcePolyfill, event) {
+  es.onerror = function (event) {
     console.log(event.defaultPrevented === false)
     console.log(event.type === 'error')
     console.log(this === es)
@@ -74,7 +74,7 @@ function testESImpl(EvtSource: EventSourceConstructor) {
   })
 
   // Open
-  es.onopen = function (this: EventSourcePolyfill, event) {
+  es.onopen = function (event) {
     console.log(event.defaultPrevented === false)
     console.log(event.type === 'open')
     console.log(this === es)
