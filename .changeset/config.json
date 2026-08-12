@@ -1,7 +1,8 @@
 {
-  "$schema": "https://unpkg.com/@changesets/config@3.1.4/schema.json",
+  "$schema": "https://unpkg.com/@changesets/config@4.0.0/schema.json",
   "changelog": ["@changesets/changelog-github", {"repo": "EventSource/eventsource"}],
   "commit": false,
+  "format": "oxfmt",
   "fixed": [],
   "linked": [],
   "access": "public",

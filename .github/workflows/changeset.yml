@@ -2,7 +2,9 @@ name: Changeset
 
 on:
   pull_request:
-    branches: [main]
+    # Keep in sync with the release workflow: backports to a `vN` maintenance branch
+    # need a changeset just as much as changes to `main` do.
+    branches: [main, 'v[0-9]+']
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}

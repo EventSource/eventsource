@@ -57,7 +57,25 @@ Changes that do not affect the published package - docs, tests, CI, internal ref
 
 Maintainers only. When changesets land on `main`, the release workflow opens a "Version Packages" pull request that applies the version bump and updates the changelog. Merging that pull request publishes to npm, pushes the git tag and creates the GitHub release.
 
-Publishing uses [npm trusted publishing](https://docs.npmjs.com/trusted-publishers) over OIDC, so there is no npm token to rotate. The trusted publisher is configured on npm against the `release.yml` workflow in this repository - renaming that file will break publishing until the npm setting is updated to match.
+Publishing uses [npm trusted publishing](https://docs.npmjs.com/trusted-publishers) over OIDC, so there is no npm token to rotate. The trusted publisher is configured on npm against the `release.yml` workflow in this repository - renaming that file will break publishing until the npm setting is updated to match. The npm configuration pins the workflow file but not the branch, which is what lets the same workflow release from maintenance branches.
+
+### Releasing a fix for an older major
+
+Older majors that are still supported are patched from a long-lived `vN` branch - currently just `v4`, for the 4.x line. It sits at the latest release of that major and carries its own changesets configuration, so the release workflow behaves there exactly as it does on `main`:
+
+1. Branch off the maintenance branch, e.g. `git switch -c fix/some-backport v4`.
+2. Apply the fix and add a changeset (`npm run changeset`). Use `patch` or `minor` - a backport must never be a `major`, since that would collide with a version that already exists on a newer line.
+3. Open the pull request **against the maintenance branch**, not `main`.
+4. Merging it opens a "Version Packages" pull request against that same branch. Merging that one publishes.
+
+Two things differ from a release off `main`:
+
+- The npm dist-tag matches the branch, so a 4.x release publishes under `v4` rather than `latest`. Users on that line install it with `npm install eventsource@v4`, and `npm install eventsource` keeps resolving to the current major.
+- The GitHub release is demoted from "Latest" after publishing, so the newest major keeps that badge.
+
+Both are handled by the release workflow; there is nothing to pass by hand. If the fix also applies to the current major, land it on `main` separately - nothing is merged forward automatically.
+
+The workflow's branch filter accepts any `vN` branch, so a `v5` branch can be cut the same way once `main` moves on to 6.x. The archived `v1.x` and `v2.x` branches predate the convention, do not match the filter, and are not released from. 3.x is no longer supported - see [SECURITY.md](./SECURITY.md).
 
 # How to file a security issue
 
