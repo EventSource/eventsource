@@ -24,11 +24,12 @@
     "prebuild": "npm run clean",
     "prepare": "npm run build",
     "release": "changeset publish",
-    "test": "npm run test:node && npm run test:browser",
+    "test": "npm run test:types && npm run test:node && npm run test:browser",
     "test:browser": "node test/browser/client.browser.test.ts",
     "test:bun": "bun run test/bun/client.bun.test.ts",
     "test:deno": "deno run --allow-net --allow-read --allow-env --unstable-sloppy-imports test/deno/client.deno.test.ts",
     "test:node": "node test/node/client.node.test.ts",
+    "test:types": "npm run build && tsc -p tsconfig.types.json",
     "version:packages": "changeset version && npm install --package-lock-only --no-audit --no-fund"
   },
   "files": [

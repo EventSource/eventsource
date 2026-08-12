@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.settings",
+  "include": ["./test/type-compatible.ts"],
+  "compilerOptions": {
+    "noEmit": true,
+
+    // The type compatibility checks compare our types against the WhatWG `EventSource`,
+    // defined in TypeScript's `dom` library - unlike the library build, which must not
+    // depend on DOM typings being present.
+    "lib": ["ES2023", "DOM"]
+  }
+}
