@@ -56,9 +56,20 @@ Changes that do not affect the published package - docs, tests, CI, internal ref
 
 ## Releasing
 
-Maintainers only. When changesets land on `main`, the release workflow opens a "Version Packages" pull request that applies the version bump and updates the changelog. Merging that pull request publishes to npm, pushes the git tag and creates the GitHub release.
+Maintainers only. **This is the `v4` maintenance branch.** It exists so the 4.x line can keep receiving fixes after `main` moved on to a newer major. Active development happens on `main`.
 
-Publishing uses [npm trusted publishing](https://docs.npmjs.com/trusted-publishers) over OIDC, so there is no npm token to rotate. The trusted publisher is configured on npm against the `release.yml` workflow in this repository - renaming that file will break publishing until the npm setting is updated to match.
+Fixes are released from here the same way they are from `main`: land a changeset on `v4`, and the release workflow opens a "Version Packages" pull request against `v4`. Merging that pull request publishes to npm, pushes the git tag and creates the GitHub release.
+
+Two things differ from a release off `main`:
+
+- The release publishes under the `v4` npm dist-tag rather than `latest`, so it does not become the default install for people who run `npm install eventsource`. Users on this line install it with `npm install eventsource@v4`.
+- The GitHub release is demoted from "Latest" after publishing, so the newest major keeps that badge.
+
+Both are handled by the release workflow; there is nothing to pass by hand.
+
+Only `patch` and `minor` changesets belong on this branch. A `major` would produce a version that already exists on a newer line. If a fix also applies to the current major, land it on `main` separately - nothing is merged forward automatically.
+
+Publishing uses [npm trusted publishing](https://docs.npmjs.com/trusted-publishers) over OIDC, so there is no npm token to rotate. The trusted publisher is configured on npm against the `release.yml` workflow in this repository - renaming that file will break publishing until the npm setting is updated to match. The npm configuration pins the workflow file but not the branch, which is what lets this branch publish at all.
 
 # How to file a security issue
 

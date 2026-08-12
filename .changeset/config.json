@@ -1,11 +1,12 @@
 {
-  "$schema": "https://unpkg.com/@changesets/config@3.1.4/schema.json",
+  "$schema": "https://unpkg.com/@changesets/config@4.0.0/schema.json",
   "changelog": ["@changesets/changelog-github", {"repo": "EventSource/eventsource"}],
   "commit": false,
+  "format": "prettier",
   "fixed": [],
   "linked": [],
   "access": "public",
-  "baseBranch": "main",
+  "baseBranch": "v4",
   "updateInternalDependencies": "patch",
   "changedFilePatterns": ["src/**"],
   "ignore": []

@@ -9,10 +9,11 @@ Add one to your pull request with:
 npm run changeset
 ```
 
-Pick `patch`, `minor` or `major`, then write a sentence that will make sense to someone reading the
-changelog. The generated file gets committed alongside your changes.
+This is the `v4` maintenance branch, so pick `patch` or `minor` - never `major` - then write a
+sentence that will make sense to someone reading the changelog. The generated file gets committed
+alongside your changes.
 
 Changes that do not affect published behaviour (docs, tests, CI, refactors) do not need a changeset.
 
-When changesets land on `main`, a "Version Packages" pull request is opened that applies the version
-bump and updates the changelog. Merging that pull request publishes to npm.
+When changesets land on `v4`, a "Version Packages" pull request is opened that applies the version
+bump and updates the changelog. Merging that pull request publishes to npm under the `v4` dist-tag.
