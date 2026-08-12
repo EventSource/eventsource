@@ -72,14 +72,42 @@ jobs:
           commit-message: 'chore(release): version packages'
           pr-title: 'chore(release): version packages'
 
-      # The action creates GitHub releases without `make_latest`, so the API defaults
-      # it to true and a backport would take the "Latest" badge off the current major.
-      - name: Demote backport GitHub releases
+      # `changesets/action` calls the create-release API without `make_latest`, and that
+      # parameter defaults to true - so a backport would silently take the "Latest" badge
+      # off the current major. Clear it on everything we just published, then assert the
+      # repository's latest release is not one of them.
+      #
+      # This corrects the flag rather than never setting it: there are a few seconds
+      # between the action creating the release and this step running. Closing that
+      # window would mean turning off `create-github-releases` and rebuilding the
+      # changelog-derived release notes by hand, which risks the worse failure of
+      # publishing to npm with no GitHub release at all. The assertion below is what
+      # makes the end state guaranteed - if the demotion does not stick, the job fails
+      # loudly instead of leaving the badge on the wrong major.
+      #
+      # `make_latest` is a string enum ("true" / "false" / "legacy"), so it goes through
+      # `gh api -f` rather than `gh release edit --latest=false`, which would depend on
+      # how the runner's gh build handles negated boolean flags.
+      - name: Keep backport releases off "Latest"
         if: steps.channel.outputs.npm-tag != 'latest' && steps.changesets.outputs.published == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PUBLISHED_PACKAGES: ${{ steps.changesets.outputs.published-packages }}
         run: |
-          jq -r '.[] | "v\(.version)"' <<< "$PUBLISHED_PACKAGES" | while read -r tag; do
-            gh release edit "$tag" --latest=false
+          # Single-package repo, so changesets tags releases `v<version>`.
+          mapfile -t tags < <(jq -r '.[] | "v\(.version)"' <<< "$PUBLISHED_PACKAGES")
+
+          for tag in "${tags[@]}"; do
+            id=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$tag" --jq '.id')
+            echo "Clearing latest flag on $tag (release $id)"
+            gh api --method PATCH "repos/$GITHUB_REPOSITORY/releases/$id" -f make_latest=false >/dev/null
+          done
+
+          latest=$(gh api "repos/$GITHUB_REPOSITORY/releases/latest" --jq '.tag_name' 2>/dev/null || echo '<none>')
+          echo "Latest release is now $latest"
+          for tag in "${tags[@]}"; do
+            if [ "$latest" = "$tag" ]; then
+              echo "::error::$tag is still flagged as the latest release."
+              exit 1
+            fi
           done
