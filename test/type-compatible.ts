@@ -1,26 +1,43 @@
 /**
  * Ensures that our EventSource polyfill is as type-compatible as possible with the
  * WhatWG EventSource implementation/types (defined in TypeScript's `lib.dom.d.ts`).
+ *
+ * Checked against the built declarations in `dist`, since those - not the source - are what
+ * consumers of the published package see. Run with `npm run test:types`; the file is only
+ * ever type checked, never executed.
  */
-import {EventSource as EventSourcePolyfill} from '../src/EventSource'
-import type {EventSourceInit, FetchLike} from '../src/types'
+import {
+  type EventSourceConstructor,
+  EventSource as EventSourcePolyfill,
+  type EventSourceInit,
+  type FetchLike,
+} from '../dist/index.js'
 
-function testESImpl(EvtSource: typeof globalThis.EventSource | typeof EventSourcePolyfill) {
+/** A native `EventSource`, as typed by TypeScript's `lib.dom.d.ts` */
+declare const native: globalThis.EventSource
+
+/**
+ * Anything that satisfies our public constructor type must be usable through the full API,
+ * including the native `EventSource` - which is passed in below.
+ */
+function testESImpl(EvtSource: EventSourceConstructor) {
   const es = new EvtSource('https://foo.bar', {
     withCredentials: true,
   }) satisfies globalThis.EventSource
 
   /* eslint-disable no-console */
 
-  // Message
-  es.onmessage = function (evt) {
+  // Message.
+  // Note that unlike `lib.dom.d.ts`, we do not declare a `this` type for the `on*` handler
+  // properties, so functions relying on `this` have to annotate it explicitly.
+  es.onmessage = function (this: EventSourcePolyfill, evt) {
     console.log(typeof evt.data === 'string')
     console.log(evt.defaultPrevented === false)
     console.log(evt.type === 'message')
     console.log(this === es)
   }
 
-  function onMessage(evt: MessageEvent) {
+  function onMessage(this: EventSourcePolyfill, evt: MessageEvent) {
     console.log(typeof evt.data === 'string')
     console.log(evt.defaultPrevented === false)
     console.log(evt.type === 'message')
@@ -30,14 +47,19 @@ function testESImpl(EvtSource: typeof globalThis.EventSource | typeof EventSourc
   es.addEventListener('message', onMessage)
   es.removeEventListener('message', onMessage)
 
+  // `addEventListener` _does_ declare the `this` type, so it is inferred for inline listeners
+  es.addEventListener('message', function (evt) {
+    console.log(this.url, evt.data)
+  })
+
   // Error
-  es.onerror = function (event) {
+  es.onerror = function (this: EventSourcePolyfill, event) {
     console.log(event.defaultPrevented === false)
     console.log(event.type === 'error')
     console.log(this === es)
   }
 
-  function onError(event: Event) {
+  function onError(this: EventSourcePolyfill, event: Event) {
     console.log(event.defaultPrevented === false)
     console.log(event.type === 'error')
     console.log(this === es)
@@ -46,14 +68,19 @@ function testESImpl(EvtSource: typeof globalThis.EventSource | typeof EventSourc
   es.addEventListener('error', onError)
   es.removeEventListener('error', onError)
 
+  // Our `error` events carry non-spec extras, which must survive on the listener signature
+  es.addEventListener('error', (event) => {
+    console.log(event.code === 500, event.message === 'Internal Server Error')
+  })
+
   // Open
-  es.onopen = function (event) {
+  es.onopen = function (this: EventSourcePolyfill, event) {
     console.log(event.defaultPrevented === false)
     console.log(event.type === 'open')
     console.log(this === es)
   }
 
-  function onOpen(event: Event) {
+  function onOpen(this: EventSourcePolyfill, event: Event) {
     console.log(event.defaultPrevented === false)
     console.log(event.type === 'open')
     console.log(this === es)
@@ -77,6 +104,61 @@ function testESImpl(EvtSource: typeof globalThis.EventSource | typeof EventSourc
 
 testESImpl(EventSourcePolyfill)
 testESImpl(globalThis.EventSource)
+
+/**
+ * The exported `EventSource` type must be structural, eg free of the `#private` brand that
+ * TypeScript emits into declaration files for classes holding hard-private (`#`) fields.
+ * That brand makes the type nominal, which prevents consumers from passing the native
+ * `EventSource`, a mock, or another implementation where our type is expected.
+ */
+function testStructuralCompat() {
+  // A native `EventSource` must be assignable to our exported type
+  const nativeAsPolyfill: EventSourcePolyfill = native
+
+  // …as must a hand-rolled stub, for consumers mocking the client in their tests
+  const mock: EventSourcePolyfill = {
+    CONNECTING: 0,
+    OPEN: 1,
+    CLOSED: 2,
+    readyState: 1,
+    url: 'https://foo.bar',
+    withCredentials: false,
+    onerror: null,
+    onmessage: null,
+    onopen: null,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => true,
+    close: () => {},
+  }
+
+  // The constructor must be interchangeable with the native one, in both directions
+  const nativeCtor: EventSourceConstructor = globalThis.EventSource
+  const polyfillCtor: typeof globalThis.EventSource = EventSourcePolyfill
+
+  return [nativeAsPolyfill, mock, nativeCtor, polyfillCtor]
+}
+
+testStructuralCompat()
+
+/**
+ * Consumers must still be able to subclass the exported `EventSource`, and instances of such
+ * subclasses must remain assignable to both our type and the native one.
+ */
+function testSubclassing() {
+  class WrappedEventSource extends EventSourcePolyfill {
+    public reconnects = 0
+
+    override close(): void {
+      super.close()
+    }
+  }
+
+  const wrapped = new WrappedEventSource('https://foo.bar', {withCredentials: true})
+  return [wrapped satisfies EventSourcePolyfill, wrapped satisfies globalThis.EventSource]
+}
+
+testSubclassing()
 
 /**
  * `FetchLike` must accept standard fetch implementations: TypeScript 5.9's DOM lib types

@@ -23,6 +23,9 @@ const DEFAULT_MAX_BUFFER_SIZE = 100 * 1024 * 1024
  * An `EventSource` instance opens a persistent connection to an HTTP server, which sends events
  * in `text/event-stream` format. The connection remains open until closed by calling `.close()`.
  *
+ * Deliberately an `interface` and not a `class`: it lets consumers pass the native `EventSource`,
+ * a mock, or any other implementation wherever this type is expected.
+ *
  * @public
  * @example
  * ```js
@@ -35,48 +38,27 @@ const DEFAULT_MAX_BUFFER_SIZE = 100 * 1024 * 1024
  * })
  * ```
  */
-export class EventSource extends EventTarget {
+export interface EventSource extends EventTarget {
   /**
    * ReadyState representing an EventSource currently trying to connect
    *
    * @public
    */
-  static CONNECTING = 0 as const
+  readonly CONNECTING: 0
 
   /**
    * ReadyState representing an EventSource connection that is open (eg connected)
    *
    * @public
    */
-  static OPEN = 1 as const
+  readonly OPEN: 1
 
   /**
    * ReadyState representing an EventSource connection that is closed (eg disconnected)
    *
    * @public
    */
-  static CLOSED = 2 as const
-
-  /**
-   * ReadyState representing an EventSource currently trying to connect
-   *
-   * @public
-   */
-  readonly CONNECTING = 0 as const
-
-  /**
-   * ReadyState representing an EventSource connection that is open (eg connected)
-   *
-   * @public
-   */
-  readonly OPEN = 1 as const
-
-  /**
-   * ReadyState representing an EventSource connection that is closed (eg disconnected)
-   *
-   * @public
-   */
-  readonly CLOSED = 2 as const
+  readonly CLOSED: 2
 
   /**
    * Returns the state of this EventSource object's connection. It can have the values described below.
@@ -88,9 +70,7 @@ export class EventSource extends EventTarget {
    *
    * @public
    */
-  public get readyState(): number {
-    return this.#readyState
-  }
+  readonly readyState: number
 
   /**
    * Returns the URL providing the event stream.
@@ -99,20 +79,128 @@ export class EventSource extends EventTarget {
    *
    * @public
    */
-  public get url(): string {
-    return this.#url.href
-  }
+  readonly url: string
 
   /**
    * Returns true if the credentials mode for connection requests to the URL providing the event stream is set to "include", and false otherwise.
    *
    * [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/withCredentials)
+   *
+   * @public
    */
+  readonly withCredentials: boolean
+
+  /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/error_event) */
+  onerror: ((ev: ErrorEvent) => unknown) | null
+
+  /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/message_event) */
+  onmessage: ((ev: MessageEvent) => unknown) | null
+
+  /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/open_event) */
+  onopen: ((ev: Event) => unknown) | null
+
+  addEventListener<K extends keyof EventSourceEventMap>(
+    type: K,
+    listener: (this: EventSource, ev: EventSourceEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void
+  addEventListener(
+    type: string,
+    listener: (this: EventSource, event: MessageEvent) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void
+
+  removeEventListener<K extends keyof EventSourceEventMap>(
+    type: K,
+    listener: (this: EventSource, ev: EventSourceEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void
+  removeEventListener(
+    type: string,
+    listener: (this: EventSource, event: MessageEvent) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void
+
+  /**
+   * Aborts any instances of the fetch algorithm started for this EventSource object, and sets the readyState attribute to CLOSED.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/close)
+   *
+   * @public
+   */
+  close(): void
+}
+
+/**
+ * The `EventSource` constructor. Mirrors the shape of the native one, so the two can be used
+ * interchangeably - eg for functions that take an implementation to construct.
+ *
+ * @public
+ */
+export interface EventSourceConstructor {
+  readonly prototype: EventSource
+
+  /**
+   * Constructs a new `EventSource` instance, which immediately starts connecting.
+   *
+   * @param url - The URL to connect to
+   * @param eventSourceInitDict - Options for the connection
+   */
+  new (url: string | URL, eventSourceInitDict?: EventSourceInit): EventSource
+
+  /** ReadyState representing an EventSource currently trying to connect */
+  readonly CONNECTING: 0
+
+  /** ReadyState representing an EventSource connection that is open (eg connected) */
+  readonly OPEN: 1
+
+  /** ReadyState representing an EventSource connection that is closed (eg disconnected) */
+  readonly CLOSED: 2
+}
+
+/**
+ * Implementation of the `EventSource` interface.
+ *
+ * Intentionally not exported: TypeScript emits a `#private` brand into declaration files for any
+ * class holding hard-private (`#`) fields, which makes the emitted type nominal. Exporting the
+ * interface and const instead keeps the public type structural, while the implementation keeps
+ * its actual, runtime-enforced private state.
+ *
+ * Public members are documented on the `EventSource` interface, which is what consumers see.
+ *
+ * @internal
+ */
+class EventSourceImpl extends EventTarget implements EventSource {
+  static CONNECTING = 0 as const
+  static OPEN = 1 as const
+  static CLOSED = 2 as const
+
+  readonly CONNECTING = 0 as const
+  readonly OPEN = 1 as const
+  readonly CLOSED = 2 as const
+
+  public get readyState(): number {
+    return this.#readyState
+  }
+
+  public get url(): string {
+    return this.#url.href
+  }
+
   public get withCredentials(): boolean {
     return this.#withCredentials
   }
 
-  /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/error_event) */
   public get onerror(): ((ev: ErrorEvent) => unknown) | null {
     return this.#onError
   }
@@ -126,7 +214,6 @@ export class EventSource extends EventTarget {
     }
   }
 
-  /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/message_event) */
   public get onmessage(): ((ev: MessageEvent) => unknown) | null {
     return this.#onMessage
   }
@@ -140,7 +227,6 @@ export class EventSource extends EventTarget {
     }
   }
 
-  /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/open_event) */
   public get onopen(): ((ev: Event) => unknown) | null {
     return this.#onOpen
   }
@@ -236,13 +322,6 @@ export class EventSource extends EventTarget {
     this.#connect()
   }
 
-  /**
-   * Aborts any instances of the fetch algorithm started for this EventSource object, and sets the readyState attribute to CLOSED.
-   *
-   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/close)
-   *
-   * @public
-   */
   close(): void {
     if (this.#reconnectTimer) clearTimeout(this.#reconnectTimer)
     if (this.#readyState === this.CLOSED) return
@@ -626,14 +705,37 @@ export class EventSource extends EventTarget {
   }
 }
 
+// The class is named `EventSourceImpl` to leave the `EventSource` name free for the interface and
+// the const below. Restore the public name, so neither `EventSource.name` nor inspected instances
+// (eg `console.log(eventSource)`) leak the implementation name.
+Object.defineProperty(EventSourceImpl, 'name', {value: 'EventSource'})
+
 // Provides a way to detect that the EventSource implementation supports passing `fetch`
 // that can be used to customize the request, eg custom headers and similar.
-Object.defineProperty(EventSource, Symbol.for('eventsource.supports-fetch-override'), {
+Object.defineProperty(EventSourceImpl, Symbol.for('eventsource.supports-fetch-override'), {
   value: true,
   writable: false,
   configurable: false,
   enumerable: false,
 })
+
+/**
+ * An `EventSource` instance opens a persistent connection to an HTTP server, which sends events
+ * in `text/event-stream` format. The connection remains open until closed by calling `.close()`.
+ *
+ * @public
+ * @example
+ * ```js
+ * const eventSource = new EventSource('https://example.com/stream')
+ * eventSource.addEventListener('error', (error) => {
+ *   console.error(error)
+ * })
+ * eventSource.addEventListener('message', (event) => {
+ *  console.log('Received message:', event.data)
+ * })
+ * ```
+ */
+export const EventSource: EventSourceConstructor = EventSourceImpl
 
 /**
  * According to spec, when constructing a URL:
