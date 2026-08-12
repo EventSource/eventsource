@@ -724,6 +724,34 @@ export function registerTests(options: {
     await deferClose(es)
   })
 
+  test('throws on `fetch()` yielding chunks that are not buffers', async () => {
+    const url = `${baseUrl}:${port}/`
+
+    // @ts-expect-error `value` should be a buffer, which is all a `TextDecoder` accepts
+    const faultyFetch: FetchLike = async () => ({
+      body: {
+        getReader: () => ({
+          read: async () => ({done: false, value: 'not a buffer'}),
+          cancel: async () => {},
+        }),
+      },
+      redirected: false,
+      status: 200,
+      headers: new Headers({'content-type': 'text/event-stream'}),
+      url,
+    })
+
+    const onError = getCallCounter({name: 'onError'})
+    const es = new OurEventSource(url, {fetch: faultyFetch})
+
+    es.addEventListener('error', onError)
+    await onError.waitForCallCount(1)
+
+    // The message comes from the runtime's `TextDecoder`, and differs between environments
+    expect(onError.lastCall.lastArg).toMatchObject({type: 'error'})
+    await deferClose(es)
+  })
+
   test('[NON-SPEC] message event contains extended properties (failed connection)', async () => {
     const onError = getCallCounter({name: 'onError'})
     const es = new OurEventSource(`${baseUrl}:9999/should-not-connect`, {fetch})

@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.settings",
-  "include": ["./test/type-compatible.ts"],
+  "include": ["./src", "./test/type-compatible.ts"],
   "compilerOptions": {
     "noEmit": true,
 
