@@ -91,13 +91,13 @@ export interface EventSource extends EventTarget {
   readonly withCredentials: boolean
 
   /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/error_event) */
-  onerror: ((ev: ErrorEvent) => unknown) | null
+  onerror: ((this: EventSource, ev: ErrorEvent) => unknown) | null
 
   /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/message_event) */
-  onmessage: ((ev: MessageEvent) => unknown) | null
+  onmessage: ((this: EventSource, ev: MessageEvent) => unknown) | null
 
   /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/open_event) */
-  onopen: ((ev: Event) => unknown) | null
+  onopen: ((this: EventSource, ev: Event) => unknown) | null
 
   addEventListener<K extends keyof EventSourceEventMap>(
     type: K,
@@ -201,10 +201,10 @@ class EventSourceImpl extends EventTarget implements EventSource {
     return this.#withCredentials
   }
 
-  public get onerror(): ((ev: ErrorEvent) => unknown) | null {
+  public get onerror(): ((this: EventSource, ev: ErrorEvent) => unknown) | null {
     return this.#onError
   }
-  public set onerror(value: ((ev: ErrorEvent) => unknown) | null) {
+  public set onerror(value: ((this: EventSource, ev: ErrorEvent) => unknown) | null) {
     if (this.#onError) {
       this.removeEventListener('error', this.#onError)
     }
@@ -214,10 +214,10 @@ class EventSourceImpl extends EventTarget implements EventSource {
     }
   }
 
-  public get onmessage(): ((ev: MessageEvent) => unknown) | null {
+  public get onmessage(): ((this: EventSource, ev: MessageEvent) => unknown) | null {
     return this.#onMessage
   }
-  public set onmessage(value: ((ev: MessageEvent) => unknown) | null) {
+  public set onmessage(value: ((this: EventSource, ev: MessageEvent) => unknown) | null) {
     if (this.#onMessage) {
       this.removeEventListener('message', this.#onMessage)
     }
@@ -227,10 +227,10 @@ class EventSourceImpl extends EventTarget implements EventSource {
     }
   }
 
-  public get onopen(): ((ev: Event) => unknown) | null {
+  public get onopen(): ((this: EventSource, ev: Event) => unknown) | null {
     return this.#onOpen
   }
-  public set onopen(value: ((ev: Event) => unknown) | null) {
+  public set onopen(value: ((this: EventSource, ev: Event) => unknown) | null) {
     if (this.#onOpen) {
       this.removeEventListener('open', this.#onOpen)
     }
@@ -411,7 +411,7 @@ class EventSourceImpl extends EventTarget implements EventSource {
    *
    * @internal
    */
-  #onError: ((ev: ErrorEvent) => unknown) | null = null
+  #onError: ((this: EventSource, ev: ErrorEvent) => unknown) | null = null
 
   /**
    * Holds the current message handler, attached through `onmessage` property directly.
@@ -419,7 +419,7 @@ class EventSourceImpl extends EventTarget implements EventSource {
    *
    * @internal
    */
-  #onMessage: ((ev: MessageEvent) => unknown) | null = null
+  #onMessage: ((this: EventSource, ev: MessageEvent) => unknown) | null = null
 
   /**
    * Holds the current open handler, attached through `onopen` property directly.
@@ -427,7 +427,7 @@ class EventSourceImpl extends EventTarget implements EventSource {
    *
    * @internal
    */
-  #onOpen: ((ev: Event) => unknown) | null = null
+  #onOpen: ((this: EventSource, ev: Event) => unknown) | null = null
 
   /**
    * Connect to the given URL and start receiving events
