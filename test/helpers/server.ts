@@ -1,5 +1,4 @@
 import {createHash} from 'node:crypto'
-import {createReadStream} from 'node:fs'
 import {
   createServer,
   type IncomingMessage,
@@ -7,46 +6,53 @@ import {
   type Server,
   type ServerResponse,
 } from 'node:http'
-import {dirname, resolve as resolvePath} from 'node:path'
-import {fileURLToPath} from 'node:url'
 
-import esbuild from 'esbuild'
 import {encode} from 'eventsource-encoder'
 
 import {unicodeLines} from './fixtures.ts'
+import {ROUTE_PREFIX} from './routes.ts'
 
-const isDeno = typeof globalThis.Deno !== 'undefined'
+const isDeno = 'Deno' in globalThis
 /* {[client id]: number of connects} */
 const connectCounts = new Map<string, number>()
 
-export async function getServer(port: number): Promise<{close: () => Promise<void>}> {
-  const server = await promServer(port)
-
-  const closeServer = () =>
-    new Promise<void>((resolve, reject) => {
-      server.close((err) => (err ? reject(err) : resolve()))
-    })
-
-  return {
-    close: closeServer,
-  }
-
-  function promServer(portNumber: number) {
-    return new Promise<Server>((resolve, reject) => {
-      const srv = createServer(onRequest)
-        .on('error', reject)
-        .listen(portNumber, isDeno ? '127.0.0.1' : '::', () => resolve(srv))
-    })
-  }
+/**
+ * Starts a standalone server for the suites that do not run in a browser. Resolves with the
+ * server even if the port is already bound, so that concurrently running suites (or a
+ * `globalSetup` that a pool invokes more than once) do not fail the run.
+ */
+export function createTestServer(port: number): Promise<Server> {
+  return new Promise((resolve, reject) => {
+    const srv = createServer((req, res) => handleRequest(req, res))
+      .on('error', (err: NodeJS.ErrnoException) =>
+        err.code === 'EADDRINUSE' ? resolve(srv) : reject(err),
+      )
+      .listen(port, isDeno ? '127.0.0.1' : '::', () => resolve(srv))
+  })
 }
 
-function onRequest(req: IncomingMessage, res: ServerResponse) {
+/**
+ * Connect-compatible request handler, so the same routes can be served either from a
+ * standalone `node:http` server or as Vite middleware. Requests outside `ROUTE_PREFIX` are
+ * passed to `next()` when it is present (Vite serves the test page and modules), and 404 when
+ * it is not.
+ */
+export function handleRequest(
+  req: IncomingMessage,
+  res: ServerResponse,
+  next?: () => void,
+): void | Promise<void> {
   // Disable Nagle's algorithm for testing
   if (res.socket && 'setNoDelay' in res.socket) {
     res.socket.setNoDelay(true)
   }
 
-  const path = new URL(req.url || '/', 'http://localhost').pathname
+  const {pathname} = new URL(req.url || '/', 'http://localhost')
+  if (!pathname.startsWith(ROUTE_PREFIX)) {
+    return next ? next() : writeFallback(req, res)
+  }
+
+  const path = pathname.slice(ROUTE_PREFIX.length) || '/'
   switch (path) {
     // Server-Sent Event endpoints
     case '/':
@@ -77,12 +83,6 @@ function onRequest(req: IncomingMessage, res: ServerResponse) {
       return writeRedirect(req, res)
     case '/redirect-target':
       return writeRedirectTarget(req, res)
-
-    // Browser test endpoints (HTML/JS)
-    case '/browser-test':
-      return writeBrowserTestPage(req, res)
-    case '/browser-test.js':
-      return writeBrowserTestScript(req, res)
 
     // Fallback, eg 404
     default:
@@ -336,7 +336,7 @@ async function writeRedirect(req: IncomingMessage, res: ServerResponse) {
   xOriginUrl.hostname = url.hostname === 'localhost' ? '127.0.0.1' : 'localhost'
 
   const status = parseInt(redirectUrl, 10)
-  const path = `/redirect-target?from=${encodeURIComponent(url.toString())}&id=${id}`
+  const path = `${ROUTE_PREFIX}/redirect-target?from=${encodeURIComponent(url.toString())}&id=${id}`
 
   res.writeHead(status, {
     'Cache-Control': 'no-cache',
@@ -488,7 +488,7 @@ function writeCookies(req: IncomingMessage, res: ServerResponse) {
     'Access-Control-Allow-Credentials': 'true',
     'Content-Type': 'application/json',
     'Cache-Control': 'no-cache',
-    'Set-Cookie': 'someSession=someValue; Path=/authed; HttpOnly; SameSite=Lax;',
+    'Set-Cookie': `someSession=someValue; Path=${ROUTE_PREFIX}/authed; HttpOnly; SameSite=Lax;`,
     Connection: 'keep-alive',
   })
   tryWrite(res, JSON.stringify({cookiesWritten: true}))
@@ -530,38 +530,6 @@ function writeFallback(_req: IncomingMessage, res: ServerResponse) {
   })
 
   tryWrite(res, 'File not found')
-  res.end()
-}
-
-function writeBrowserTestPage(_req: IncomingMessage, res: ServerResponse) {
-  res.writeHead(200, {
-    'Content-Type': 'text/html; charset=utf-8',
-    'Cache-Control': 'no-cache',
-    Connection: 'close',
-  })
-
-  const thisDir = dirname(fileURLToPath(import.meta.url))
-  createReadStream(resolvePath(thisDir, './browser/browser-test.html')).pipe(res)
-}
-
-async function writeBrowserTestScript(_req: IncomingMessage, res: ServerResponse) {
-  res.writeHead(200, {
-    'Content-Type': 'text/javascript; charset=utf-8',
-    'Cache-Control': 'no-cache',
-    Connection: 'close',
-  })
-
-  const thisDir = dirname(fileURLToPath(import.meta.url))
-  const build = await esbuild.build({
-    bundle: true,
-    target: ['chrome71', 'edge79', 'firefox105', 'safari14.1'],
-    entryPoints: [resolvePath(thisDir, './browser/browser-test.ts')],
-    sourcemap: 'inline',
-    write: false,
-    outdir: 'out',
-  })
-
-  tryWrite(res, build.outputFiles.map((file) => file.text).join('\n\n'))
   res.end()
 }
 
