@@ -20,6 +20,25 @@ npm run build
 npm test
 ```
 
+## Running the tests
+
+The suite in `test/client.test.ts` runs against a real HTTP server in every supported environment - there are no mocks and no simulated DOM. Each environment gets its own Vitest config, and `npm test` covers Node only:
+
+- `npm test` - Node.js
+- `npm run test:browser` - Chromium, Firefox and WebKit, via Playwright
+- `npm run test:bun` - Bun
+- `npm run test:deno` - Deno
+- `npm run test:happy-dom` - happy-dom
+- `npm run test:workerd` - workerd (Cloudflare Workers), via miniflare
+- `npm run test:types` - type compatibility with the WhatWG `EventSource`
+- `npm run test:all` - all of the above, in sequence
+
+The browser tests need Playwright's browsers installed once, with `npx playwright install chromium firefox webkit`.
+
+The happy-dom and workerd suites are expected to fail today and do not gate CI: happy-dom reports the test server's requests as cross-origin and blocks them, and workerd returns a null `MessageEvent.origin`, fires the `on*` handlers twice, and orders handlers differently from every other runtime.
+
+The browser suite is the one place where the endpoints are not served by a standalone server. Vitest serves the test page from its own Vite server, so the endpoints are mounted onto that same server (`test/helpers/ssePlugin.ts`) to keep the page and the endpoints same-origin. Serving them separately would make every request cross-origin and silently change what the CORS, cookie and redirect tests actually assert.
+
 # Workflow guidelines
 
 - Anything in the `main` branch is scheduled for the next release and should generally be ready to released, although there are exceptions when there are multiple features that are dependent on each other.

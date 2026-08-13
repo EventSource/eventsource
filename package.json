@@ -52,18 +52,20 @@
     "changeset:status": "changeset status --since=origin/main",
     "clean": "node scripts/clean.ts",
     "format": "oxfmt --write .",
-    "lint": "oxlint . && tsc --noEmit",
-    "posttest": "npm run lint",
+    "lint": "oxlint . && tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
     "prebuild": "npm run clean",
     "prepare": "npm run build",
     "release": "changeset publish",
-    "test": "npm run test:types && npm run test:node && npm run test:browser",
-    "test:browser": "node test/browser/client.browser.test.ts",
-    "test:bun": "bun run test/bun/client.bun.test.ts",
-    "test:deno": "deno run --allow-net --allow-read --allow-env --unstable-sloppy-imports test/deno/client.deno.test.ts",
-    "test:node": "node test/node/client.node.test.ts",
+    "test": "vitest run",
+    "test:browser": "vitest run --config ./vitest.browser.config.ts",
+    "test:bun": "bun run vitest run",
+    "test:deno": "deno run -A --node-modules-dir npm:vitest run",
     "test:types": "npm run build && tsc -p tsconfig.types.json",
-    "version:packages": "changeset version && npm install --package-lock-only --no-audit --no-fund"
+    "version:packages": "changeset version && npm install --package-lock-only --no-audit --no-fund",
+    "test:all": "npm run test:types && npm run test && npm run test:browser && npm run test:bun && npm run test:deno && npm run test:happy-dom && npm run test:workerd",
+    "test:happy-dom": "vitest run --config ./vitest.happy-dom.config.ts",
+    "test:workerd": "vitest run --config ./vitest.workerd.config.ts",
+    "posttest": "npm run lint"
   },
   "dependencies": {
     "eventsource-parser": "^4.0.0"
@@ -71,17 +73,18 @@
   "devDependencies": {
     "@changesets/changelog-github": "^1.0.0",
     "@changesets/cli": "^3.0.0",
+    "@cloudflare/vitest-pool-workers": "^0.21.3",
     "@tsconfig/strictest": "^2.0.8",
     "@types/node": "^22.19.19",
-    "@types/sinon": "^21.0.1",
-    "esbuild": "^0.28.0",
+    "@vitest/browser": "^4.1.10",
+    "@vitest/browser-playwright": "^4.1.10",
     "eventsource-encoder": "^1.0.2",
+    "happy-dom": "^20.11.2",
     "oxfmt": "^0.52.0",
     "oxlint": "^1.67.0",
     "playwright": "^1.60.0",
-    "sinon": "^22.0.0",
     "typescript": "^7.0.0",
-    "undici": "^7.0.0"
+    "vitest": "^4.1.10"
   },
   "browserslist": [
     "node >= 22.12.0",

@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.settings",
+  "include": ["./src", "./test", "./vitest.config.ts", "./vitest.*.config.ts"],
+
+  // `type-compatible.ts` is checked by `tsconfig.types.json` instead, via `npm run test:types`.
+  // It imports the built `dist` output, so it can only be checked after a build - which is not
+  // something `npm run lint` should require.
+  "exclude": ["./test/type-compatible.ts"],
+  "compilerOptions": {
+    "noEmit": true,
+
+    // The tests run in browsers as well as on the server, so they use DOM globals
+    // (`location`, `DOMException`, `MessageEvent`) that the library build must not rely on.
+    "lib": ["ES2023", "DOM"]
+  }
+}
