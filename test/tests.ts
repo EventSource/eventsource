@@ -1,4 +1,3 @@
-
 import {
   EventSource as OurEventSource,
   type EventSourceFetchInit,

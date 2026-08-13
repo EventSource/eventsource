@@ -2,9 +2,32 @@
   "name": "eventsource",
   "version": "5.0.0",
   "description": "WhatWG/W3C compliant EventSource client for Node.js and browsers",
-  "sideEffects": false,
+  "keywords": [
+    "eventsource",
+    "server-sent-events",
+    "sse"
+  ],
+  "homepage": "https://github.com/EventSource/eventsource#readme",
+  "bugs": {
+    "url": "https://github.com/EventSource/eventsource/issues"
+  },
+  "license": "MIT",
+  "author": "Espen Hovlandsdal <espen@hovlandsdal.com>",
+  "contributors": [
+    "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
+    "Einar Otto Stangvik <einaro.s@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://git@github.com/EventSource/eventsource.git"
+  },
+  "files": [
+    "dist",
+    "src",
+    "!dist/stats.html"
+  ],
   "type": "module",
-  "packageManager": "npm@12.0.1",
+  "sideEffects": false,
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
@@ -12,6 +35,15 @@
       "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "default": "./dist/index.js"
+      },
+      "./package.json": "./package.json"
+    },
+    "provenance": true
   },
   "scripts": {
     "build": "tsc -p tsconfig.dist.json",
@@ -33,37 +65,6 @@
     "test:types": "npm run build && tsc -p tsconfig.types.json",
     "version:packages": "changeset version && npm install --package-lock-only --no-audit --no-fund"
   },
-  "files": [
-    "dist",
-    "src",
-    "!dist/stats.html"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git://git@github.com/EventSource/eventsource.git"
-  },
-  "keywords": [
-    "sse",
-    "eventsource",
-    "server-sent-events"
-  ],
-  "author": "Espen Hovlandsdal <espen@hovlandsdal.com>",
-  "contributors": [
-    "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
-    "Einar Otto Stangvik <einaro.s@gmail.com>"
-  ],
-  "license": "MIT",
-  "engines": {
-    "node": ">=22.12.0"
-  },
-  "browserslist": [
-    "node >= 22.12.0",
-    ">0.3%",
-    "chrome >= 84",
-    "safari >= 15",
-    "firefox >= 105",
-    "edge >= 84"
-  ],
   "dependencies": {
     "eventsource-parser": "^4.0.0"
   },
@@ -82,17 +83,16 @@
     "typescript": "^7.0.0",
     "undici": "^7.0.0"
   },
-  "bugs": {
-    "url": "https://github.com/EventSource/eventsource/issues"
+  "browserslist": [
+    "node >= 22.12.0",
+    ">0.3%",
+    "chrome >= 84",
+    "safari >= 15",
+    "firefox >= 105",
+    "edge >= 84"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
   },
-  "homepage": "https://github.com/EventSource/eventsource#readme",
-  "publishConfig": {
-    "provenance": true,
-    "exports": {
-      ".": {
-        "default": "./dist/index.js"
-      },
-      "./package.json": "./package.json"
-    }
-  }
+  "packageManager": "npm@12.0.1"
 }

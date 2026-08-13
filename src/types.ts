@@ -63,9 +63,7 @@ type BodyChunk = Uint8Array | DataView | ArrayBuffer
  * @public
  */
 export interface ReaderLike {
-  read(): Promise<
-    {done: false; value: BodyChunk} | {done: true; value?: BodyChunk | undefined}
-  >
+  read(): Promise<{done: false; value: BodyChunk} | {done: true; value?: BodyChunk | undefined}>
   cancel(): Promise<void>
 }
 
