@@ -21,6 +21,7 @@ npm install --save eventsource
 - Edge >= 84
 - Deno >= 2
 - Bun >= 1.1.23
+- Cloudflare Workers: [partial](#cloudflare-workers)
 
 Basically, any environment that supports:
 
@@ -96,6 +97,22 @@ error TS2304: Cannot find name 'Event'.
 error TS2304: Cannot find name 'EventTarget'.
 error TS2304: Cannot find name 'MessageEvent'.
 ```
+
+### Cloudflare Workers
+
+Cloudflare Workers are supported, with one caveat: use `addEventListener()` rather than the `onmessage`, `onopen` and `onerror` properties.
+
+workerd's `EventTarget` dispatches `on<type>` handler properties itself, on top of the listener this module registers, so a handler assigned that way is called twice per event - and assigning `null` only removes one of the two registrations, so it does not unsubscribe ([workerd#6022](https://github.com/cloudflare/workerd/issues/6022)).
+
+```js
+// Called twice per message on Cloudflare Workers
+eventSource.onmessage = (event) => console.log(event.data)
+
+// Use this instead
+eventSource.addEventListener('message', (event) => console.log(event.data))
+```
+
+workerd also drops `origin` and `lastEventId` from the `MessageEvent` constructor. This module assigns them itself, so both are correct on Workers today; the workaround goes away once [workerd#6995](https://github.com/cloudflare/workerd/pull/6995) lands.
 
 ## Migrating from v1 / v2
 
