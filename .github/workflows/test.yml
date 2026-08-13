@@ -106,16 +106,25 @@ jobs:
       - name: Run tests
         run: npm run test:bun
 
-  # Known-failing environments. These run so the failures stay visible, but they do not gate the
-  # rest of the matrix: happy-dom reports the test server's requests as cross-origin and blocks
-  # them, and workerd's remaining failures all trace to cloudflare/workerd#6022, where its
-  # `EventTarget` dispatches `on<type>` handler properties itself and so fires our `on*` handlers
-  # twice. Drop `continue-on-error` once they are green.
-  testHappyDom:
-    name: 'Test: happy-dom (allowed to fail)'
+  # Known-failing environments, reported but never gating.
+  #
+  # happy-dom reports the test server's requests as cross-origin and blocks them. workerd's
+  # remaining failures all trace to cloudflare/workerd#6022, where its `EventTarget` dispatches
+  # `on<type>` handler properties itself and so fires our `on*` handlers twice.
+  #
+  # `continue-on-error` is deliberately on the *step* rather than the job. At job level it keeps
+  # the overall run green but the job still reports a check run with a `failure` conclusion, which
+  # is what puts a red X on the commit. At step level the job itself succeeds, so the commit stays
+  # green, and the outcome is written to the run summary to keep the result visible. Move
+  # `continue-on-error` up to the job (or drop it) once these are expected to pass.
+  testKnownFailing:
+    name: 'Test: ${{ matrix.suite }} (informational)'
     timeout-minutes: 15
     runs-on: ubuntu-latest
-    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: ['happy-dom', 'workerd']
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -124,19 +133,31 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Run tests
-        run: npm run test:happy-dom
-
-  testWorkerd:
-    name: 'Test: Cloudflare Workers (allowed to fail)'
-    timeout-minutes: 15
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-      - name: Install dependencies
-        run: npm ci
-      - name: Run tests
-        run: npm run test:workerd
+        id: tests
+        continue-on-error: true
+        run: |
+          # `pipefail` is not set in the default shell, so without it `tee` swallows the exit
+          # code and the step reports success no matter what the suite did.
+          set -o pipefail
+          npm run test:${{ matrix.suite }} 2>&1 | tee /tmp/${{ matrix.suite }}.log
+      - name: Summarise
+        if: always()
+        run: |
+          # Vitest forces colour on in CI, so the escape sequences have to come off before
+          # anything can be matched at the start of a line.
+          sed -E 's/\x1b\[[0-9;]*[mGKH]//g' '/tmp/${{ matrix.suite }}.log' > /tmp/plain.log
+          {
+            if [ '${{ steps.tests.outcome }}' = 'success' ]; then
+              echo '### ${{ matrix.suite }}: passing 🎉'
+              echo
+              echo 'This environment is no longer failing. It can be promoted to a gating job.'
+            else
+              echo '### ${{ matrix.suite }}: failing, as expected'
+              echo
+              echo '```'
+              grep -E '^ +(Tests|Test Files) ' /tmp/plain.log || true
+              echo '```'
+              echo
+              grep -E '^ FAIL ' /tmp/plain.log | sed 's/^ FAIL /- /' || true
+            fi
+          } | tee -a "$GITHUB_STEP_SUMMARY"
