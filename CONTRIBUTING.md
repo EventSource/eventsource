@@ -35,7 +35,7 @@ The suite in `test/client.test.ts` runs against a real HTTP server in every supp
 
 The browser tests need Playwright's browsers installed once, with `npx playwright install chromium firefox webkit`.
 
-The happy-dom and workerd suites are expected to fail today and do not gate CI: happy-dom reports the test server's requests as cross-origin and blocks them, and workerd returns a null `MessageEvent.origin`, fires the `on*` handlers twice, and orders handlers differently from every other runtime.
+The happy-dom and workerd suites are expected to fail today and do not gate CI. happy-dom reports the test server's requests as cross-origin and blocks them. workerd's remaining failures all come from [cloudflare/workerd#6022](https://github.com/cloudflare/workerd/issues/6022): its `EventTarget` dispatches `on<type>` handler properties itself, on top of the `addEventListener` call our `on*` setters make, so those handlers fire twice, assigning `null` only removes one registration, and they fire ahead of listeners registered before them.
 
 The browser suite is the one place where the endpoints are not served by a standalone server. Vitest serves the test page from its own Vite server, so the endpoints are mounted onto that same server (`test/helpers/ssePlugin.ts`) to keep the page and the endpoints same-origin. Serving them separately would make every request cross-origin and silently change what the CORS, cookie and redirect tests actually assert.
 

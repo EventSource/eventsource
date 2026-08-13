@@ -593,11 +593,26 @@ class EventSourceImpl extends EventTarget implements EventSource {
       this.#lastEventId = event.id
     }
 
+    const origin = this.#redirectUrl ? this.#redirectUrl.origin : this.#url.origin
+    const lastEventId = event.id || ''
+
     const messageEvent = new MessageEvent(event.event || 'message', {
       data: event.data,
-      origin: this.#redirectUrl ? this.#redirectUrl.origin : this.#url.origin,
-      lastEventId: event.id || '',
+      origin,
+      lastEventId,
     })
+
+    // workerd (Cloudflare Workers) accepts `data` but silently drops `origin` and `lastEventId`
+    // from the constructor init, yielding `null` and `''`. Both are plain own properties there
+    // rather than prototype getters, so they can be assigned after the fact. Elsewhere the
+    // constructor honours them and this is skipped, so no runtime pays for it unnecessarily.
+    if (messageEvent.origin !== origin) {
+      defineEventProperty(messageEvent, 'origin', origin)
+    }
+
+    if (messageEvent.lastEventId !== lastEventId) {
+      defineEventProperty(messageEvent, 'lastEventId', lastEventId)
+    }
 
     // The `onmessage` property only triggers on messages without an `event` field, or ones that
     // explicitly set `message`. This is handled automatically: the event is dispatched with type
@@ -753,4 +768,29 @@ function getBaseURL(): string | undefined {
   return doc && typeof doc === 'object' && 'baseURI' in doc && typeof doc.baseURI === 'string'
     ? doc.baseURI
     : undefined
+}
+
+/**
+ * Assigns a `MessageEvent` property that the constructor's init dictionary was supposed to have
+ * set, for runtimes that ignore it.
+ *
+ * Defined rather than assigned because on the runtimes that do implement the property as a
+ * prototype getter, a plain assignment would throw in strict mode. `enumerable` and
+ * `configurable` mirror how a spec-compliant implementation exposes it.
+ *
+ * @param event - The message event to define the property on
+ * @param property - The property to define
+ * @param value - The value the constructor should have set
+ * @internal
+ */
+function defineEventProperty(
+  event: MessageEvent,
+  property: 'origin' | 'lastEventId',
+  value: string,
+): void {
+  Object.defineProperty(event, property, {
+    value,
+    enumerable: true,
+    configurable: true,
+  })
 }
