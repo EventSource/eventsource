@@ -108,9 +108,9 @@ jobs:
 
   # Known-failing environments. These run so the failures stay visible, but they do not gate the
   # rest of the matrix: happy-dom reports the test server's requests as cross-origin and blocks
-  # them, and workerd has its own set of issues (a null `MessageEvent.origin`, on-handlers firing
-  # twice, and handler ordering that differs from every other runtime). Both are being worked
-  # through separately - drop `continue-on-error` once they are green.
+  # them, and workerd's remaining failures all trace to cloudflare/workerd#6022, where its
+  # `EventTarget` dispatches `on<type>` handler properties itself and so fires our `on*` handlers
+  # twice. Drop `continue-on-error` once they are green.
   testHappyDom:
     name: 'Test: happy-dom (allowed to fail)'
     timeout-minutes: 15
