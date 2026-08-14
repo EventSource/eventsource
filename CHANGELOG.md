@@ -1,5 +1,46 @@
 # 📓 Changelog
 
+## 5.1.0
+
+### Minor Changes
+
+- [#355](https://github.com/EventSource/eventsource/pull/355) [`d8370e4`](https://github.com/EventSource/eventsource/commit/d8370e47cb0a8f6e70e9e5e5a95e579a885faa69) Thanks [@rexxars](https://github.com/rexxars)! - Typed response body chunks as buffers instead of `unknown`
+
+  `ReaderLike` typed chunks read off the response body as `unknown`, but they are handed to a `TextDecoder`, which only accepts buffers and throws on anything else. So a reader yielding anything else was never usable, and the type said otherwise. It also hid a type error in the client itself, which only surfaces when compiling against TypeScript's `dom` library: the node typings resolve the chunk to `any`, while the `dom` library resolves it to `{}`.
+
+  Chunks are now typed as `Uint8Array | DataView | ArrayBuffer`, which is what both the node and DOM typings accept, and which every `fetch()` implementation yields. Nothing changes at runtime.
+
+  If you pass a custom `fetch()` that returns a hand-rolled body, and your reader's chunk type is wider than the above, eg `unknown` or `any`, it will no longer be assignable. Returning a real `Response`, or a reader that yields `Uint8Array` chunks, is unaffected.
+
+- [#355](https://github.com/EventSource/eventsource/pull/355) [`008f07e`](https://github.com/EventSource/eventsource/commit/008f07e0f75599837964e218536ef9ee10accd11) Thanks [@rexxars](https://github.com/rexxars)! - Declared the `this` type for the `onerror`, `onmessage` and `onopen` properties
+
+  `addEventListener()` already declared that listeners are called with the EventSource instance as `this`, but the `on*` properties did not, so `this` was an implicit `any` in handlers assigned to them (an error under `noImplicitThis`). They now match `addEventListener()` and the native `EventSource`:
+
+  ```ts
+  eventSource.onmessage = function (event) {
+    console.log(this.url, event.data) // `this` is now typed
+  }
+  ```
+
+  Handlers that declare an incompatible `this`, eg an unbound class method typed with `this: MyClass`, will now be rejected where they were previously accepted. Arrow functions and handlers that ignore `this` are unaffected.
+
+- [#355](https://github.com/EventSource/eventsource/pull/355) [`3512add`](https://github.com/EventSource/eventsource/commit/3512add8dc809a098155a7d47387821da91cb8e3) Thanks [@rexxars](https://github.com/rexxars)! - Made the exported `EventSource` type structural, so other implementations can satisfy it
+
+  `EventSource` was exported as a class holding hard-private (`#`) fields, which makes TypeScript emit a `#private` brand into the declaration file and turns the exported type nominal. A consumer writing `function connect(es: EventSource)` against this package could not pass the native `EventSource`, a mock, or any other implementation, even when the shape matched exactly.
+
+  The implementation class is now internal, and `EventSource` is exported as an `interface` plus a const holding the constructor. As a result:
+  - The native `EventSource`, along with mocks and stubs, is assignable to the exported `EventSource` type
+  - The exported value and `globalThis.EventSource` are interchangeable in both directions, which helps libraries that accept an EventSource implementation to construct
+  - A new `EventSourceConstructor` type is exported for that case
+
+  Nothing changes at runtime: `new EventSource(...)`, `instanceof`, subclassing, the readyState statics, `EventSource.name`, inspected output and the `eventsource.supports-fetch-override` symbol all behave as before, and the internal state is still held in real `#private` fields.
+
+### Patch Changes
+
+- [#357](https://github.com/EventSource/eventsource/pull/357) [`8e5c691`](https://github.com/EventSource/eventsource/commit/8e5c691c88b625a0f6d661d4b3bc6b756737d085) Thanks [@rexxars](https://github.com/rexxars)! - Fixed `origin` and `lastEventId` being empty on Cloudflare Workers
+
+  workerd accepts `data` from the `MessageEvent` constructor's init dictionary but silently drops `origin` and `lastEventId`, so message events dispatched on Cloudflare Workers arrived with `origin` set to `null` and `lastEventId` to an empty string. Both are now assigned explicitly when the constructor did not take them, which leaves every other runtime untouched.
+
 ## 5.0.0
 
 ### Major Changes
