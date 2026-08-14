@@ -13,8 +13,8 @@ import {sharedConfig, standaloneServer} from './vitest.config.ts'
  * flag would let the resolver match the `node` export condition. `compatibilityDate` is
  * required, as workerd refuses to start without one.
  *
- * This suite is expected to fail for now, and runs non-blocking in CI so the failures stay
- * visible without gating the other environments.
+ * The one behaviour it does not match the other runtimes on is `on*` handler dispatch;
+ * `test/client.test.ts` marks the seven tests that depend on it as known failures.
  */
 export default defineConfig({
   plugins: [

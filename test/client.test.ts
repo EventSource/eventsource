@@ -31,6 +31,19 @@ const browserTest = test.runIf(hasBrowserSemantics)
  */
 const xOriginRedirectTest = suite === 'happy-dom' ? test.fails : test
 
+/**
+ * workerd's `EventTarget` dispatches `on<type>` handler properties itself, on top of the
+ * `addEventListener` call our `on*` setters make, so those handlers fire more than once, assigning
+ * `null` only removes one registration, and they fire ahead of listeners registered before them
+ * (https://github.com/cloudflare/workerd/issues/6022). Asserted as known failures rather than
+ * skipped, so that these turn red - and the workaround gets removed - once workerd stops
+ * dispatching the handler properties itself.
+ *
+ * Note that not every `on*` test trips this: the two that only ever register a single handler and
+ * check that it fired still pass, so they are left as ordinary tests.
+ */
+const onHandlerTest = suite === 'workerd' ? test.fails : test
+
 test('can connect, receive message, manually disconnect', async () => {
   const onMessage = getCallCounter({name: 'onMessage'})
   const es = new OurEventSource(new URL(`${serverUrl}/`))
@@ -129,58 +142,67 @@ test('can use `es.onopen` to listen for open events, nulling it unsubscribes', a
   await deferClose(es)
 })
 
-test('can use `es.onerror` to listen for error events, nulling it unsubscribes', async () => {
-  const onError = getCallCounter<ErrorEvent>({name: 'onError'})
-  const onOpen = getCallCounter<Event>({name: 'onOpen'})
-  const es = new OurEventSource(`${serverUrl}/counter`, esInit)
-  es.addEventListener('open', onOpen.listener)
-  es.onerror = onError.listener
+onHandlerTest(
+  'can use `es.onerror` to listen for error events, nulling it unsubscribes',
+  async () => {
+    const onError = getCallCounter<ErrorEvent>({name: 'onError'})
+    const onOpen = getCallCounter<Event>({name: 'onOpen'})
+    const es = new OurEventSource(`${serverUrl}/counter`, esInit)
+    es.addEventListener('open', onOpen.listener)
+    es.onerror = onError.listener
 
-  await onOpen.waitForCallCount(3)
-  es.onerror = null
+    await onOpen.waitForCallCount(3)
+    es.onerror = null
 
-  await onOpen.waitForCallCount(4) // 4 connects
+    await onOpen.waitForCallCount(4) // 4 connects
 
-  // If `es.onerror = null` did not work, this should be 4
-  expect(onError.callCount).toBe(2)
-  await deferClose(es)
-})
+    // If `es.onerror = null` did not work, this should be 4
+    expect(onError.callCount).toBe(2)
+    await deferClose(es)
+  },
+)
 
-test('can use `es.onmessage` to listen for explicit `message` events, nulling it unsubscribes', async () => {
-  const onMessage = getCallCounter({name: 'onMessage'})
-  const onError = getCallCounter<ErrorEvent>({name: 'onError'})
-  const es = new OurEventSource(`${serverUrl}/counter?event=message`, esInit)
-  es.addEventListener('error', onError.listener)
-  es.onmessage = onMessage.listener
+onHandlerTest(
+  'can use `es.onmessage` to listen for explicit `message` events, nulling it unsubscribes',
+  async () => {
+    const onMessage = getCallCounter({name: 'onMessage'})
+    const onError = getCallCounter<ErrorEvent>({name: 'onError'})
+    const es = new OurEventSource(`${serverUrl}/counter?event=message`, esInit)
+    es.addEventListener('error', onError.listener)
+    es.onmessage = onMessage.listener
 
-  await onError.waitForCallCount(2)
-  es.onmessage = null
+    await onError.waitForCallCount(2)
+    es.onmessage = null
 
-  await onError.waitForCallCount(3) // 3 disconnects
+    await onError.waitForCallCount(3) // 3 disconnects
 
-  // If `es.onmessage = null` did not work, this should be 9,
-  // since each connect emits 3 message then closes
-  expect(onMessage.callCount).toBe(6)
-  await deferClose(es)
-})
+    // If `es.onmessage = null` did not work, this should be 9,
+    // since each connect emits 3 message then closes
+    expect(onMessage.callCount).toBe(6)
+    await deferClose(es)
+  },
+)
 
-test('can use `es.onmessage` to listen for implicit `message` events, nulling it unsubscribes', async () => {
-  const onMessage = getCallCounter({name: 'onMessage'})
-  const onError = getCallCounter<ErrorEvent>({name: 'onError'})
-  const es = new OurEventSource(`${serverUrl}/counter?event=`, esInit)
-  es.addEventListener('error', onError.listener)
-  es.onmessage = onMessage.listener
+onHandlerTest(
+  'can use `es.onmessage` to listen for implicit `message` events, nulling it unsubscribes',
+  async () => {
+    const onMessage = getCallCounter({name: 'onMessage'})
+    const onError = getCallCounter<ErrorEvent>({name: 'onError'})
+    const es = new OurEventSource(`${serverUrl}/counter?event=`, esInit)
+    es.addEventListener('error', onError.listener)
+    es.onmessage = onMessage.listener
 
-  await onError.waitForCallCount(2)
-  es.onmessage = null
+    await onError.waitForCallCount(2)
+    es.onmessage = null
 
-  await onError.waitForCallCount(3) // 3 disconnects
+    await onError.waitForCallCount(3) // 3 disconnects
 
-  // If `es.onmessage = null` did not work, this should be 9,
-  // since each connect emits 3 message then closes
-  expect(onMessage.callCount).toBe(6)
-  await deferClose(es)
-})
+    // If `es.onmessage = null` did not work, this should be 9,
+    // since each connect emits 3 message then closes
+    expect(onMessage.callCount).toBe(6)
+    await deferClose(es)
+  },
+)
 
 test('`es.onmessage` does not fire for non-`message` events', async () => {
   const onMessage = getCallCounter({name: 'onMessage'})
@@ -197,7 +219,7 @@ test('`es.onmessage` does not fire for non-`message` events', async () => {
   await deferClose(es)
 })
 
-test('can redeclare `es.onopen` after initial assignment', async () => {
+onHandlerTest('can redeclare `es.onopen` after initial assignment', async () => {
   const onError = getCallCounter<ErrorEvent>({name: 'onError'})
   const onOpen = getCallCounter<Event>({name: 'onOpen'})
   const onOpenNew = getCallCounter<Event>({name: 'onOpen (new)'})
@@ -216,7 +238,7 @@ test('can redeclare `es.onopen` after initial assignment', async () => {
   await deferClose(es)
 })
 
-test('can redeclare `es.onerror` after initial assignment', async () => {
+onHandlerTest('can redeclare `es.onerror` after initial assignment', async () => {
   const onError = getCallCounter<ErrorEvent>({name: 'onError'})
   const onErrorNew = getCallCounter<ErrorEvent>({name: 'onError (new)'})
   const onOpen = getCallCounter<Event>({name: 'onOpen'})
@@ -235,7 +257,7 @@ test('can redeclare `es.onerror` after initial assignment', async () => {
   await deferClose(es)
 })
 
-test('can redeclare `es.onmessage` after initial assignment', async () => {
+onHandlerTest('can redeclare `es.onmessage` after initial assignment', async () => {
   const onMessage = getCallCounter({name: 'onMessage'})
   const onMessageNew = getCallCounter({name: 'onMessage (new)'})
   const onError = getCallCounter<ErrorEvent>({name: 'onError'})
@@ -255,7 +277,7 @@ test('can redeclare `es.onmessage` after initial assignment', async () => {
   await deferClose(es)
 })
 
-test('on-handlers fire in registration order relative to `addEventListener`', async () => {
+onHandlerTest('on-handlers fire in registration order relative to `addEventListener`', async () => {
   const order: string[] = []
   const onOpen = getCallCounter<Event>({name: 'onOpen'})
   const es = new OurEventSource(`${serverUrl}/`, esInit)
@@ -740,7 +762,7 @@ test('[NON-SPEC] message event contains extended properties (failed connection)'
     timeStamp: expect.any(Number),
     // Node, Deno, Bun, Chromium, Webkit, Firefox _ALL_ have different messages 😅
     message: expect.stringMatching(
-      /fetch failed|failed to fetch|load failed|attempting to fetch|connection refused|ECONNREFUSED|unable to connect/i,
+      /fetch failed|failed to fetch|load failed|attempting to fetch|connection refused|ECONNREFUSED|unable to connect|network connection lost/i,
     ),
     code: undefined,
   })
