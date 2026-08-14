@@ -8,19 +8,20 @@ import {sharedConfig, standaloneServer} from './vitest.config.ts'
  * browser-semantics tests here (CORS, cookies, `withCredentials`) while still talking to the
  * standalone server.
  *
- * This suite is expected to fail for now: happy-dom's CORS handling does not yet line up with a
- * real browser's, which is being worked through separately. It runs non-blocking in CI so the
- * failures stay visible without gating the other environments.
+ * The one behaviour it does not match a real browser on is stripping `Authorization` from a
+ * cross-origin redirect; `test/client.test.ts` marks those four tests as known failures.
  */
 export default defineConfig({
   test: {
     ...sharedConfig,
     environment: 'happy-dom',
-    // happy-dom otherwise defaults `location` to `http://localhost:3000`, so give it the server's
-    // origin - that is the split the browser suite is written against. Note that happy-dom still
-    // reports these requests as cross-origin and blocks them, which is part of what is being
-    // worked through separately.
-    environmentOptions: {happyDom: {url: `http://127.0.0.1:${TEST_PORT}`}},
+    // Point `location` at the server, so its requests are same-origin - the split the browser
+    // suite is written against. happy-dom otherwise defaults to `http://localhost:3000`, and
+    // every request to the server then counts as cross-origin.
+    //
+    // The key is `happyDOM`, not `happyDom`: `EnvironmentOptions` carries an index signature, so
+    // a misspelling type-checks and is then silently ignored, leaving the default URL in place.
+    environmentOptions: {happyDOM: {url: `http://127.0.0.1:${TEST_PORT}`}},
     globalSetup: standaloneServer,
     provide: {port: TEST_PORT, suite: 'happy-dom'},
   },

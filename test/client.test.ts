@@ -15,11 +15,21 @@ import {
   request,
   serverOrigin,
   serverUrl,
+  suite,
 } from './helpers/env.ts'
 import {unicodeLines} from './helpers/fixtures.ts'
 
 /** Only meaningful where CORS, cookies and `withCredentials` are actually enforced. */
 const browserTest = test.runIf(hasBrowserSemantics)
+
+/**
+ * happy-dom copies the full header list onto a redirected request and only ever deletes the
+ * cookie headers, so `Authorization` survives a redirect to a different origin - which the fetch
+ * spec requires it not to (https://fetch.spec.whatwg.org/#http-redirect-fetch, step 13). Asserted
+ * as a known failure rather than skipped, so that this turns red - and the workaround gets
+ * removed - the moment happy-dom starts stripping the header.
+ */
+const xOriginRedirectTest = suite === 'happy-dom' ? test.fails : test
 
 test('can connect, receive message, manually disconnect', async () => {
   const onMessage = getCallCounter({name: 'onMessage'})
@@ -532,7 +542,7 @@ test('can request cross-origin', async () => {
 
 // Cross-origin redirect tests
 ;[301, 302, 307, 308].forEach((status) => {
-  test(`redirects: handles ${status} to different origin`, async () => {
+  xOriginRedirectTest(`redirects: handles ${status} to different origin`, async () => {
     const id = Math.random().toString(36).slice(2)
     const onMessage = getCallCounter({name: 'onMessage'})
     const onOpen = getCallCounter<Event>({name: 'onOpen'})
@@ -730,7 +740,7 @@ test('[NON-SPEC] message event contains extended properties (failed connection)'
     timeStamp: expect.any(Number),
     // Node, Deno, Bun, Chromium, Webkit, Firefox _ALL_ have different messages 😅
     message: expect.stringMatching(
-      /fetch failed|failed to fetch|load failed|attempting to fetch|connection refused|unable to connect/i,
+      /fetch failed|failed to fetch|load failed|attempting to fetch|connection refused|ECONNREFUSED|unable to connect/i,
     ),
     code: undefined,
   })
