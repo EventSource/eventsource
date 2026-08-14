@@ -100,7 +100,7 @@ error TS2304: Cannot find name 'MessageEvent'.
 
 ### Cloudflare Workers
 
-Cloudflare Workers are supported, with one caveat: use `addEventListener()` rather than the `onmessage`, `onopen` and `onerror` properties.
+Cloudflare Workers require `compatibilityDate: '2024-11-11'` or later, and `addEventListener()` instead of the `onmessage`, `onopen` and `onerror` properties.
 
 workerd's `EventTarget` dispatches `on<type>` handler properties itself, on top of the listener this module registers, so a handler assigned that way is called twice per event - and assigning `null` only removes one of the two registrations, so it does not unsubscribe ([workerd#6022](https://github.com/cloudflare/workerd/issues/6022)).
 
