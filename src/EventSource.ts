@@ -311,6 +311,7 @@ class EventSourceImpl extends EventTarget implements EventSource {
       maxBufferSize: eventSourceInitDict?.maxBufferSize ?? DEFAULT_MAX_BUFFER_SIZE,
       onEvent: this.#onEvent,
       onError: this.#onParseError,
+      onId: this.#onIdChange,
       onRetry: this.#onRetryChange,
     })
 
@@ -582,6 +583,17 @@ class EventSourceImpl extends EventTarget implements EventSource {
   }
 
   /**
+   * Called by EventSourceParser when a blank line ends a block containing a valid `id` field.
+   * This runs before `#onEvent` when the same block also contains data.
+   *
+   * @param value - The value of the `id` field
+   * @internal
+   */
+  #onIdChange = (value: string) => {
+    this.#lastEventId = value
+  }
+
+  /**
    * Called by EventSourceParser instance when an event has successfully been parsed
    * and is ready to be processed.
    *
@@ -589,16 +601,12 @@ class EventSourceImpl extends EventTarget implements EventSource {
    * @internal
    */
   #onEvent = (event: EventSourceMessage) => {
-    if (typeof event.id === 'string') {
-      this.#lastEventId = event.id
-    }
-
     const origin = this.#redirectUrl ? this.#redirectUrl.origin : this.#url.origin
     // [spec] The `lastEventId` attribute is the last event ID string of the event
     // source, i.e. the persisted buffer (`#lastEventId`) - not the current event's `id`.
-    // The buffer is only updated by an explicit `id` field (above) and must survive an
+    // The buffer is only updated by an explicit `id` field and must survive an
     // event that omits `id`.
-    const lastEventId = this.#lastEventId ?? ""
+    const lastEventId = this.#lastEventId ?? ''
 
     const messageEvent = new MessageEvent(event.event || 'message', {
       data: event.data,

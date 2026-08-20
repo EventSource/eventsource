@@ -61,6 +61,8 @@ export function handleRequest(
       return writeCounter(req, res)
     case '/mixed-ids':
       return writeMixedIds(req, res)
+    case '/id-only':
+      return writeIdOnly(req, res)
     case '/identified':
       return writeIdentifiedListeners(req, res)
     case '/end-after-one':
@@ -158,6 +160,25 @@ function writeMixedIds(_req: IncomingMessage, res: ServerResponse) {
   tryWrite(res, encode({id: '1', data: 'First, with id'}))
   tryWrite(res, encode({data: 'Second, without id'}))
 
+  res.end()
+}
+
+function writeIdOnly(req: IncomingMessage, res: ServerResponse) {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive',
+  })
+
+  const lastEventId = getLastEventId(req)
+  if (!lastEventId) {
+    tryWrite(res, encode({retry: 50}))
+    tryWrite(res, 'id: 42\n\n')
+    res.end()
+    return
+  }
+
+  tryWrite(res, encode({data: `Reconnected with ${lastEventId}`}))
   res.end()
 }
 

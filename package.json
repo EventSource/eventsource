@@ -68,7 +68,7 @@
     "posttest": "npm run lint"
   },
   "dependencies": {
-    "eventsource-parser": "^4.0.0"
+    "eventsource-parser": "^4.1.0"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^1.0.0",

@@ -378,6 +378,52 @@ test('message event `lastEventId` persists when a later event omits the `id` fie
   await deferClose(es)
 })
 
+test('an ID-only chunk sets `lastEventId` on a later message without an ID', async () => {
+  const url = `${serverUrl}/id-only-then-message`
+  const encoder = new TextEncoder()
+  const fetch: FetchLike = async () => ({
+    body: new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(encoder.encode('id: 42\n\n'))
+        controller.enqueue(encoder.encode('data: Message without ID\n\n'))
+        controller.close()
+      },
+    }),
+    redirected: false,
+    status: 200,
+    headers: new Headers({'content-type': 'text/event-stream'}),
+    url,
+  })
+
+  const onMessage = getCallCounter({name: 'onMessage'})
+  const es = new OurEventSource(url, {fetch})
+
+  es.addEventListener('message', onMessage.listener)
+  await onMessage.waitForCallCount(1)
+
+  expect(onMessage.lastArg).toMatchObject({
+    data: 'Message without ID',
+    lastEventId: '42',
+  })
+
+  await deferClose(es)
+})
+
+test('an ID from a block without data is used for reconnecting and later messages', async () => {
+  const onMessage = getCallCounter({name: 'onMessage'})
+  const es = new OurEventSource(`${serverUrl}/id-only`, esInit)
+
+  es.addEventListener('message', onMessage.listener)
+  await onMessage.waitForCallCount(1)
+
+  expect(onMessage.lastArg).toMatchObject({
+    data: 'Reconnected with 42',
+    lastEventId: '42',
+  })
+
+  await deferClose(es)
+})
+
 test('will not reconnect after explicit `close()`', async () => {
   const onMessage = getCallCounter({name: 'onMessage'})
   const onError = getCallCounter<ErrorEvent>({name: 'onError'})
