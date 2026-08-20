@@ -346,6 +346,34 @@ test('will reconnect with last received message id if server disconnects', async
     origin: serverOrigin,
   })
   expect(onMessage.callCount).toBe(8)
+  await deferClose(es)
+})
+
+test('message event `lastEventId` persists when a later event omits the `id` field', async () => {
+  // Record every event, not just the most recent: the two events arrive back to back, so
+  // `lastArg` would already point at the second one by the time the first is asserted.
+  const seen: MessageEvent[] = []
+  const onMessage = getCallCounter({name: 'onMessage', onCall: () => {}})
+  const es = new OurEventSource(`${serverUrl}/mixed-ids`, esInit)
+
+  es.addEventListener('message', (event) => seen.push(event as MessageEvent))
+  es.addEventListener('message', onMessage.listener)
+
+  await onMessage.waitForCallCount(2)
+
+  // First event carries `id: 1`, which updates the last event ID buffer.
+  expect(seen[0], 'first message').toMatchObject({
+    data: 'First, with id',
+    lastEventId: '1',
+  })
+
+  // The second event omits the `id` field. Per the spec ("dispatch the event" initializes
+  // `lastEventId` to the last event ID string, and only an `id` field updates that buffer),
+  // the event must still carry `lastEventId: '1'` - not an empty string.
+  expect(seen[1], 'second message').toMatchObject({
+    data: 'Second, without id',
+    lastEventId: '1',
+  })
 
   await deferClose(es)
 })

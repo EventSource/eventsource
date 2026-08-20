@@ -59,6 +59,8 @@ export function handleRequest(
       return writeDefault(req, res)
     case '/counter':
       return writeCounter(req, res)
+    case '/mixed-ids':
+      return writeMixedIds(req, res)
     case '/identified':
       return writeIdentifiedListeners(req, res)
     case '/end-after-one':
@@ -137,6 +139,24 @@ async function writeCounter(req: IncomingMessage, res: ServerResponse) {
     )
     await delay(5)
   }
+
+  res.end()
+}
+
+/**
+ * Writes two messages: one with an `id` field, then one without. Per the spec, the second
+ * event's `lastEventId` must still be `'1'`: the last event ID buffer is only updated by an
+ * explicit `id` field and is not reset when an event omits it.
+ */
+function writeMixedIds(_req: IncomingMessage, res: ServerResponse) {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive',
+  })
+
+  tryWrite(res, encode({id: '1', data: 'First, with id'}))
+  tryWrite(res, encode({data: 'Second, without id'}))
 
   res.end()
 }
