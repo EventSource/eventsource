@@ -597,8 +597,7 @@ class EventSourceImpl extends EventTarget implements EventSource {
     // [spec] The `lastEventId` attribute is the last event ID string of the event
     // source, i.e. the persisted buffer (`#lastEventId`) - not the current event's `id`.
     // The buffer is only updated by an explicit `id` field (above) and must survive an
-    // event that omits `id`, so emitting `event.id || ''` here wrongly blanked it after
-    // such an event.
+    // event that omits `id`.
     const lastEventId = this.#lastEventId ?? ""
 
     const messageEvent = new MessageEvent(event.event || 'message', {

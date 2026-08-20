@@ -318,6 +318,37 @@ test('message event contains correct properties', async () => {
   await deferClose(es)
 })
 
+test('will reconnect with last received message id if server disconnects', async () => {
+  const onMessage = getCallCounter({name: 'onMessage'})
+  const onError = getCallCounter<ErrorEvent>({name: 'onError'})
+  const url = `${serverUrl}/counter`
+  const es = new OurEventSource(url, esInit)
+  es.addEventListener('counter', onMessage.listener)
+  es.addEventListener('error', onError.listener)
+
+  // While still receiving messages (we receive 3 at a time before it disconnects)
+  await onMessage.waitForCallCount(1)
+  expect(es.readyState, 'readyState').toBe(OurEventSource.OPEN) // Open (connected)
+
+  // While waiting for reconnect (after 3 messages it will disconnect and reconnect)
+  await onError.waitForCallCount(1)
+  expect(es.readyState, 'readyState').toBe(OurEventSource.CONNECTING) // Connecting (reconnecting)
+  expect(onMessage.callCount).toBe(3)
+
+  // Will reconnect infinitely, stop at 8 messages
+  await onMessage.waitForCallCount(8)
+
+  expect(es.url).toBe(url)
+  expect(onMessage.lastArg).toMatchObject({
+    data: 'Counter is at 8',
+    type: 'counter',
+    lastEventId: '8',
+    origin: serverOrigin,
+  })
+  expect(onMessage.callCount).toBe(8)
+  await deferClose(es)
+})
+
 test('message event `lastEventId` persists when a later event omits the `id` field', async () => {
   // Record every event, not just the most recent: the two events arrive back to back, so
   // `lastArg` would already point at the second one by the time the first is asserted.
