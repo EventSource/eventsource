@@ -136,3 +136,19 @@ jobs:
         run: npm ci
       - name: Run tests
         run: npm run test:workerd
+
+  testIos:
+    name: 'Test: iOS Simulator'
+    timeout-minutes: 20
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: npm ci
+      - name: List available simulators
+        run: xcrun simctl list devices available
+      - name: Run tests
+        run: npm run test:ios
