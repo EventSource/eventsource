@@ -17,6 +17,17 @@ declare module 'vitest/node' {
 
 const SAFARI_BUNDLE_ID = 'com.apple.mobilesafari'
 
+/**
+ * How many times to ask the simulator to open the tester URL.
+ *
+ * `simctl openurl` has to hand the URL to Safari and wait for it to accept it, and it gives up
+ * after about ten seconds - which a slow runner can exceed just launching the app, failing with
+ * `NSPOSIXErrorDomain code 60` ("Operation timed out") on a device that is perfectly healthy.
+ * Safari is launched up front to keep that cost out of the way, so a retry only has to cover the
+ * case where it still lost the race.
+ */
+const OPEN_URL_ATTEMPTS = 3
+
 export interface SimulatorDevice {
   udid: string
   name: string
@@ -78,7 +89,24 @@ class IosSimulatorProvider implements BrowserProvider {
     this.project.vitest.logger.log(
       `Opening ${url} in Safari on ${device.name}, ${device.runtime} (${device.udid})`,
     )
-    await exec('xcrun', ['simctl', 'openurl', device.udid, url])
+
+    for (let attempt = 1; ; attempt++) {
+      try {
+        await exec('xcrun', ['simctl', 'openurl', device.udid, url])
+        return
+      } catch (err) {
+        if (attempt >= OPEN_URL_ATTEMPTS) throw err
+        this.project.vitest.logger.log(
+          `Opening it failed (attempt ${attempt} of ${OPEN_URL_ATTEMPTS}), restarting Safari and retrying: ${
+            err instanceof Error ? err.message.split('\n')[0] : err
+          }`,
+        )
+        // Restart Safari rather than just asking again: a timed-out `openurl` may still have
+        // navigated, and a second tester page would then connect under the same session id.
+        await terminateSafari(device.udid)
+        await launchSafari(device.udid)
+      }
+    }
   }
 
   async close(): Promise<void> {
@@ -86,7 +114,7 @@ class IosSimulatorProvider implements BrowserProvider {
     // Leave the simulator booted - booting costs the better part of a minute, and a developer
     // running the suite repeatedly should not pay it every time - but close Safari, so the next
     // run starts on a blank page instead of restoring the previous tester page.
-    await exec('xcrun', ['simctl', 'terminate', this.booted.udid, SAFARI_BUNDLE_ID]).catch(() => {})
+    await terminateSafari(this.booted.udid)
   }
 
   private async boot(): Promise<SimulatorDevice> {
@@ -121,7 +149,27 @@ export async function bootSimulator(name?: string | undefined): Promise<Simulato
     await exec('xcrun', ['simctl', 'bootstatus', device.udid, '-b'], {timeout: 600_000})
   }
 
+  // Start Safari here rather than leaving its first launch to `openurl`, which times out after
+  // about ten seconds - on a cold simulator that is not enough for the app to come up. Launching
+  // it up front pays that cost where nothing is racing a timeout.
+  await launchSafari(device.udid)
+
   return device
+}
+
+function launchSafari(udid: string): Promise<unknown> {
+  // Best-effort: if Safari is already running this reports an error, and if the launch itself
+  // times out the retry in `openPage` is what covers it. Either way the run should carry on.
+  return exec('xcrun', ['simctl', 'launch', udid, SAFARI_BUNDLE_ID], {timeout: 120_000}).catch(
+    () => undefined,
+  )
+}
+
+function terminateSafari(udid: string): Promise<unknown> {
+  // Reports an error when Safari is not running, which is not worth distinguishing here.
+  return exec('xcrun', ['simctl', 'terminate', udid, SAFARI_BUNDLE_ID], {timeout: 120_000}).catch(
+    () => undefined,
+  )
 }
 
 /**
