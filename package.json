@@ -59,6 +59,7 @@
     "test": "vitest run",
     "test:browser": "vitest run --config ./vitest.browser.config.ts",
     "test:ios": "vitest run --config ./vitest.ios.config.ts",
+    "test:ios:boot": "node scripts/bootIosSimulator.ts",
     "test:bun": "bun run vitest run",
     "test:deno": "deno run -A --node-modules-dir npm:vitest run",
     "test:types": "npm run build && tsc -p tsconfig.types.json",

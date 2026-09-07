@@ -17,7 +17,7 @@ declare module 'vitest/node' {
 
 const SAFARI_BUNDLE_ID = 'com.apple.mobilesafari'
 
-interface SimulatorDevice {
+export interface SimulatorDevice {
   udid: string
   name: string
   state: string
@@ -90,29 +90,38 @@ class IosSimulatorProvider implements BrowserProvider {
   }
 
   private async boot(): Promise<SimulatorDevice> {
-    if (this.booted) return this.booted
-
-    const {stdout} = await exec('xcrun', ['simctl', 'list', 'devices', 'available', '--json'])
-    const devices = listDevices(stdout)
-    const device = pickDevice(devices, this.device)
-    if (!device) {
-      throw new Error(
-        `Found no available iOS simulator ${this.device ? `named "${this.device}"` : 'to run on'}. ` +
-          `\`xcrun simctl list devices available\` lists what is installed; ` +
-          `\`xcodebuild -downloadPlatform iOS\` installs a runtime if none is.`,
-      )
-    }
-
-    if (device.state !== 'Booted') {
-      // `bootstatus -b` boots the device and waits until it has finished starting up, so the
-      // first `openurl` does not race the boot. The simulator does not need Simulator.app to be
-      // open to run Safari, so nothing here brings up a UI.
-      await exec('xcrun', ['simctl', 'bootstatus', device.udid, '-b'], {timeout: 300_000})
-    }
-
-    this.booted = device
-    return device
+    this.booted ??= await bootSimulator(this.device)
+    return this.booted
   }
+}
+
+/**
+ * Boots a simulator to run on, and resolves once it has finished starting up.
+ *
+ * Also used by `scripts/bootIosSimulator.ts`, which CI runs as a step of its own: a cold boot
+ * takes longer than `browser.connectTimeout` allows for, and booting up front keeps that wait
+ * out of the window Vitest gives the browser to connect back (and, incidentally, makes the boot
+ * a visible, separately timed step in the log rather than a silent stall).
+ */
+export async function bootSimulator(name?: string | undefined): Promise<SimulatorDevice> {
+  const {stdout} = await exec('xcrun', ['simctl', 'list', 'devices', 'available', '--json'])
+  const device = pickDevice(listDevices(stdout), name)
+  if (!device) {
+    throw new Error(
+      `Found no available iOS simulator ${name ? `named "${name}"` : 'to run on'}. ` +
+        `\`xcrun simctl list devices available\` lists what is installed; ` +
+        `\`xcodebuild -downloadPlatform iOS\` installs a runtime if none is.`,
+    )
+  }
+
+  if (device.state !== 'Booted') {
+    // `bootstatus -b` boots the device and waits until it has finished starting up, so the first
+    // `openurl` does not race the boot. The simulator does not need Simulator.app to be open in
+    // order to run Safari, so nothing here brings up a UI.
+    await exec('xcrun', ['simctl', 'bootstatus', device.udid, '-b'], {timeout: 600_000})
+  }
+
+  return device
 }
 
 /**
