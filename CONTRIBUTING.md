@@ -26,14 +26,19 @@ The suite in `test/client.test.ts` runs against a real HTTP server in every supp
 
 - `npm test` - Node.js
 - `npm run test:browser` - Chromium, Firefox and WebKit, via Playwright
+- `npm run test:ios` - Safari on an iOS simulator (macOS with Xcode only)
 - `npm run test:bun` - Bun
 - `npm run test:deno` - Deno
 - `npm run test:happy-dom` - happy-dom
 - `npm run test:workerd` - workerd (Cloudflare Workers), via miniflare
 - `npm run test:types` - type compatibility with the WhatWG `EventSource`
-- `npm run test:all` - all of the above, in sequence
+- `npm run test:all` - all of the above except `test:ios`, in sequence
 
 The browser tests need Playwright's browsers installed once, with `npx playwright install chromium firefox webkit`.
+
+`test:ios` is out of `test:all` because it only runs on macOS with Xcode's iOS platform installed, but do reach for it whenever a report names an iPhone or iPad: Playwright's `webkit` is a desktop build with a different networking stack, so it is not evidence about iOS. It picks an iPhone on the newest installed iOS runtime, preferring one that is already booted; set `IOS_SIMULATOR_DEVICE` to pin a device by name, eg `IOS_SIMULATOR_DEVICE='iPad (A16)' npm run test:ios`. If nothing is installed, `xcodebuild -downloadPlatform iOS` fetches a runtime. The simulator is left booted afterwards, since booting one costs most of a minute.
+
+The provider (`test/helpers/iosSimulator.ts`) drives the simulator with `simctl` alone - Safari there is opened with `simctl openurl` and reports back over the websocket Vitest already opens, so no WebDriver or Appium stack is involved. That also means nothing in the suite can drive the page: keep the tests free of Vitest's browser locators and `userEvent`, which this provider does not implement.
 
 Every environment gates CI. Two of them deviate from the rest in ways that are the runtime's doing rather than ours, and those tests are asserted as known failures with `test.fails` rather than skipped or excluded, so each one turns red - prompting removal of the workaround - once the runtime is fixed:
 
