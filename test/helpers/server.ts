@@ -61,8 +61,6 @@ export function handleRequest(
       return writeCounter(req, res)
     case '/mixed-ids':
       return writeMixedIds(req, res)
-    case '/invalid-stream':
-      return writeInvalidStream(req, res)
     case '/id-only':
       return writeIdOnly(req, res)
     case '/identified':
@@ -73,6 +71,8 @@ export function handleRequest(
       return writeSlowConnect(req, res)
     case '/debug':
       return writeDebug(req, res)
+    case '/invalid-stream':
+      return writeInvalidStream(req, res)
     case '/set-cookie':
       return writeCookies(req, res)
     case '/authed':
@@ -145,14 +145,6 @@ async function writeCounter(req: IncomingMessage, res: ServerResponse) {
   }
 
   res.end()
-}
-
-function writeInvalidStream(req: IncomingMessage, res: ServerResponse) {
-  const status =
-    new URL(req.url || '/', 'http://localhost').searchParams.get('status') === '403' ? 403 : 200
-  res.writeHead(status, {'Content-Type': status === 200 ? 'text/plain' : 'text/event-stream'})
-  // Keep the response open so the client owns releasing the failed connection.
-  res.write('This response is not a usable event stream.')
 }
 
 /**
@@ -571,6 +563,14 @@ function writeAuthed(req: IncomingMessage, res: ServerResponse) {
   )
 
   res.end()
+}
+
+function writeInvalidStream(req: IncomingMessage, res: ServerResponse) {
+  const status =
+    new URL(req.url || '/', 'http://localhost').searchParams.get('status') === '403' ? 403 : 200
+  res.writeHead(status, {'Content-Type': status === 200 ? 'text/plain' : 'text/event-stream'})
+  // Keep the response open so the client owns releasing the failed connection.
+  res.write('This response is not a usable event stream.')
 }
 
 function writeFallback(_req: IncomingMessage, res: ServerResponse) {
