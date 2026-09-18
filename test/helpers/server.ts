@@ -61,6 +61,8 @@ export function handleRequest(
       return writeCounter(req, res)
     case '/mixed-ids':
       return writeMixedIds(req, res)
+    case '/message-burst':
+      return writeMessageBurst(req, res)
     case '/id-only':
       return writeIdOnly(req, res)
     case '/identified':
@@ -143,6 +145,12 @@ async function writeCounter(req: IncomingMessage, res: ServerResponse) {
   }
 
   res.end()
+}
+
+function writeMessageBurst(req: IncomingMessage, res: ServerResponse) {
+  const event = new URL(req.url || '/', 'http://localhost').searchParams.get('event') || 'message'
+  res.writeHead(200, {'Content-Type': 'text/event-stream'})
+  res.end(['first', 'second', 'third'].map((data) => encode({event, data})).join(''))
 }
 
 /**
