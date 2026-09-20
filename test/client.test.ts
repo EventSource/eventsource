@@ -485,6 +485,45 @@ test('will not reconnect after explicit `close()` in `onError`', async () => {
   expect(es.readyState, 'readyState').toBe(OurEventSource.CLOSED)
 })
 
+test('does not dispatch buffered events after close during event dispatch', async () => {
+  const url = `${serverUrl}/`
+
+  // Multiple SSE events delivered in a single chunk: a listener closing the EventSource
+  // while the first event is being dispatched must not observe the still-buffered later
+  // events being dispatched afterwards - the dispatch steps stop once the connection is
+  // closed (https://html.spec.whatwg.org/multipage/server-sent-events.html#dispatchMessage).
+  const chunkedFetch: FetchLike = async () => ({
+    body: new ReadableStream<Uint8Array>({
+      start(controller) {
+        const encoder = new TextEncoder()
+        controller.enqueue(encoder.encode('data: first\n\ndata: second\n\ndata: third\n\n'))
+      },
+    }),
+    redirected: false,
+    status: 200,
+    headers: new Headers({'content-type': 'text/event-stream'}),
+    url,
+  })
+
+  const onMessage = getCallCounter({
+    name: 'onMessage',
+    onCall: ({numCalls}) => {
+      if (numCalls === 1) {
+        es.close()
+      }
+    },
+  })
+  const es = new OurEventSource(url, {fetch: chunkedFetch})
+
+  es.addEventListener('message', onMessage.listener)
+  await onMessage.waitForCallCount(1)
+  // Give any incorrectly-queued subsequent dispatches the chance to happen before asserting.
+  await new Promise((resolve) => setTimeout(resolve, 25))
+
+  expect(onMessage.callCount, 'messages dispatched').toBe(1)
+  expect(es.readyState, 'readyState').toBe(OurEventSource.CLOSED)
+})
+
 test('will have correct ready state throughout lifecycle', async () => {
   const onMessage = getCallCounter({name: 'onMessage'})
   const onOpen = getCallCounter<Event>({name: 'onOpen'})

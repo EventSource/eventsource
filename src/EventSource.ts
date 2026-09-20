@@ -601,6 +601,14 @@ class EventSourceImpl extends EventTarget implements EventSource {
    * @internal
    */
   #onEvent = (event: EventSourceMessage) => {
+    // [spec] Once the EventSource has been closed - including by a listener during a
+    // previous event's dispatch, when several parsed events arrive in one chunk - the
+    // event dispatch steps stop: no further buffered events are dispatched.
+    // https://html.spec.whatwg.org/multipage/server-sent-events.html#dispatchMessage
+    if (this.#readyState === this.CLOSED) {
+      return
+    }
+
     const origin = this.#redirectUrl ? this.#redirectUrl.origin : this.#url.origin
     // [spec] The `lastEventId` attribute is the last event ID string of the event
     // source, i.e. the persisted buffer (`#lastEventId`) - not the current event's `id`.
