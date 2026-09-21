@@ -793,6 +793,42 @@ browserTest(
   },
 )
 
+test.each([200, 403])(
+  'aborts a rejected HTTP %i response before reporting failure',
+  async (status) => {
+    let signal: AbortSignal | undefined
+    let abortedOnError: boolean | undefined
+    const onError = getCallCounter<ErrorEvent>({name: 'connection failure'})
+    const es = new OurEventSource(`${serverUrl}/invalid-stream?status=${status}`, {
+      fetch(url, init) {
+        signal = init.signal
+        return request(url, init)
+      },
+    })
+    es.addEventListener('error', (event) => {
+      abortedOnError = signal?.aborted
+      onError.listener(event)
+    })
+
+    try {
+      await onError.waitForCallCount(1)
+      expect(es.readyState).toBe(OurEventSource.CLOSED)
+      expect(abortedOnError).toBe(true)
+      expect(signal?.aborted).toBe(true)
+      expect(onError.lastArg.code).toBe(status)
+      expect(onError.lastArg.message).toBe(
+        status === 200
+          ? 'Invalid content type, expected "text/event-stream"'
+          : 'Non-200 status code (403)',
+      )
+      es.close()
+      expect(onError.callCount).toBe(1)
+    } finally {
+      es.close()
+    }
+  },
+)
+
 test('throws on `fetch()` that does not return web-stream', async () => {
   const url = `${serverUrl}/`
 

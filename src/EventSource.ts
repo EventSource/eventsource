@@ -673,9 +673,8 @@ class EventSourceImpl extends EventTarget implements EventSource {
   #failConnection(message?: string, code?: number) {
     // [spec] …if the readyState attribute is set to a value other than CLOSED,
     // [spec] sets the readyState attribute to CLOSED…
-    if (this.#readyState !== this.CLOSED) {
-      this.#readyState = this.CLOSED
-    }
+    // Release the request before reporting failure, including responses with an unread body.
+    this.close()
 
     // [spec] …and fires an event named `error` at the `EventSource` object.
     // [spec] Once the user agent has failed the connection, it does not attempt to reconnect.
