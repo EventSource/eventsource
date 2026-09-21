@@ -1,5 +1,13 @@
 # 📓 Changelog
 
+## 5.1.2
+
+### Patch Changes
+
+- [#363](https://github.com/EventSource/eventsource/pull/363) [`c4d6b9a`](https://github.com/EventSource/eventsource/commit/c4d6b9a98580225d34ebf6887564a7d7b7eaa3c7) Thanks [@brennanbutler01](https://github.com/brennanbutler01)! - Abort the underlying request when a response fails EventSource validation.
+
+- [#362](https://github.com/EventSource/eventsource/pull/362) [`627eb17`](https://github.com/EventSource/eventsource/commit/627eb17b4ff2a71ee466453f08fd0dc7989ca1ad) Thanks [@brennanbutler01](https://github.com/brennanbutler01)! - Stop dispatching buffered messages when an event listener closes the connection.
+
 ## 5.1.1
 
 ### Patch Changes
