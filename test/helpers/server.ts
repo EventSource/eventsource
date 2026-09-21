@@ -148,7 +148,7 @@ async function writeCounter(req: IncomingMessage, res: ServerResponse) {
 }
 
 function writeMessageBurst(req: IncomingMessage, res: ServerResponse) {
-  const event = new URL(req.url || '/', 'http://localhost').searchParams.get('event') || 'message'
+  const event = new URL(req.url || '/', 'http://localhost').searchParams.get('event') ?? 'message'
   res.writeHead(200, {'Content-Type': 'text/event-stream'})
   res.end(['first', 'second', 'third'].map((data) => encode({event, data})).join(''))
 }

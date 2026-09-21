@@ -44,9 +44,15 @@ const xOriginRedirectTest = suite === 'happy-dom' ? test.fails : test
  */
 const onHandlerTest = suite === 'workerd' ? test.fails : test
 
-test.each(['message', 'notice'])(
-  'stops dispatching buffered %s events when a listener closes the connection',
-  async (eventType) => {
+const bufferedEventTypes = [
+  {name: 'nameless', eventType: ''},
+  {name: 'message', eventType: 'message'},
+  {name: 'notice', eventType: 'notice'},
+]
+
+test.each(bufferedEventTypes)(
+  'stops dispatching buffered $name events when a listener closes the connection',
+  async ({eventType}) => {
     const seen: string[] = []
     const onMessage = getCallCounter({name: 'first message'})
     const es = new OurEventSource(`${serverUrl}/message-burst?event=${eventType}`, {
@@ -58,7 +64,7 @@ test.each(['message', 'notice'])(
       },
     })
 
-    es.addEventListener(eventType, (event) => {
+    es.addEventListener(eventType || 'message', (event) => {
       seen.push(event.data)
       es.close()
       onMessage.listener(event)
@@ -74,13 +80,13 @@ test.each(['message', 'notice'])(
   },
 )
 
-test.each(['message', 'notice'])(
-  'dispatches every buffered %s event while open',
-  async (eventType) => {
+test.each(bufferedEventTypes)(
+  'dispatches every buffered $name event while open',
+  async ({eventType}) => {
     const seen: string[] = []
     const onMessage = getCallCounter({name: 'messages'})
     const es = new OurEventSource(`${serverUrl}/message-burst?event=${eventType}`, esInit)
-    es.addEventListener(eventType, (event) => {
+    es.addEventListener(eventType || 'message', (event) => {
       seen.push(event.data)
       onMessage.listener(event)
     })
