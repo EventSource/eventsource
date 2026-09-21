@@ -601,6 +601,11 @@ class EventSourceImpl extends EventTarget implements EventSource {
    * @internal
    */
   #onEvent = (event: EventSourceMessage) => {
+    // A listener can close the connection while the parser is still processing this chunk.
+    if (this.#readyState === this.CLOSED) {
+      return
+    }
+
     const origin = this.#redirectUrl ? this.#redirectUrl.origin : this.#url.origin
     // [spec] The `lastEventId` attribute is the last event ID string of the event
     // source, i.e. the persisted buffer (`#lastEventId`) - not the current event's `id`.

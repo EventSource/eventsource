@@ -44,6 +44,62 @@ const xOriginRedirectTest = suite === 'happy-dom' ? test.fails : test
  */
 const onHandlerTest = suite === 'workerd' ? test.fails : test
 
+const bufferedEventTypes = [
+  {name: 'nameless', eventType: ''},
+  {name: 'message', eventType: 'message'},
+  {name: 'notice', eventType: 'notice'},
+]
+
+test.each(bufferedEventTypes)(
+  'stops dispatching buffered $name events when a listener closes the connection',
+  async ({eventType}) => {
+    const seen: string[] = []
+    const onMessage = getCallCounter({name: 'first message'})
+    const es = new OurEventSource(`${serverUrl}/message-burst?event=${eventType}`, {
+      async fetch(url, init) {
+        const response = await request(url, init)
+        // Keep the real HTTP exchange, but make the chunk boundary deterministic.
+        const body = await response.arrayBuffer()
+        return new Response(body, {status: response.status, headers: response.headers})
+      },
+    })
+
+    es.addEventListener(eventType || 'message', (event) => {
+      seen.push(event.data)
+      es.close()
+      onMessage.listener(event)
+    })
+
+    try {
+      await onMessage.waitForCallCount(1)
+      expect(seen).toEqual(['first'])
+      expect(es.readyState).toBe(OurEventSource.CLOSED)
+    } finally {
+      es.close()
+    }
+  },
+)
+
+test.each(bufferedEventTypes)(
+  'dispatches every buffered $name event while open',
+  async ({eventType}) => {
+    const seen: string[] = []
+    const onMessage = getCallCounter({name: 'messages'})
+    const es = new OurEventSource(`${serverUrl}/message-burst?event=${eventType}`, esInit)
+    es.addEventListener(eventType || 'message', (event) => {
+      seen.push(event.data)
+      onMessage.listener(event)
+    })
+
+    try {
+      await onMessage.waitForCallCount(3)
+      expect(seen).toEqual(['first', 'second', 'third'])
+    } finally {
+      es.close()
+    }
+  },
+)
+
 test('can connect, receive message, manually disconnect', async () => {
   const onMessage = getCallCounter({name: 'onMessage'})
   const es = new OurEventSource(new URL(`${serverUrl}/`))
