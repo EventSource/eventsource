@@ -70,21 +70,21 @@
     "posttest": "npm run lint"
   },
   "dependencies": {
-    "eventsource-parser": "^4.1.0"
+    "eventsource-parser": "^4.1.1"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^1.0.0",
-    "@changesets/cli": "^3.0.0",
-    "@cloudflare/vitest-pool-workers": "^0.21.3",
+    "@changesets/changelog-github": "^1.0.1",
+    "@changesets/cli": "^3.0.3",
+    "@cloudflare/vitest-pool-workers": "^0.22.0",
     "@tsconfig/strictest": "^2.0.8",
     "@types/node": "^22.19.19",
     "@vitest/browser": "^4.1.10",
     "@vitest/browser-playwright": "^4.1.10",
     "eventsource-encoder": "^1.0.2",
-    "happy-dom": "^20.11.2",
+    "happy-dom": "^20.14.5",
     "oxfmt": "^0.52.0",
     "oxlint": "^1.67.0",
-    "playwright": "^1.60.0",
+    "playwright": "^1.63.0",
     "typescript": "^7.0.0",
     "vitest": "^4.1.10"
   },
