@@ -75,6 +75,8 @@ export function handleRequest(
       return writeDebug(req, res)
     case '/invalid-stream':
       return writeInvalidStream(req, res)
+    case '/content-type':
+      return writeContentType(req, res)
     case '/set-cookie':
       return writeCookies(req, res)
     case '/authed':
@@ -579,6 +581,13 @@ function writeInvalidStream(req: IncomingMessage, res: ServerResponse) {
   res.writeHead(status, {'Content-Type': status === 200 ? 'text/plain' : 'text/event-stream'})
   // Keep the response open so the client owns releasing the failed connection.
   res.write('This response is not a usable event stream.')
+}
+
+function writeContentType(req: IncomingMessage, res: ServerResponse) {
+  const contentTypes = new URL(req.url || '/', 'http://localhost').searchParams.getAll('value')
+  res.writeHead(200, contentTypes.length === 0 ? {} : {'Content-Type': contentTypes})
+  tryWrite(res, encode({data: 'Hello, world!'}))
+  tryWrite(res, ':\n')
 }
 
 function writeFallback(_req: IncomingMessage, res: ServerResponse) {

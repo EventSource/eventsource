@@ -484,7 +484,7 @@ class EventSourceImpl extends EventTarget implements EventSource {
 
     // [spec] …or if res's `Content-Type` is not `text/event-stream`, then fail the connection.
     const contentType = headers.get('content-type') || ''
-    if (!contentType.startsWith('text/event-stream')) {
+    if (getMimeTypeEssence(contentType) !== 'text/event-stream') {
       this.#failConnection('Invalid content type, expected "text/event-stream"', status)
       return
     }
@@ -809,4 +809,39 @@ function defineEventProperty(
     enumerable: true,
     configurable: true,
   })
+}
+
+// Fetch selects the last valid MIME type, ignoring invalid values and */*.
+// Commas inside quoted parameters belong to the same value.
+// https://fetch.spec.whatwg.org/#concept-header-extract-mime-type
+function getMimeTypeEssence(contentType: string): string | undefined {
+  let essence: string | undefined
+  let start = 0
+  let quoted = false
+
+  for (let i = 0; i <= contentType.length; i++) {
+    const char = contentType[i]
+    if (i < contentType.length) {
+      if (quoted && char === '\\' && i + 1 < contentType.length) {
+        i++
+        continue
+      }
+      if (char === '"') {
+        quoted = !quoted
+        continue
+      }
+      if (char !== ',' || quoted) continue
+    }
+
+    const candidate = contentType
+      .slice(start, i)
+      .match(
+        /^[\t\n\r ]*([!#$%&'*+.^_`|~0-9A-Za-z-]+\/[!#$%&'*+.^_`|~0-9A-Za-z-]+)[\t\n\r ]*(?:;|$)/,
+      )?.[1]
+      ?.toLowerCase()
+    if (candidate && candidate !== '*/*') essence = candidate
+    start = i + 1
+  }
+
+  return essence
 }

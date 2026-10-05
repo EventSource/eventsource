@@ -793,6 +793,89 @@ browserTest(
   },
 )
 
+test.each([
+  {contentType: 'text/event-stream', valid: true},
+  {contentType: 'Text/Event-Stream', valid: true},
+  {contentType: 'TEXT/EVENT-STREAM', valid: true},
+  {contentType: 'text/event-stream;charset=utf-8', valid: true},
+  {contentType: 'Text/Event-Stream; charset=UTF-8', valid: true},
+  {contentType: 'text/event-stream ; charset=utf-8', valid: true},
+  {contentType: ' \ttext/event-stream\t ; charset=utf-8', valid: true},
+  {contentType: 'text/event-stream; boundary="one;two"', valid: true},
+  {contentType: 'text/event-stream;', valid: true},
+  {contentType: 'text/event-stream; charset', valid: true},
+  {contentType: 'text/event-stream; charset=iso-8859-1', valid: true},
+  {contentType: 'text/plain, Text/Event-Stream; charset=utf-8', valid: true},
+  {contentType: 'text/event-stream, invalid', valid: true},
+  {contentType: 'text/event-stream, */*', valid: true},
+  {contentType: 'text/event-stream,', valid: true},
+  {contentType: ', text/event-stream', valid: true},
+  {contentType: 'text/event-stream; note="a,b"', valid: true},
+  {contentType: 'text/event-stream; note="a\\\",b"', valid: true},
+  {contentType: 'text/event-stream; note="unclosed, text/plain', valid: true},
+  {contentType: 'text/plain; note="a,b", text/event-stream', valid: true},
+  {contentType: ['text/plain', 'Text/Event-Stream'], valid: true},
+  {contentType: ['text/event-stream', 'invalid'], valid: true},
+  {contentType: ['text/event-stream', '*/*'], valid: true},
+  {contentType: null, valid: false},
+  {contentType: '', valid: false},
+  {contentType: 'text/plain', valid: false},
+  {contentType: 'text/event-streaming', valid: false},
+  {contentType: 'text/event-stream+json', valid: false},
+  {contentType: 'text/event-stream/extra', valid: false},
+  {contentType: 'text/event-stream, text/plain', valid: false},
+  {contentType: 'text/event-stream; charset=utf-8, text/plain', valid: false},
+  {contentType: 'text/plain; note="x, text/event-stream"', valid: false},
+  {contentType: 'text/event-stream; note="a\\\",b", text/plain', valid: false},
+  {contentType: ['text/event-stream', 'text/plain'], valid: false},
+  {contentType: 'text/event-stream garbage', valid: false},
+  {contentType: 'text /event-stream', valid: false},
+  {contentType: 'text/ event-stream', valid: false},
+  {contentType: 'text/event-stream\u00a0; charset=utf-8', valid: false},
+  {contentType: '\u00a0text/event-stream', valid: false},
+])('checks SSE MIME essence for $contentType', async ({contentType, valid}) => {
+  const params = new URLSearchParams()
+  if (contentType !== null) {
+    for (const value of Array.isArray(contentType) ? contentType : [contentType]) {
+      params.append('value', value)
+    }
+  }
+
+  let signal: AbortSignal | undefined
+  const onMessage = getCallCounter({name: 'MIME message'})
+  const onError = getCallCounter<ErrorEvent>({name: 'MIME error'})
+  const es = new OurEventSource(`${serverUrl}/content-type?${params}`, {
+    ...esInit,
+    fetch(url, init) {
+      signal = init.signal
+      return request(url, init)
+    },
+  })
+  es.addEventListener('message', onMessage.listener)
+  es.addEventListener('error', onError.listener)
+
+  try {
+    const outcome = await Promise.race([
+      onMessage.waitForCallCount(1).then(() => 'message'),
+      onError.waitForCallCount(1).then(() => 'error'),
+    ])
+    expect(outcome).toBe(valid ? 'message' : 'error')
+
+    if (valid) {
+      expect(es.readyState).toBe(OurEventSource.OPEN)
+      expect(onMessage.lastArg.data).toBe('Hello, world!')
+      expect(onError.callCount).toBe(0)
+    } else {
+      expect(es.readyState).toBe(OurEventSource.CLOSED)
+      expect(onError.lastArg.message).toBe('Invalid content type, expected "text/event-stream"')
+      expect(onMessage.callCount).toBe(0)
+      expect(signal?.aborted).toBe(true)
+    }
+  } finally {
+    es.close()
+  }
+})
+
 test.each([200, 403])(
   'aborts a rejected HTTP %i response before reporting failure',
   async (status) => {
