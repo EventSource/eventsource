@@ -1,5 +1,17 @@
 # 📓 Changelog
 
+## 5.1.3
+
+### Patch Changes
+
+- [#369](https://github.com/EventSource/eventsource/pull/369) [`d3fe0d3`](https://github.com/EventSource/eventsource/commit/d3fe0d3bd40cf0bf3e34f634d9d93441c486110f) Thanks [@rexxars](https://github.com/rexxars)! - Accept case variations of `text/event-stream` and reject different MIME subtypes such as `text/event-streaming`.
+
+- [#370](https://github.com/EventSource/eventsource/pull/370) [`02634eb`](https://github.com/EventSource/eventsource/commit/02634eb9091e98b0b6e2a69dd39244b80fcd4dc5) Thanks [@rexxars](https://github.com/rexxars)! - Avoid double-encoding non-ASCII event IDs when reconnecting with Cloudflare Workers' native `fetch`.
+
+- [#367](https://github.com/EventSource/eventsource/pull/367) [`fd62d79`](https://github.com/EventSource/eventsource/commit/fd62d79007e842bbc852228aa28ef628d78f49a4) Thanks [@OsamaAnsar](https://github.com/OsamaAnsar)! - Fixed `Last-Event-ID` not being sent as UTF-8 on reconnect
+
+  The event ID was passed to `fetch()` as a plain string header value, but header values are byte strings. An ID containing a character above U+00FF, eg `€`, made `fetch()` throw a `TypeError` on every reconnect attempt, so the connection was never re-established. An ID with characters in the U+0080 to U+00FF range, eg `é`, was sent as a single Latin-1 byte instead of its UTF-8 encoding. The header now carries the UTF-8 bytes of the ID, as the specification requires.
+
 ## 5.1.2
 
 ### Patch Changes
