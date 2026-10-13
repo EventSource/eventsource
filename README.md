@@ -16,7 +16,7 @@ npm install --save eventsource
 
 - Node.js >= 22.12
 - Chrome >= 84
-- Safari >= 15
+- Safari >= 15 ([non-ASCII event ID limitation](#safari-and-webkit))
 - Firefox >= 105
 - Edge >= 84
 - Deno >= 2
@@ -97,6 +97,12 @@ error TS2304: Cannot find name 'Event'.
 error TS2304: Cannot find name 'EventTarget'.
 error TS2304: Cannot find name 'MessageEvent'.
 ```
+
+### Safari and WebKit
+
+Safari/WebKit encodes non-ASCII `Last-Event-ID` header values as UTF-8 a second time, so the server receives a different ID on reconnect. This affects accented characters, currency symbols and emoji. Event data and `MessageEvent.lastEventId` retain their original Unicode values.
+
+For the widest client compatibility, we recommend that servers use ASCII-only values in the event stream's `id` field. See [WebKit's header encoding](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/network/cf/ResourceRequestCFNet.h#L76-L85) for the underlying behavior.
 
 ### Cloudflare Workers
 

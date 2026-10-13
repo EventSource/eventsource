@@ -16,10 +16,13 @@ declare module 'vitest' {
     suite: Suite
     /** Port the test endpoints are reachable on. */
     port: number
+    /** Whether the browser uses WebKit, including Safari on the iOS simulator. */
+    isWebKit?: boolean
   }
 }
 
 export const suite: Suite = inject('suite')
+export const isWebKit = inject('isWebKit') === true
 
 /**
  * Origin the test endpoints are served from.

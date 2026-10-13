@@ -40,10 +40,12 @@ The browser tests need Playwright's browsers installed once, with `npx playwrigh
 
 The provider (`test/helpers/iosSimulator.ts`) drives the simulator with `simctl` alone - Safari there is opened with `simctl openurl` and reports back over the websocket Vitest already opens, so no WebDriver or Appium stack is involved. That also means nothing in the suite can drive the page: keep the tests free of Vitest's browser locators and `userEvent`, which this provider does not implement.
 
-Every environment gates CI. Two of them deviate from the rest in ways that are the runtime's doing rather than ours, and those tests are asserted as known failures with `test.fails` rather than skipped or excluded, so each one turns red - prompting removal of the workaround - once the runtime is fixed:
+Use `test.fails` for runtime bugs when a future fix must turn the test red and prompt removal of the workaround:
 
 - **workerd**, seven of the `on*` handler tests. Its `EventTarget` dispatches `on<type>` handler properties itself, on top of the `addEventListener` call our `on*` setters make, so those handlers fire more than once, assigning `null` only removes one registration, and they fire ahead of listeners registered before them ([cloudflare/workerd#6022](https://github.com/cloudflare/workerd/issues/6022)). The two `on*` tests that register a single handler and check that it fired are unaffected and run normally.
 - **happy-dom**, the four cross-origin redirect tests. It does not strip `Authorization` when a request is redirected to a different origin, as [the fetch spec requires](https://fetch.spec.whatwg.org/#http-redirect-fetch).
+
+For Safari/WebKit, skip only the non-ASCII `Last-Event-ID` round-trip cases. Keep the Unicode parsing and header-construction assertions active. Document this limitation in the README.
 
 The per-runtime message pattern in the extended-properties test is the other place runtimes differ: a refused connection is reported as `fetch failed` on Node, `connect ECONNREFUSED …` under happy-dom, `Network connection lost.` on workerd, and something different again in each browser engine. That one is only wording, so the pattern accepts all of them.
 
