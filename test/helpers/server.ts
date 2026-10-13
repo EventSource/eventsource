@@ -65,6 +65,8 @@ export function handleRequest(
       return writeMessageBurst(req, res)
     case '/id-only':
       return writeIdOnly(req, res)
+    case '/echo-last-event-id':
+      return writeEchoLastEventId(req, res)
     case '/identified':
       return writeIdentifiedListeners(req, res)
     case '/end-after-one':
@@ -184,6 +186,30 @@ function writeIdOnly(req: IncomingMessage, res: ServerResponse) {
   if (!lastEventId) {
     tryWrite(res, encode({retry: 50}))
     tryWrite(res, 'id: 42\n\n')
+    res.end()
+    return
+  }
+
+  tryWrite(res, encode({data: `Reconnected with ${lastEventId}`}))
+  res.end()
+}
+
+/**
+ * Sends the event ID given in the `id` query parameter on the first connection, then closes. On the
+ * reconnect, echoes back the `Last-Event-ID` header, decoded as UTF-8, so that a test can check
+ * exactly which bytes the client put on the wire.
+ */
+function writeEchoLastEventId(req: IncomingMessage, res: ServerResponse) {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive',
+  })
+
+  const lastEventId = getLastEventIdFromUtf8Header(req)
+  if (lastEventId === undefined) {
+    const id = new URL(req.url || '/', 'http://localhost').searchParams.get('id') ?? ''
+    tryWrite(res, encode({retry: 50, id, data: 'First connection'}))
     res.end()
     return
   }
@@ -599,6 +625,15 @@ function delay(ms: number): Promise<void> {
 function getLastEventId(req: IncomingMessage): string | undefined {
   const lastId = req.headers['last-event-id']
   return typeof lastId === 'string' ? lastId : undefined
+}
+
+/**
+ * Like `getLastEventId()`, but for a header value that carries UTF-8 bytes. Node hands header
+ * values over with one character per byte, so the bytes have to be decoded explicitly.
+ */
+function getLastEventIdFromUtf8Header(req: IncomingMessage): string | undefined {
+  const lastId = getLastEventId(req)
+  return lastId === undefined ? undefined : Buffer.from(lastId, 'latin1').toString('utf8')
 }
 
 function tryWrite(res: ServerResponse, chunk: string | Uint8Array) {

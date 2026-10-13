@@ -559,7 +559,11 @@ class EventSourceImpl extends EventTarget implements EventSource {
    * @internal
    */
   #getRequestOptions(): EventSourceFetchInit {
-    const lastEvent = this.#lastEventId ? {'Last-Event-ID': this.#lastEventId} : undefined
+    // [spec] If the last event ID string is not the empty string, set `Last-Event-ID` to the last
+    // event ID string, encoded as UTF-8.
+    const lastEvent = this.#lastEventId
+      ? {'Last-Event-ID': utf8ToByteString(this.#lastEventId)}
+      : undefined
 
     const init: EventSourceFetchInit = {
       // [spec] Let `corsAttributeState` be `Anonymous`…
@@ -809,4 +813,25 @@ function defineEventProperty(
     enumerable: true,
     configurable: true,
   })
+}
+
+/**
+ * Encodes a string as UTF-8 and returns those bytes as a "byte string": one character per byte,
+ * each in the range U+0000 to U+00FF.
+ *
+ * Header values are byte strings. `fetch()` throws a `TypeError` for any character above U+00FF,
+ * and sends a character in U+0080 to U+00FF as a single Latin-1 byte, rather than as its UTF-8
+ * encoding. Passing the UTF-8 bytes through as characters makes `fetch()` put exactly those
+ * bytes on the wire.
+ *
+ * @param value - The string to encode
+ * @returns The UTF-8 bytes of `value`, one per character
+ * @internal
+ */
+function utf8ToByteString(value: string): string {
+  let byteString = ''
+  for (const byte of new TextEncoder().encode(value)) {
+    byteString += String.fromCharCode(byte)
+  }
+  return byteString
 }

@@ -480,6 +480,33 @@ test('an ID from a block without data is used for reconnecting and later message
   await deferClose(es)
 })
 
+const nonAsciiIds = [
+  {name: 'Latin-1 (U+0080 to U+00FF)', id: 'café'},
+  {name: 'beyond Latin-1 (above U+00FF)', id: 'café-€1'},
+  {name: 'outside the BMP', id: 'id-😀'},
+]
+
+test.each(nonAsciiIds)(
+  'sends a UTF-8 encoded `Last-Event-ID` for an ID with characters $name',
+  async ({id}) => {
+    const onMessage = getCallCounter({name: 'onMessage'})
+    const url = `${serverUrl}/echo-last-event-id?id=${encodeURIComponent(id)}`
+    const es = new OurEventSource(url, esInit)
+
+    es.addEventListener('message', onMessage.listener)
+
+    // The first message arrives together with the ID, the second is the echo from the reconnect
+    await onMessage.waitForCallCount(2)
+
+    expect(onMessage.lastArg).toMatchObject({
+      data: `Reconnected with ${id}`,
+      lastEventId: id,
+    })
+
+    await deferClose(es)
+  },
+)
+
 test('will not reconnect after explicit `close()`', async () => {
   const onMessage = getCallCounter({name: 'onMessage'})
   const onError = getCallCounter<ErrorEvent>({name: 'onError'})
