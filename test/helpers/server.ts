@@ -100,9 +100,12 @@ export function handleRequest(
   }
 }
 
-function writeDefault(_req: IncomingMessage, res: ServerResponse) {
+function writeDefault(req: IncomingMessage, res: ServerResponse) {
+  const contentType =
+    new URL(req.url || '/', 'http://localhost').searchParams.get('content-type') ??
+    'text/event-stream'
   res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
+    'Content-Type': contentType,
     'Cache-Control': 'no-cache',
     Connection: 'keep-alive',
   })

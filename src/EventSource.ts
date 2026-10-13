@@ -484,7 +484,7 @@ class EventSourceImpl extends EventTarget implements EventSource {
 
     // [spec] …or if res's `Content-Type` is not `text/event-stream`, then fail the connection.
     const contentType = headers.get('content-type') || ''
-    if (!contentType.startsWith('text/event-stream')) {
+    if (!/^[\t\n\r ]*text\/event-stream[\t\n\r ]*(?:;|$)/i.test(contentType)) {
       this.#failConnection('Invalid content type, expected "text/event-stream"', status)
       return
     }
