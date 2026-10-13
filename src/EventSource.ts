@@ -561,8 +561,15 @@ class EventSourceImpl extends EventTarget implements EventSource {
   #getRequestOptions(): EventSourceFetchInit {
     // [spec] If the last event ID string is not the empty string, set `Last-Event-ID` to the last
     // event ID string, encoded as UTF-8.
+    // workerd's native fetch encodes header values as UTF-8 itself.
     const lastEvent = this.#lastEventId
-      ? {'Last-Event-ID': utf8ToByteString(this.#lastEventId)}
+      ? {
+          'Last-Event-ID':
+            this.#fetch === globalThis.fetch &&
+            globalThis.navigator?.userAgent === 'Cloudflare-Workers'
+              ? this.#lastEventId
+              : utf8ToByteString(this.#lastEventId),
+        }
       : undefined
 
     const init: EventSourceFetchInit = {

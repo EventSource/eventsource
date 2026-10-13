@@ -114,6 +114,8 @@ eventSource.addEventListener('message', (event) => console.log(event.data))
 
 workerd also drops `origin` and `lastEventId` from the `MessageEvent` constructor. This module assigns them itself, so both are correct on Workers today; the workaround goes away once [workerd#6995](https://github.com/cloudflare/workerd/pull/6995) lands.
 
+Workers' native `fetch` encodes header values as UTF-8 itself. This module passes it the original event ID to avoid encoding twice. Custom `fetch` implementations receive a UTF-8 byte string; wrappers that forward to Workers' native `fetch` must decode `Last-Event-ID` back to Unicode first.
+
 ## Migrating from v1 / v2
 
 See [MIGRATION.md](MIGRATION.md#v2-to-v3) for a detailed migration guide.

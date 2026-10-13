@@ -481,10 +481,44 @@ test('an ID from a block without data is used for reconnecting and later message
 })
 
 const nonAsciiIds = [
-  {name: 'Latin-1 (U+0080 to U+00FF)', id: 'café'},
-  {name: 'beyond Latin-1 (above U+00FF)', id: 'café-€1'},
-  {name: 'outside the BMP', id: 'id-😀'},
+  {name: 'Latin-1 (U+0080 to U+00FF)', id: 'café', header: 'caf\xc3\xa9'},
+  {
+    name: 'beyond Latin-1 (above U+00FF)',
+    id: 'café-€1',
+    header: 'caf\xc3\xa9-\xe2\x82\xac1',
+  },
+  {name: 'outside the BMP', id: 'id-😀', header: 'id-\xf0\x9f\x98\x80'},
+  {
+    name: 'joined emoji with a skin tone modifier',
+    id: 'id-👩🏽‍💻',
+    header: 'id-\xf0\x9f\x91\xa9\xf0\x9f\x8f\xbd\xe2\x80\x8d\xf0\x9f\x92\xbb',
+  },
 ]
+
+test.each(nonAsciiIds)(
+  'provides a UTF-8 `Last-Event-ID` byte string to custom fetch for characters $name',
+  async ({id, header}) => {
+    let lastEventIdHeader: string | undefined
+    const onMessage = getCallCounter({name: 'onMessage'})
+    const url = `${serverUrl}/echo-last-event-id?id=${encodeURIComponent(id)}`
+    const es = new OurEventSource(url, {
+      fetch(url, init) {
+        lastEventIdHeader = init.headers['Last-Event-ID']
+        return request(url, init)
+      },
+    })
+
+    es.addEventListener('message', onMessage.listener)
+
+    try {
+      await onMessage.waitForCallCount(2)
+      expect(lastEventIdHeader).toBe(header)
+      expect(onMessage.lastArg.lastEventId).toBe(id)
+    } finally {
+      es.close()
+    }
+  },
+)
 
 test.each(nonAsciiIds)(
   'sends a UTF-8 encoded `Last-Event-ID` for an ID with characters $name',
@@ -495,15 +529,15 @@ test.each(nonAsciiIds)(
 
     es.addEventListener('message', onMessage.listener)
 
-    // The first message arrives together with the ID, the second is the echo from the reconnect
-    await onMessage.waitForCallCount(2)
+    try {
+      // The first message arrives together with the ID, the second is the echo from the reconnect
+      await onMessage.waitForCallCount(2)
 
-    expect(onMessage.lastArg).toMatchObject({
-      data: `Reconnected with ${id}`,
-      lastEventId: id,
-    })
-
-    await deferClose(es)
+      expect(onMessage.lastArg.lastEventId).toBe(id)
+      expect(onMessage.lastArg.data).toBe(`Reconnected with ${id}`)
+    } finally {
+      es.close()
+    }
   },
 )
 
