@@ -11,12 +11,12 @@ export default defineConfig({
     ...sharedConfig,
     // No `globalSetup`: the endpoints are served by the plugin above, not a standalone server.
     provide: {port: BROWSER_PORT, suite: 'browser'},
+    // `127.0.0.1` rather than `localhost`, so that `localhost` is left over to serve as the
+    // second origin the CORS and cross-origin redirect tests need.
+    api: {host: '127.0.0.1', port: BROWSER_PORT},
     browser: {
       enabled: true,
       provider: playwright(),
-      // `127.0.0.1` rather than `localhost`, so that `localhost` is left over to serve as the
-      // second origin the CORS and cross-origin redirect tests need.
-      api: {host: '127.0.0.1', port: BROWSER_PORT},
       instances: [
         {browser: 'chromium', headless: true},
         {browser: 'firefox', headless: true},

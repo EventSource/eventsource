@@ -18,12 +18,12 @@ export default defineConfig({
   test: {
     ...sharedConfig,
     provide: {port: BROWSER_PORT, suite: 'browser', isWebKit: true},
+    // The simulator reaches the host on loopback, so this is the same address (and the same
+    // `localhost` second origin) the Playwright browsers use.
+    api: {host: '127.0.0.1', port: BROWSER_PORT},
     browser: {
       enabled: true,
       provider: iosSimulator(),
-      // The simulator reaches the host on loopback, so this is the same address (and the same
-      // `localhost` second origin) the Playwright browsers use.
-      api: {host: '127.0.0.1', port: BROWSER_PORT},
       // The default budget is spent well before a cold simulator has booted - the clock starts
       // while the provider is still booting, not once the page is open. `npm run test:ios:boot`
       // takes the boot out of this window; the headroom is for when it has not been run.

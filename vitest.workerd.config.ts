@@ -1,4 +1,4 @@
-import {cloudflareTest} from '@cloudflare/vitest-pool-workers'
+import {cloudflareTest} from '@cloudflare/vitest-plugin'
 import {defineConfig} from 'vitest/config'
 
 import {TEST_PORT} from './test/helpers/routes.ts'
@@ -27,6 +27,8 @@ export default defineConfig({
   ],
   test: {
     ...sharedConfig,
+    // workerd cannot read transformed modules from Vitest's cache on the host filesystem.
+    fsModuleCache: false,
     globalSetup: standaloneServer,
     provide: {port: TEST_PORT, suite: 'workerd'},
   },
