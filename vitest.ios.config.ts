@@ -17,7 +17,7 @@ export default defineConfig({
   plugins: [ssePlugin()],
   test: {
     ...sharedConfig,
-    provide: {port: BROWSER_PORT, suite: 'browser'},
+    provide: {port: BROWSER_PORT, suite: 'browser', isWebKit: true},
     browser: {
       enabled: true,
       provider: iosSimulator(),
