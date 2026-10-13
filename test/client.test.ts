@@ -856,6 +856,38 @@ browserTest(
   },
 )
 
+test.each([
+  {contentType: 'Text/Event-Stream', valid: true},
+  {contentType: 'TEXT/EVENT-STREAM; charset=utf-8', valid: true},
+  {contentType: 'text/event-stream;charset=utf-8', valid: true},
+  {contentType: ' \ttext/event-stream\t ; charset=iso-8859-1', valid: true},
+  {contentType: 'text/event-stream; note="a,b"', valid: true},
+  {contentType: 'text/event-stream;', valid: true},
+  {contentType: 'text/event-streaming', valid: false},
+  {contentType: 'text/event-stream+json', valid: false},
+  {contentType: 'text/event-stream/extra', valid: false},
+  {contentType: 'text/event-stream garbage', valid: false},
+  {contentType: 'text /event-stream', valid: false},
+  {contentType: 'text/ event-stream', valid: false},
+  {contentType: 'text/event-stream\u00a0; charset=utf-8', valid: false},
+])('validates the event stream MIME type: $contentType', async ({contentType, valid}) => {
+  const onResult = getCallCounter<Event>({name: 'MIME result'})
+  const es = new OurEventSource(
+    `${serverUrl}/?${new URLSearchParams({'content-type': contentType})}`,
+    esInit,
+  )
+  es.addEventListener('welcome', onResult.listener)
+  es.addEventListener('error', onResult.listener)
+
+  try {
+    await onResult.waitForCallCount(1)
+    expect(onResult.lastArg.type).toBe(valid ? 'welcome' : 'error')
+    expect(es.readyState).toBe(valid ? OurEventSource.OPEN : OurEventSource.CLOSED)
+  } finally {
+    es.close()
+  }
+})
+
 test.each([200, 403])(
   'aborts a rejected HTTP %i response before reporting failure',
   async (status) => {
