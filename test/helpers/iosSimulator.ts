@@ -6,6 +6,12 @@ import type {BrowserProvider, TestProject} from 'vitest/node'
 
 const exec = promisify(execFile)
 
+declare module 'vitest/browser' {
+  interface BrowserCommands {
+    __vitest_viewport: (viewport: {width: number; height: number}) => Promise<void>
+  }
+}
+
 declare module 'vitest/node' {
   // `browser.instances[].browser` is typed from the union every installed provider contributes.
   // `@vitest/browser-playwright` narrows it to its own three engines, so without this the iOS
@@ -78,6 +84,10 @@ class IosSimulatorProvider implements BrowserProvider {
   constructor(project: TestProject, options: IosSimulatorOptions) {
     this.project = project
     this.device = options.device ?? process.env['IOS_SIMULATOR_DEVICE']
+
+    // Vitest 5 requests a viewport resize before loading the test iframe. It sizes the iframe
+    // itself; Safari keeps the simulator's screen size, so there is no browser window to resize.
+    project.browser?.registerCommand('__vitest_viewport', () => Promise.resolve())
   }
 
   getCommandsContext(): Record<string, unknown> {

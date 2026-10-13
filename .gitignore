@@ -44,7 +44,7 @@ jspm_packages
 
 # Cache
 .cache
+.vitest
 
 # Compiled output
 /dist
-

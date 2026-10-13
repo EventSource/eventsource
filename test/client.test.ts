@@ -360,7 +360,8 @@ test('message event contains correct properties', async () => {
   const onMessage = getCallCounter({name: 'onMessage'})
   const es = new OurEventSource(`${serverUrl}/counter`, esInit)
 
-  es.addEventListener('counter', onMessage.listener)
+  // A buffered chunk can dispatch multiple events before the waiting promise resumes.
+  es.addEventListener('counter', onMessage.listener, {once: true})
   await onMessage.waitForCallCount(1)
 
   expect(onMessage.lastArg).toMatchObject({
