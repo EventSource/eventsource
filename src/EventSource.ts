@@ -297,7 +297,7 @@ class EventSourceImpl extends EventTarget implements EventSource {
 
     try {
       if (url instanceof URL) {
-        this.#url = new URL(url.href)
+        this.#url = new URL(url)
       } else if (typeof url === 'string') {
         this.#url = new URL(url, getBaseURL())
       } else {
