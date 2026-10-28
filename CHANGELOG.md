@@ -1,5 +1,11 @@
 # 📓 Changelog
 
+## 5.1.4
+
+### Patch Changes
+
+- [#372](https://github.com/EventSource/eventsource/pull/372) [`0769591`](https://github.com/EventSource/eventsource/commit/07695914c127a936c3f3de3374d9e10dd1ce1e55) Thanks [@edsonsims](https://github.com/edsonsims)! - Copy URL objects during construction so later caller mutations do not change the exposed URL or reconnection target.
+
 ## 5.1.3
 
 ### Patch Changes
