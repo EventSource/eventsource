@@ -51,6 +51,45 @@ const bufferedEventTypes = [
   {name: 'notice', eventType: 'notice'},
 ]
 
+test('snapshots the caller-owned URL during construction', () => {
+  const input = new URL(`${serverUrl}/counter?original=yes`)
+  const original = input.href
+  const es = new OurEventSource(input, esInit)
+  try {
+    input.pathname = '/changed'
+    input.search = '?changed=yes'
+    input.hash = '#changed'
+    expect(es.url).toBe(original)
+  } finally {
+    es.close()
+  }
+})
+
+test('reconnects to the original URL after the caller mutates its URL object', async () => {
+  const input = new URL(`${serverUrl}/counter?original=yes`)
+  const original = input.href
+  const requested: string[] = []
+  const onMessage = getCallCounter({name: 'messages after reconnect'})
+  const es = new OurEventSource(input, {
+    fetch(url, init) {
+      requested.push(url.toString())
+      return request(url, init)
+    },
+  })
+  es.addEventListener('open', () => {
+    input.search = '?changed=yes'
+  })
+  es.addEventListener('counter', onMessage.listener)
+  try {
+    await onMessage.waitForCallCount(4)
+    expect(requested.length).toBeGreaterThanOrEqual(2)
+    expect(requested.every((url) => url === original)).toBe(true)
+    expect(es.url).toBe(original)
+  } finally {
+    es.close()
+  }
+})
+
 test.each(bufferedEventTypes)(
   'stops dispatching buffered $name events when a listener closes the connection',
   async ({eventType}) => {
