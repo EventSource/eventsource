@@ -24,15 +24,6 @@ import {unicodeLines} from './helpers/fixtures.ts'
 const browserTest = test.runIf(hasBrowserSemantics)
 
 /**
- * happy-dom copies the full header list onto a redirected request and only ever deletes the
- * cookie headers, so `Authorization` survives a redirect to a different origin - which the fetch
- * spec requires it not to (https://fetch.spec.whatwg.org/#http-redirect-fetch, step 13). Asserted
- * as a known failure rather than skipped, so that this turns red - and the workaround gets
- * removed - the moment happy-dom starts stripping the header.
- */
-const xOriginRedirectTest = suite === 'happy-dom' ? test.fails : test
-
-/**
  * workerd's `EventTarget` dispatches `on<type>` handler properties itself, on top of the
  * `addEventListener` call our `on*` setters make, so those handlers fire more than once, assigning
  * `null` only removes one registration, and they fire ahead of listeners registered before them
@@ -797,7 +788,7 @@ test('can request cross-origin', async () => {
 
 // Cross-origin redirect tests
 ;[301, 302, 307, 308].forEach((status) => {
-  xOriginRedirectTest(`redirects: handles ${status} to different origin`, async () => {
+  test(`redirects: handles ${status} to different origin`, async () => {
     const id = Math.random().toString(36).slice(2)
     const onMessage = getCallCounter({name: 'onMessage'})
     const onOpen = getCallCounter<Event>({name: 'onOpen'})
