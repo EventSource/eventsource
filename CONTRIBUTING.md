@@ -43,7 +43,6 @@ The provider (`test/helpers/iosSimulator.ts`) drives the simulator with `simctl`
 Use `test.fails` for runtime bugs when a future fix must turn the test red and prompt removal of the workaround:
 
 - **workerd**, seven of the `on*` handler tests. Its `EventTarget` dispatches `on<type>` handler properties itself, on top of the `addEventListener` call our `on*` setters make, so those handlers fire more than once, assigning `null` only removes one registration, and they fire ahead of listeners registered before them ([cloudflare/workerd#6022](https://github.com/cloudflare/workerd/issues/6022)). The two `on*` tests that register a single handler and check that it fired are unaffected and run normally.
-- **happy-dom**, the four cross-origin redirect tests. It does not strip `Authorization` when a request is redirected to a different origin, as [the fetch spec requires](https://fetch.spec.whatwg.org/#http-redirect-fetch).
 
 For Safari/WebKit, skip only the non-ASCII `Last-Event-ID` round-trip cases. Keep the Unicode parsing and header-construction assertions active. Document this limitation in the README.
 
