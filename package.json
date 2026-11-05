@@ -75,18 +75,18 @@
   "devDependencies": {
     "@changesets/changelog-github": "^1.0.1",
     "@changesets/cli": "^3.0.3",
-    "@cloudflare/vitest-plugin": "^1.4.1",
+    "@cloudflare/vitest-plugin": "^1.6.0",
     "@tsconfig/strictest": "^2.0.8",
     "@types/node": "^22.19.19",
-    "@vitest/browser": "^5.0.4",
-    "@vitest/browser-playwright": "^5.0.4",
+    "@vitest/browser": "^5.1.0",
+    "@vitest/browser-playwright": "^5.1.0",
     "eventsource-encoder": "^1.0.2",
     "happy-dom": "^21.0.1",
     "oxfmt": "^0.73.0",
     "oxlint": "^1.88.0",
     "playwright": "^1.64.0",
     "typescript": "^7.0.0",
-    "vitest": "^5.0.4"
+    "vitest": "^5.1.0"
   },
   "browserslist": [
     "node >= 22.12.0",
