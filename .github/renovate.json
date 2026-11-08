@@ -8,6 +8,15 @@
   "rangeStrategy": "bump",
   "packageRules": [
     {
+      "description": "Keep major-only Node.js versions floating in GitHub Actions",
+      "matchManagers": ["github-actions"],
+      "matchDepTypes": ["uses-with"],
+      "matchDepNames": ["node"],
+      "matchCurrentValue": "/^[0-9]+$/",
+      "matchUpdateTypes": ["minor", "patch"],
+      "enabled": false
+    },
+    {
       "matchUpdateTypes": ["major"],
       "dependencyDashboardApproval": true
     },
