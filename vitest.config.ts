@@ -23,7 +23,7 @@ export const sharedConfig = {
   reporters: process.env['GITHUB_ACTIONS'] ? ['default', 'github-actions'] : 'default',
 } satisfies ViteUserConfig['test']
 
-// Base config: node, and the same file run under `bun run vitest` and `deno run -A npm:vitest`.
+// Base config: shared by the Node.js, Bun and Deno test scripts.
 export default defineConfig({
   test: {
     ...sharedConfig,
