@@ -1,5 +1,11 @@
 # 📓 Changelog
 
+## 5.1.5
+
+### Patch Changes
+
+- [#376](https://github.com/EventSource/eventsource/pull/376) [`0ce156b`](https://github.com/EventSource/eventsource/commit/0ce156b480c64354f175342ae92ec0cdbb8fdc20) Thanks [@renovate](https://github.com/apps/renovate)! - Update `eventsource-parser` to `^4.1.3`.
+
 ## 5.1.4
 
 ### Patch Changes
