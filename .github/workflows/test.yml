@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 24.22.2
       - name: Cache node modules
         id: cache-node-modules
         uses: actions/cache@v6
@@ -77,7 +77,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 24.22.2
       - name: Install dependencies
         run: npm ci
       - name: Check type compatibility
@@ -91,7 +91,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 24.22.2
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
@@ -108,7 +108,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 24.22.2
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -125,7 +125,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 24.22.2
       - name: Install dependencies
         run: npm ci
       - name: Run tests
@@ -142,7 +142,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 24.22.2
       - name: Install dependencies
         run: npm ci
       - name: Run tests
@@ -157,7 +157,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 24.22.2
       - name: Install dependencies
         run: npm ci
       - name: List available simulators
