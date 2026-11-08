@@ -14,10 +14,12 @@
     },
     {
       "matchUpdateTypes": ["minor", "patch"],
-      "matchPackagePatterns": ["*"],
       "semanticCommitType": "chore",
       "schedule": ["before 3am on Friday"],
-      "automerge": false
+      "automerge": false,
+      "matchPackageNames": [
+        "*"
+      ]
     }
   ]
 }
