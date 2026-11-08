@@ -8,6 +8,15 @@
   "rangeStrategy": "bump",
   "packageRules": [
     {
+      "description": "Keep major-only Node.js and Deno versions floating in GitHub Actions",
+      "matchManagers": ["github-actions"],
+      "matchDepTypes": ["uses-with"],
+      "matchDepNames": ["node", "deno"],
+      "matchCurrentValue": "/^v?[0-9]+([.]x)?$/",
+      "matchUpdateTypes": ["minor", "patch"],
+      "enabled": false
+    },
+    {
       "matchUpdateTypes": ["major"],
       "dependencyDashboardApproval": true
     },
