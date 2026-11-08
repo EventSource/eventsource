@@ -89,11 +89,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
       - name: Install dependencies
-        run: deno install
+        run: npm ci
       - name: Run tests
         run: npm run test:deno
 
@@ -103,11 +106,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
       - name: Install Dependencies
-        run: bun install --frozen-lockfile
+        run: npm ci
       - name: Run tests
         run: npm run test:bun
 
