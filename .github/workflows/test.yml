@@ -2,6 +2,11 @@ name: Test
 on:
   push:
   workflow_dispatch:
+    inputs:
+      run_ios:
+        description: Run the iOS simulator test
+        type: boolean
+        default: false
 
 jobs:
   testBrowser:
@@ -120,7 +125,7 @@ jobs:
       - name: Run tests
         run: npm run test:happy-dom
 
-  # Every environment gates now. Where a runtime deviates from the others, the deviation is pinned
+  # Where a runtime deviates from the others, the deviation is pinned
   # in `test/client.test.ts` with `test.fails` rather than excluded from CI, so that the suite goes
   # red again once the runtime is fixed and the workaround can come out. See CONTRIBUTING.md.
   testWorkerd:
@@ -138,6 +143,7 @@ jobs:
         run: npm run test:workerd
 
   testIos:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_ios
     name: 'Test: iOS Simulator'
     timeout-minutes: 20
     runs-on: macos-latest

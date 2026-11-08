@@ -38,6 +38,8 @@ The browser tests need Playwright's browsers installed once, with `npx playwrigh
 
 `test:ios` is out of `test:all` because it only runs on macOS with Xcode's iOS platform installed, but do reach for it whenever a report names an iPhone or iPad: Playwright's `webkit` is a desktop build with a different networking stack, so it is not evidence about iOS. It picks an iPhone on the newest installed iOS runtime, preferring one that is already booted; set `IOS_SIMULATOR_DEVICE` to pin a device by name, eg `IOS_SIMULATOR_DEVICE='iPad (A16)' npm run test:ios`. If nothing is installed, `xcodebuild -downloadPlatform iOS` fetches a runtime. The simulator is left booted afterwards, since booting one costs most of a minute.
 
+To run the iOS test in CI, open the **Test** workflow in GitHub Actions, choose **Run workflow**, and check **Run the iOS simulator test**.
+
 The provider (`test/helpers/iosSimulator.ts`) drives the simulator with `simctl` alone - Safari there is opened with `simctl openurl` and reports back over the websocket Vitest already opens, so no WebDriver or Appium stack is involved. That also means nothing in the suite can drive the page: keep the tests free of Vitest's browser locators and `userEvent`, which this provider does not implement.
 
 Use `test.fails` for runtime bugs when a future fix must turn the test red and prompt removal of the workaround:
