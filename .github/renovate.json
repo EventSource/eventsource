@@ -2,24 +2,26 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "dependencyDashboard": true,
-  "schedule": ["before 3am on Friday"],
+  "schedule": ["* 0-2 * * 5"],
   "semanticCommitType": "chore",
+  "gitIgnoredAuthors": ["41898282+github-actions[bot]@users.noreply.github.com"],
   "rangeStrategy": "bump",
   "packageRules": [
     {
       "matchUpdateTypes": ["major"],
-      "semanticCommitType": "chore",
-      "automerge": false,
       "dependencyDashboardApproval": true
     },
     {
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["dependencies"],
+      "semanticCommitType": "fix"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["devDependencies"],
       "matchUpdateTypes": ["minor", "patch"],
-      "semanticCommitType": "chore",
-      "schedule": ["before 3am on Friday"],
-      "automerge": false,
-      "matchPackageNames": [
-        "*"
-      ]
+      "groupName": "dev dependencies",
+      "groupSlug": "dev-dependencies"
     }
   ]
 }

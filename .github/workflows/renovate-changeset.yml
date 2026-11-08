@@ -1,0 +1,48 @@
+name: Renovate changeset
+
+on:
+  pull_request:
+    branches: [main, 'v[0-9]+']
+    paths: [package.json]
+
+jobs:
+  changeset:
+    if: github.event.pull_request.user.login == 'renovate[bot]' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Add a patch changeset for updated runtime dependencies
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_BRANCH: ${{ github.head_ref }}
+          PR_NUMBER: ${{ github.event.number }}
+        run: |
+          base=$(git merge-base "$BASE_SHA" HEAD)
+          note=".changeset/renovate-$PR_NUMBER.md"
+          # Respect a release note supplied by a maintainer.
+          if git diff --name-only --diff-filter=A "$base" HEAD -- '.changeset/*.md' ":(exclude)$note" | grep -q .; then
+            exit 0
+          fi
+
+          changes=$(jq -r --slurpfile base <(git show "${base}:package.json") '
+            .dependencies | to_entries[] | select(.value != $base[0].dependencies[.key]) |
+            "Update `\(.key)` to `\(.value)`."
+          ' package.json)
+          if [ -z "$changes" ]; then
+            exit 0
+          fi
+
+          printf '%s\n' '---' "'eventsource': patch" '---' '' "$changes" > "$note"
+          git add -- "$note"
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'docs: add changeset for runtime dependency update'
+          git push origin "HEAD:refs/heads/$HEAD_BRANCH"
