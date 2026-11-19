@@ -20,7 +20,9 @@ export default defineConfig({
   test: {
     ...sharedConfig,
     name: 'ios',
-    pool: iosPool(),
+    // `env.ts` calls `inject` from `vitest`, so the pool has to give it the same runner `vitest`
+    // as the test file instead of the real package.
+    pool: iosPool({testHelpers: ['test/helpers/env.ts']}),
     globalSetup: standaloneServer,
     provide: {port: TEST_PORT, suite: 'react-native'},
   },
