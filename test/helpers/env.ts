@@ -8,7 +8,7 @@ import {ROUTE_PREFIX} from './routes.ts'
  * sniffed at runtime, because several suites are deliberately hard to tell apart from the
  * inside: happy-dom presents a `document`, and node/bun/deno all share the base config.
  */
-export type Suite = 'node' | 'browser' | 'happy-dom' | 'workerd'
+export type Suite = 'node' | 'browser' | 'happy-dom' | 'workerd' | 'react-native'
 
 declare module 'vitest' {
   interface ProvidedContext {
