@@ -22,6 +22,8 @@ const testHelpers = ['test/helpers/env.ts']
 
 const base = {
   ...sharedConfig,
+  // Print each test as it finishes, so a hang points at the first test with no result.
+  reporters: process.env['GITHUB_ACTIONS'] ? ['verbose', 'github-actions'] : ['verbose'],
   globalSetup: standaloneServer,
   provide: {port: TEST_PORT, suite: 'react-native'},
 } as const
