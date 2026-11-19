@@ -159,14 +159,8 @@ jobs:
           node-version: 24
       - name: Install dependencies
         run: npm ci
-      # TEMPORARY: the pool build that reports diagnostics when a file collects no tests.
-      - name: Install the pool diagnostics build
-        run: |
-          git clone --depth 1 --branch debug/collect-diagnostics https://github.com/rexxars/vitest-pool-react-native "$RUNNER_TEMP/pool"
-          (cd "$RUNNER_TEMP/pool" && npm ci && npm pack --pack-destination "$RUNNER_TEMP")
-          npm install --no-save "$RUNNER_TEMP"/vitest-pool-react-native-*.tgz
       # Not expected to pass, see `vitest.react-native.config.ts`.
-      - uses: rexxars/vitest-pool-react-native/android@feat/action-config-input
+      - uses: rexxars/vitest-pool-react-native/android@main
         with:
           config: vitest.react-native.config.ts
 
@@ -182,8 +176,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       # Not expected to pass, see `vitest.react-native.config.ts`.
-      # TODO: point at `@main` once the action's `config` input is released.
-      - uses: rexxars/vitest-pool-react-native/ios@feat/action-config-input
+      - uses: rexxars/vitest-pool-react-native/ios@main
         with:
           config: vitest.react-native.config.ts
 
