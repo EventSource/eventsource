@@ -92,7 +92,7 @@
     "react-native": "0.81.5",
     "typescript": "^7.0.0",
     "vitest": "^5.1.0",
-    "vitest-pool-react-native": "^2.1.0"
+    "vitest-pool-react-native": "^2.1.1"
   },
   "browserslist": [
     "node >= 22.12.0",
