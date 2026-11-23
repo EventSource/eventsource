@@ -27,6 +27,7 @@ The suite in `test/client.test.ts` runs against a real HTTP server in every supp
 - `npm test` - Node.js
 - `npm run test:browser` - Chromium, Firefox and WebKit, via Playwright
 - `npm run test:ios` - Safari on an iOS simulator (macOS with Xcode only)
+- `npm run test:react-native` - React Native (Hermes) on an iOS simulator, via `vitest-pool-react-native` (macOS with Xcode only). Known to fail, see `vitest.react-native.config.ts`
 - `npm run test:bun` - Bun
 - `npm run test:deno` - Deno
 - `npm run test:happy-dom` - happy-dom
