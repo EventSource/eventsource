@@ -159,12 +159,6 @@ jobs:
           node-version: 24
       - name: Install dependencies
         run: npm ci
-      # TEMPORARY: the pool build that reports errors thrown while a module loads.
-      - name: Install the pool from the fix branch
-        run: |
-          git clone --depth 1 --branch fix/report-module-load-errors https://github.com/rexxars/vitest-pool-react-native "$RUNNER_TEMP/pool"
-          (cd "$RUNNER_TEMP/pool" && npm ci && npm pack --pack-destination "$RUNNER_TEMP")
-          npm install --no-save "$RUNNER_TEMP"/vitest-pool-react-native-*.tgz
       # Not expected to pass, see `vitest.react-native.config.ts`.
       - uses: rexxars/vitest-pool-react-native/android@main
         with:
