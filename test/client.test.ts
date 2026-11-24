@@ -1122,6 +1122,41 @@ test('[NON-SPEC] custom `maxBufferSize` fails connection on parser buffer overfl
   await deferClose(es)
 })
 
+test('[NON-SPEC] clamps an oversized `retry` value so the reconnection delay does not overflow', async () => {
+  const url = `${serverUrl}/`
+  let fetchCount = 0
+
+  const retryFetch: FetchLike = async () => {
+    fetchCount++
+    return {
+      body: new ReadableStream<Uint8Array>({
+        start(controller) {
+          const encoder = new TextEncoder()
+          // Larger than the 2^31-1 ms maximum that timers accept, which would otherwise be
+          // treated as a 1ms delay and cause a tight reconnect loop
+          controller.enqueue(encoder.encode('retry: 2147483648\n'))
+          controller.enqueue(encoder.encode('data: hello\n\n'))
+          controller.close()
+        },
+      }),
+      redirected: false,
+      status: 200,
+      headers: new Headers({'content-type': 'text/event-stream'}),
+      url,
+    }
+  }
+
+  const onError = getCallCounter<ErrorEvent>({name: 'onError'})
+  const es = new OurEventSource(url, {fetch: retryFetch})
+
+  es.addEventListener('error', onError.listener)
+  await onError.waitForCallCount(1)
+
+  await new Promise((resolve) => setTimeout(resolve, 250))
+  expect(fetchCount, 'reconnect attempts').toBe(1)
+  await deferClose(es)
+})
+
 test('[NON-SPEC] unrefs the reconnection timer where supported, so it does not keep the event loop alive', async () => {
   // Browsers return numeric timer handles, so there is nothing to unref there.
   const probe = setTimeout(() => {}, 0)
