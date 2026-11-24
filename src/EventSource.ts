@@ -656,7 +656,8 @@ class EventSourceImpl extends EventTarget implements EventSource {
    * @internal
    */
   #onRetryChange = (value: number) => {
-    this.#reconnectInterval = value
+    // Timers treat delays above 2^31-1 ms as 1ms, so clamp to avoid a tight reconnect loop
+    this.#reconnectInterval = Math.min(value, 2147483647)
   }
 
   /**
