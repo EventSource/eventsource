@@ -106,17 +106,23 @@ export function syntaxError(message: string): SyntaxError {
  * @returns A string representation of the error
  * @internal
  */
-export function flattenError(err: unknown): string {
+export function flattenError(err: unknown, seen: Set<Error> = new Set()): string {
   if (!(err instanceof Error)) {
     return `${err}`
   }
 
+  // A cause chain can loop back on itself (`err.cause = err`), so stop at an error already printed
+  if (seen.has(err)) {
+    return err.message
+  }
+  seen.add(err)
+
   if ('errors' in err && Array.isArray(err.errors)) {
-    return err.errors.map(flattenError).join(', ')
+    return err.errors.map((error) => flattenError(error, seen)).join(', ')
   }
 
-  if ('cause' in err && err.cause instanceof Error) {
-    return `${err}: ${flattenError(err.cause)}`
+  if ('cause' in err && err.cause instanceof Error && !seen.has(err.cause)) {
+    return `${err}: ${flattenError(err.cause, seen)}`
   }
 
   return err.message

@@ -984,6 +984,29 @@ test('throws on `fetch()` that does not return web-stream', async () => {
   await deferClose(es)
 })
 
+test('[NON-SPEC] emits an error event when `fetch()` rejects with a cyclic cause', async () => {
+  const url = `${serverUrl}/`
+
+  const faultyFetch: FetchLike = async () => {
+    const outer = new TypeError('fetch failed')
+    const inner = new Error('socket hang up', {cause: outer})
+    outer.cause = inner
+    throw outer
+  }
+
+  const onError = getCallCounter<ErrorEvent>({name: 'onError'})
+  const es = new OurEventSource(url, {fetch: faultyFetch})
+
+  es.addEventListener('error', onError.listener)
+  await onError.waitForCallCount(1)
+
+  expect(onError.lastArg).toMatchObject({
+    type: 'error',
+    message: 'TypeError: fetch failed: socket hang up',
+  })
+  await deferClose(es)
+})
+
 test('throws on `fetch()` that does not return a body', async () => {
   const url = `${serverUrl}/`
 
